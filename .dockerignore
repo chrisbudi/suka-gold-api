@@ -11,12 +11,6 @@ app/*/__pycache__/
 app/*/*/__pycache__/
 app/*/*/*/__pycache__/
 
-#web
-web/__pycache__/
-web/*/__pycache__/
-web/*/*/__pycache__/
-web/*/*/*/__pycache__/
-
 .env/
 .venv/
 venv/
