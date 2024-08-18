@@ -1,12 +1,14 @@
 """
 URL mapping for user app
 """
+
 from django.urls import path
-from rest_framework.urls import app_name
-from user import views
+from user.views import CreateTokenView, CreateUserView, ManageUserView
 
 app_name = "user"
 
-url_pattern = [
-    path('create/', views.CreateUserView.as_view(), name='create'),
+urlpatterns = [
+   path('create/', CreateUserView.as_view(), name='create'),
+   path('token/', CreateTokenView.as_view(), name='token'),
+   path('me/', ManageUserView.as_view(), name='me'),
 ]
