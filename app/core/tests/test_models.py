@@ -1,8 +1,14 @@
 """
 django test for model
 """
+from decimal import Decimal
+
+
 from django.contrib.auth import get_user_model
+
 from django.test import TestCase
+
+from user import models
 
 
 class CommandTest(TestCase):
@@ -46,3 +52,20 @@ class CommandTest(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_recipe(self):
+        """Test creating a new recipe"""
+        userModel = get_user_model().objects.create_user(
+            email='test@example.com',
+            password='testpass123'
+        )
+        
+        recipe = models.Recipe.objects.create(
+            user=userModel, 
+            title='Steak and mushroom sauce',
+            time_minutes=5,
+            price=Decimal('5.50'),
+            description='test description',
+        )
+        
+        self.assertEqual(str(recipe), recipe.title)
