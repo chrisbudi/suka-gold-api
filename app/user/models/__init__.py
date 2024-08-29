@@ -1,1 +1,1 @@
-from .users import (UserManager, User, UserKtp,)
+from .users import (user_manager, user, user_props, user_ktp,)

@@ -3,11 +3,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext as _
 
-from user import models
+from user import  models
 
 # Register your models here.
+# @admin.register(models.user_ktp, models.user_props)
 class UserAdmin(BaseUserAdmin):
     """ define user page for admin """
+    # model = models.user
     ordering = ['id']
     list_display = ['email', 'name']
     fieldsets = (
@@ -26,5 +28,23 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
 
+# class UserPropsAdmin(models.user_props):
+#     """ define user page for admin """
+#     model = models.user_props
 
-admin.site.register(models.User, UserAdmin)
+
+# class UserKtpAdmin():
+#     """ define user ktp page for admin """
+#     ordering = ['id']
+#     list_display = ['ktp_number', 'user_id']
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('ktp_number',)
+#         }),
+#     )
+
+
+admin.site.register(models.user, UserAdmin)
+# admin.site.register(models.user_props, UserPropsAdmin)
+# admin.site.register(models.user_ktp, UserKtpAdmin)

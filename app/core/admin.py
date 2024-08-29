@@ -1,10 +1,3 @@
-"""
-Django custom admin
-"""
+from django.contrib import admin
 
-# import models
-# from core import models
-
-
-
-# admin.site.register(models.Recipe)
+# Register your models here.

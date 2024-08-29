@@ -1,7 +1,7 @@
-from .address import (City, Province, )
-from .gold import (Gold, GoldCertPrice, GoldPrice, GoldPriceSetting,)
+from .address import (city, province, )
+from .gold import (gold, gold, gold_price, gold_price_setting,)
 from .infrormations import (
-    InformationCustomerService,
-    InformationEducational,
-    InformationRating, )
-from .promo import InformationPromo
+    information_customer_service,
+    information_educational,
+    information_rating, )
+from .promo import information_promo

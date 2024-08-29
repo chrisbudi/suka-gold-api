@@ -1,6 +1,6 @@
 from django.db import models
 
-class InformationEducational(models.Model):
+class information_educational(models.Model):
     information_educational_id = models.AutoField(primary_key=True)
     information_name = models.CharField(max_length=255)
     information_notes = models.TextField(blank=True, null=True)
@@ -11,7 +11,7 @@ class InformationEducational(models.Model):
         return self.information_name
 
 
-class InformationCustomerService(models.Model):
+class information_customer_service(models.Model):
     information_customer_service_id = models.AutoField(primary_key=True)
     information_phone = models.CharField(max_length=20)
     information_name = models.CharField(max_length=255)
@@ -20,7 +20,7 @@ class InformationCustomerService(models.Model):
         return self.information_name
 
 
-class InformationRating(models.Model):
+class information_rating(models.Model):
     information_rate_id = models.AutoField(primary_key=True)
     information_rate_name = models.CharField(max_length=255)
     rate = models.IntegerField()

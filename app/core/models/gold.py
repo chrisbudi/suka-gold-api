@@ -3,18 +3,18 @@ Model for golds
 """
 
 from django.db import models
-
+from django_ulid.models import ULIDField
 
 # Gold Models
 
-class GoldCertPrice(models.Model):
+class gold_cert_price(models.Model):
     cert_id = models.AutoField(primary_key=True)
     gold_weight = models.IntegerField()
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
     createtime = models.DateTimeField(auto_now_add=True)
     createuser = models.CharField(max_length=255)
 
-class Gold(models.Model):
+class gold(models.Model):
     gold_id = models.AutoField(primary_key=True)
     gold_weight = models.IntegerField()
     type = models.CharField(max_length=50)  # bar-mintedbar
@@ -28,7 +28,7 @@ class Gold(models.Model):
     from django.db import models
 
 # Gold Price Setting Model
-class GoldPriceSetting(models.Model):
+class gold_price_setting(models.Model):
     gps_id = models.AutoField(primary_key=True)
     weekend_price_buy = models.DecimalField(max_digits=8, decimal_places=2)  # +cost beli user sabtu minggu
     weekend_price_sell = models.DecimalField(max_digits=8, decimal_places=2)  # - harga jual user sabtu minggu
@@ -45,8 +45,8 @@ class GoldPriceSetting(models.Model):
 
 
 # Gold Price Model
-class GoldPrice(models.Model):
-    gold_price_id = models.CharField(primary_key=True, max_length=255)
+class gold_price(models.Model):
+    gold_price_id = ULIDField(primary_key=True)
     gold_price_base = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar emas dr api
     gold_price_sell = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar + goldpricesetting_sel
     gold_price_buy = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar + goldpricesetting_buy
