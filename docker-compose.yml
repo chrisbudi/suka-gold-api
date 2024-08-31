@@ -11,7 +11,7 @@ services:
     volumes:
       - ./app:/app
     environment:
-      - DB_HOST=db
+      - DB_HOST=app.db
       - DB_NAME=devdb
       - DB_USER=app
       - DB_PASS=app
@@ -20,9 +20,9 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     depends_on:
-      - db
+      - app.db
 
-  db:
+  app.db:
     image: postgres:13.1-alpine
     environment:
       - POSTGRES_DB=devdb
@@ -32,6 +32,21 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5430:5432"
+
+  # app.seq:
+  #   image: datalust/seq:latest
+  #   container_name: Seq
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #   ports:
+  #     - 5341:5341
+  #     - 8081:80
+
+  # app.redis:
+  #   image: redis:6.0.9-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   restart: always
 
 volumes:
   postgres_data:
