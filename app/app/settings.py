@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework.authtoken',
     'rest_framework',
+    'django_filters',
     'core',
     'user',
 ]

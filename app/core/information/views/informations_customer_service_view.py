@@ -5,6 +5,9 @@ from rest_framework import status
 from core.models import information_customer_service as modelInfo
 
 
+serializer_class = infoSerializer
+
+
 @api_view(['GET'])
 def fetch_customer_service(request):
     try:

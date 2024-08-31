@@ -3,6 +3,7 @@ Serializer for recipe api
 """
 
 from rest_framework import serializers
+from django_filters import rest_framework as filters
 
 from core.models import (
     information_educational, 
@@ -17,7 +18,8 @@ class InformationCustomerServiceSerializer(serializers.ModelSerializer):
         model = information_customer_service
         fields = ['information_customer_service_id', 'information_phone', 'information_name']
         read_only_fields = ['information_customer_service_id',]
-        
+
+   
         
 class InformationEducationalSerializer(serializers.ModelSerializer):
     """Serializer for Information Rating Educational object"""
@@ -26,6 +28,14 @@ class InformationEducationalSerializer(serializers.ModelSerializer):
         model = information_educational
         fields = "__all__"
         read_only_fields = ['id',]
+
+class InformationEducationalServiceFilter(filters.FilterSet):
+    class Meta:
+        model = information_educational
+        fields = {
+            'information_name': ['icontains'],
+            'information_background': ['icontains'],
+        }
         
 class InformationPromoSerializer(serializers.ModelSerializer):
     """Serializer for information Promo object"""

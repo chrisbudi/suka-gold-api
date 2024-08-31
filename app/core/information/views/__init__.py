@@ -7,11 +7,9 @@ from .informations_customer_service_view import (
 
 
 from .informations_educational_view import (
-    fetch_educational,
-    post_educational,
-    patch_educational,
-    delete_educational, 
-    )
+    InformationEducationViewSet
+    
+   )
 
 from .informations_promo_view import (
     fetch_promo,
