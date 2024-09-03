@@ -136,3 +136,14 @@ AUTH_USER_MODEL = 'user.user'
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Suka Gledek API',
+    'DESCRIPTION': 'Apps backend for suka gledek',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # 'TAGS': [
+    #     {'name': 'Information - Customer Service', 'description': 'APIs related to customer service information'},
+    #     {'name': 'Information - Educational', 'description': 'APIs related to educational information'},
+    # ],
+}
