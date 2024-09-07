@@ -12,8 +12,6 @@ from .views import (
     informations_rating_view as views_rating,
     )
 
-
-
 router = DefaultRouter()
 
 app_name = 'information'

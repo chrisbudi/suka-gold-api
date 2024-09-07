@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'django_filters',
     'core',
     'user',
+    'ewallet',
+    'gold_transaction',
+    'investment',
+    'loan',
 ]
 
 MIDDLEWARE = [
