@@ -73,11 +73,13 @@ class user_props(models.Model):
         on_delete=models.CASCADE,
     )
 
-    city  = models.ForeignKey(
+    city = models.ForeignKey(
         city,
         on_delete=models.CASCADE,
     )
-    
+
+    # make user id as primary key
+    id = ULIDField(primary_key=True, unique=True, default=ulid.new, editable=False, max_length=26)
     wallet_amt = models.DecimalField(max_digits=12, decimal_places=2)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
