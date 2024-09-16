@@ -11,6 +11,7 @@ EXPOSE 8000
 
 ARG DEV=false
 
+
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client && \
@@ -22,11 +23,13 @@ RUN python -m venv /py && \
     apk del .tmp-build-dev && \
     adduser \
     --disabled-password \
-    --no-create-home \
-    django-user
+    --home /home/django-user \
+    --gecos "" \
+    django-user && \
+    mkdir -p /home/django-user && \
+    chown -R django-user:django-user /home/django-user
 
-
+    
 ENV PATH "/py/bin:$PATH"
 
 USER django-user
-

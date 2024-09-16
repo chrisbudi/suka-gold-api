@@ -142,12 +142,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Suka Gledek API',
-    'DESCRIPTION': 'Apps backend for suka gledek',
+    'TITLE': 'NAMAS API',
+    'DESCRIPTION': 'Apps backend for namas',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    # 'TAGS': [
-    #     {'name': 'Information - Customer Service', 'description': 'APIs related to customer service information'},
-    #     {'name': 'Information - Educational', 'description': 'APIs related to educational information'},
-    # ],
 }

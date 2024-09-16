@@ -11,6 +11,15 @@ class information_educational(models.Model):
         return self.information_name
 
 
+class information_faq(models.Model):
+    information_faq_id = models.AutoField(primary_key=True)
+    information_title = models.CharField(max_length=255)
+    information_question = models.TextField(blank=True, null=True)
+    information_answer = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.information_name
+
 class information_customer_service(models.Model):
     information_customer_service_id = models.AutoField(primary_key=True)
     information_phone = models.CharField(max_length=20)

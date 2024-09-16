@@ -15,12 +15,29 @@ services:
       - DB_NAME=devdb
       - DB_USER=app
       - DB_PASS=app
+      - SELENIUM_URL=http://app.selenium:4444/wd/hub
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - app.db
+      - app.selenium
+
+  app.selenium:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+
+  app.chrome:
+    image: selenium/node-chrome:latest
+    depends_on:
+      - app.selenium
+    environment:
+      - HUB_HOST=app.selenium
+    volumes:
+      - /dev/shm:/dev/shm
 
   app.db:
     image: postgres:13.1-alpine

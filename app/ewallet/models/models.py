@@ -1,13 +1,10 @@
 
 from django.db import models
-from django_ulid.models import ULIDField
+from django_ulid.models import ULIDField, ulid
+from core.models.address import city
 
    
 class user_props(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
 
     city = models.ForeignKey(
         city,
