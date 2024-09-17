@@ -3,7 +3,7 @@ Model for golds
 """
 
 from django.db import models
-from django_ulid.models import ULIDField
+from django_ulid.models import ULIDField, ulid
 
 # Gold Models
 
@@ -46,7 +46,9 @@ class gold_price_setting(models.Model):
 
 # Gold Price Model
 class gold_price(models.Model):
-    gold_price_id = ULIDField(primary_key=True)
+    gold_price_id = ULIDField(primary_key=True, unique=True, default=ulid.new, editable=False, max_length=26)
+    gold_price_setting_weight = models.IntegerField(default=1)  # berat emas
+    gold_price_setting_source = models.CharField(max_length=50, default="")  # sumber harga emas
     gold_price_base = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar emas dr api
     gold_price_sell = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar + goldpricesetting_sel
     gold_price_buy = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar + goldpricesetting_buy
@@ -54,6 +56,3 @@ class gold_price(models.Model):
 
     def __str__(self):
         return f"Gold Price {self.gold_price_id} - Base: {self.gold_price_base}"
-
-
-
