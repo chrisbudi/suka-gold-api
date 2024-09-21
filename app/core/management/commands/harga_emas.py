@@ -2,7 +2,8 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from django.core.management.base import BaseCommand
 # from emas_org import HargaEmasSpider
-from emas_xe import HargaEmasXESpider
+
+from job import HargaEmasXESpider, HargaEmasSpider
 # from app.emas_xe import harga_emas_spider
 
 class Command(BaseCommand):

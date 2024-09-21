@@ -1,36 +1,39 @@
-
 import scrapy
-from core.models import gold_price_rate
+# from core.models import gold_price
+
+from datetime import datetime
 
 class HargaEmasXESpider(scrapy.Spider):
     name = "harga_emas_xe"
     allowed_domains = ["xe.com"]
     start_urls = ["https://www.xe.com/currencyconverter/convert/?Amount=1&From=XAU&To=IDR"]
-
+    
     def parse(self, response):
-        
         rows = response.css('table tbody tr')
-        xau_idr_value = None
+        # print(f"Rows: {rows}")
+        # xau_idr_value = None
         for row in rows:
             xau_value = row.css('td:nth-child(1) a::text').get()
-            print(f"XAU: {xau_value}")
-            if xau_value == '1':
-                idr_value = row.css('td:nth-child(2)::text').get()
+            # print(f"XAU: {xau_value}")
+            # if xau_value == '1':
+            idr_value = row.css('td:nth-child(2)::text').get()
                 
-                print(f"XAU: {xau_value}, IDR: {idr_value}")
-                xau_idr_value = {
-                    'XAU': xau_value,
-                    'IDR': idr_value
-                }
-                break  # Exit loop after finding the 1 XAU value
+            print(f"XAU: {xau_value}, IDR: {idr_value}")
+                # xau_idr_value = {
+                #     'XAU': xau_value,
+                #     'IDR': idr_value
+                # }
+                # break  # Exit loop after finding the 1 XAU value
+        # if xau_idr_value:
+            # gprice = gold_price(gold_price_source='XE', 
+            #                     gold_price_base=float(xau_idr_value['IDR'].replace(',', ''))/31.1, 
+            #                     gold_price_sell=float(xau_idr_value['IDR'].replace(',', ''))/31.1, 
+            #                     gold_price_buy=float(xau_idr_value['IDR'].replace(',', ''))/31.1, 
+            #                     gold_price_weight=1, 
+            #                     timestamps=datetime.now(), ) 
+            # gprice.save()
+            # print(f"Saved XAU to IDR rate: {xau_idr_value['IDR']}")
 
-        if xau_idr_value:
-            gold_price = gold_price_rate(gold_price_rate_source='XE', gold_price_rate_base=xau_idr_value['IDR'], gold_price_rate_weight=1)
-            gold_price.save()
-            print(f"Saved XAU to IDR rate: {xau_idr_value['IDR']}")
-            # yield xau_idr_value
-            
-    # name = "gold_price"
 
     # def __init__(self, *args, **kwargs):
     #     super(HargaEmasXESpider, self).__init__(*args, **kwargs)
