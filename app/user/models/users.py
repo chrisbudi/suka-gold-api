@@ -1,21 +1,17 @@
 from django.conf import settings
 
 from django.contrib.auth.management import create_permissions
-from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    AbstractUser,
     BaseUserManager,
     PermissionsMixin)
 
 
-from django_ulid.models import ULIDField
-import ulid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django_ulid.models import ULIDField
-import ulid
 from core.models.address import city
+from core.fields.uuidv7_field import UUIDv7Field
 
 
 # Create your models here.
@@ -46,7 +42,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     """
     Custom user model that supports using email instead of username
     """
-    id = ULIDField(primary_key=True, unique=True, default=ulid.new, editable=False, max_length=26)
+    id = UUIDv7Field(primary_key=True, unique=True, editable=False)
     phone_number = models.CharField(max_length=20)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -79,7 +75,7 @@ class user_props(models.Model):
     )
 
     # make user id as primary key
-    id = ULIDField(primary_key=True, unique=True, default=ulid.new, editable=False, max_length=26)
+    id = UUIDv7Field(primary_key=True, unique=True, editable=False)
     wallet_amt = models.DecimalField(max_digits=12, decimal_places=2)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
@@ -96,9 +92,8 @@ class user_props(models.Model):
     create_time = models.DateTimeField(auto_created=True)
     create_user = models.CharField(max_length=255)
 
-
 class user_ktp(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )

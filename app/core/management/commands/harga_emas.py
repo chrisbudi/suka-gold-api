@@ -11,7 +11,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         process = CrawlerProcess(get_project_settings())
+        process.settings.set('FEED_FORMAT', 'json')
         
+        # format disable cache
+        process.settings.set('HTTPCACHE_ENABLED', False)
+
+
+        
+        
+        # process.settings.set('FEED_URI', 'output.json) 
         # add spider to process
         # process.crawl(HargaEmasSpider)
         process.crawl(HargaEmasXESpider)  
