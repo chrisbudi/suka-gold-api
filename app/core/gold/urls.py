@@ -7,7 +7,8 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     gold_view,
-    gold_price_config_view
+    gold_price_config_view,
+    gold_cert_price_view
     )
 
 router = DefaultRouter()
@@ -22,6 +23,13 @@ gold_urls = [
     path('<str:id>/', gold_view.GoldServiceViewSet.as_view({'get': 'retrieve'}), name='get_gold'),
 ]
 
+gold_cert_price_urls = [
+    path('', gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({'get': 'list'}), name='list_gold_cert_price_config'),
+    path('create', gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({'post': 'create'}), name='create_gold_cert_price_config'),
+    path('<int:id>/', gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({'patch': 'update'}), name='patch_gold_cert_price_config'),
+    path('<int:id>/', gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({'delete': 'destroy'}), name='delete_gold_cert_price_config'),
+    path('<int:id>/', gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({'get': 'retrieve'}), name='get_gold_cert_price_config'),
+]
 
 gold_price_config_urls = [
     path('', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'get': 'list'}), name='list_gold_config'),
@@ -33,5 +41,6 @@ gold_price_config_urls = [
 
 urlpatterns = [
     path('', include(gold_urls)),
+    path('cert_price/', include(gold_cert_price_urls)),
     path('price_config/', include(gold_price_config_urls)),
 ]

@@ -5,6 +5,7 @@ from core.fields.uuidv7_field import UUIDv7Field
 
 class gold_cert_price(models.Model):
     cert_id = models.AutoField(primary_key=True)
+    cert_code= models.CharField(max_length=50)
     gold_weight = models.IntegerField()
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
     create_time = models.DateTimeField(auto_now_add=True)
