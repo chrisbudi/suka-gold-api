@@ -18,19 +18,19 @@ app_name = 'information'
 # customer service
 customer_service_urls = [
     path('', views_customer_service.InformationCustomerServiceViewSet.as_view({'get': 'list'}), name='list_customer_service'),
-    path('', views_customer_service.InformationCustomerServiceViewSet.as_view({'post': 'create'}), name='post_customer_service'),
-    path('<str:id>/', views_customer_service.InformationCustomerServiceViewSet.as_view({'patch': 'update'}), name='patch_customer_service'),
-    path('<str:id>/', views_customer_service.InformationCustomerServiceViewSet.as_view({'delete': 'destroy'}), name='delete_customer_service'),
-    path('<str:id>/', views_customer_service.InformationCustomerServiceViewSet.as_view({'get': 'retrieve'}), name='get_customer_service'),
+    path('create', views_customer_service.InformationCustomerServiceViewSet.as_view({'post': 'create'}), name='post_customer_service'),
+    path('<str:id>', views_customer_service.InformationCustomerServiceViewSet.as_view({'patch': 'update'}), name='patch_customer_service'),
+    path('<str:id>', views_customer_service.InformationCustomerServiceViewSet.as_view({'delete': 'destroy'}), name='delete_customer_service'),
+    path('<str:id>', views_customer_service.InformationCustomerServiceViewSet.as_view({'get': 'retrieve'}), name='get_customer_service'),
 ]
 
 # educational
 educational_urls = [
     path('', views_educational.InformationEducationViewSet.as_view({'get': 'list'}), name='list_educational'),
     path('', views_educational.InformationEducationViewSet.as_view({'post': 'create'}), name='post_educational'),
-    path('<int:pk>/', views_educational.InformationEducationViewSet.as_view({'patch': 'update'}), name='patch_educational'),
-    path('<int:pk>/', views_educational.InformationEducationViewSet.as_view({'delete': 'destroy'}),  name='delete_educational'),
-    path('<int:pk>/', views_educational.InformationEducationViewSet.as_view({'get': 'retrieve'}), name='get_educational'),
+    path('<int:id>/', views_educational.InformationEducationViewSet.as_view({'patch': 'update'}), name='patch_educational'),
+    path('<int:id>/', views_educational.InformationEducationViewSet.as_view({'delete': 'destroy'}),  name='delete_educational'),
+    path('<int:id>/', views_educational.InformationEducationViewSet.as_view({'get': 'retrieve'}), name='get_educational'),
 ]
 
 # promo

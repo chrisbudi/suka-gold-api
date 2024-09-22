@@ -7,8 +7,8 @@ class gold_cert_price(models.Model):
     cert_id = models.AutoField(primary_key=True)
     gold_weight = models.IntegerField()
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
-    createtime = models.DateTimeField(auto_now_add=True)
-    createuser = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=255)
 
 class gold(models.Model):
     gold_id = models.AutoField(primary_key=True)
@@ -16,10 +16,10 @@ class gold(models.Model):
     type = models.CharField(max_length=50)  # bar-mintedbar
     brand = models.CharField(max_length=255)  # marva gold, antam
     certificate_number = models.CharField(max_length=255)
-    createtime = models.DateTimeField(auto_now_add=True)
-    createuser = models.CharField(max_length=255)
-    updtime = models.DateTimeField(auto_now=True)
-    upduser = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=255)
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.CharField(max_length=255)
     
 
 # # Gold Price Setting Model

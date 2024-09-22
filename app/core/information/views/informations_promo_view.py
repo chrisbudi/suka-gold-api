@@ -3,7 +3,7 @@ from core.information.serializers import (
     InformationPromoFilter as promoFilter 
     )
 
-from rest_framework import status, viewsets, filters, pagination, response
+from rest_framework import status, viewsets, filters, pagination, response, permissions
 from core.models import information_promo as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
@@ -19,6 +19,9 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
     filterset_class  = promoFilter 
     
     pagination_class = pagination.LimitOffsetPagination  # Adjust pagination class as needed
+
+    permission_classes = (permissions.AllowAny,)
+
     
     def list(self, request):
         queryset = modelInfo.objects.all()

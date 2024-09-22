@@ -1,47 +1,48 @@
-from core.information.serializers import (
-    InformationCustomerServiceSerializer as infoSerializer,
-    InformationCustomerServiceFilter as customerFilter
+from core.gold.serializers import (
+    GoldPriceConfigSerializer as objectSerializer,
+    GoldPriceConfigServiceFilter as objectFilter,
     )
-from rest_framework import status, viewsets, filters, pagination, response, permissions
-from core.models import information_customer_service as modelInfo
+from rest_framework import status, viewsets, filters, pagination, response
+from core.models import gold_price_config as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 @extend_schema(
-    tags=['Information - Customer Service'],
+    tags=['gold - gold-price-config'],
 )
-class InformationCustomerServiceViewSet(viewsets.ModelViewSet):
+class GoldPriceConfigServiceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
-    serializer_class = infoSerializer
+    serializer_class = objectSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_class  = customerFilter
+    filterset_class  = objectFilter
     pagination_class = pagination.LimitOffsetPagination  # Adjust pagination class as needed
 
     def list(self, request):
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = infoSerializer(paginated_queryset, many=True)
+        serializer = objectSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
     
-    def get(self, request,id=None):
+    def get(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = infoSerializer(info)
+        serializer = objectSerializer(info)
         return response.Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def create(self, request):
+        serializer = objectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = infoSerializer(info, data=request.data)
+        serializer = objectSerializer(info, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return response.Response(serializer.data)
@@ -54,5 +55,5 @@ class InformationCustomerServiceViewSet(viewsets.ModelViewSet):
         info = get_object_or_404(queryset, pk=id)
         info.delete()
         return response.Response({
-            'message': 'Information customer service deleted successfully',
+            'message': 'Gold object deleted successfully',
            }, status=status.HTTP_204_NO_CONTENT)

@@ -3,7 +3,7 @@ from core.information.serializers import (
     InformationRatingSerializer as infoSerializer,
     InformationRatingFilter as ratingFilter 
     )
-from rest_framework import status, viewsets, filters, pagination, response
+from rest_framework import status, viewsets, filters, pagination, response, permissions
 from core.models import information_rating as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
@@ -19,6 +19,7 @@ class InformationRatingViewSet(viewsets.ModelViewSet):
     filterset_class  = ratingFilter 
 
     pagination_class = pagination.LimitOffsetPagination  # Adjust pagination class as needed
+    permission_classes = (permissions.AllowAny,)
 
 
     def list(self, request):
