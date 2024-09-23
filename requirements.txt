@@ -10,3 +10,5 @@ scrapy==2.11.2
 selenium==4.24.0
 webdriver-manager==4.0.2
 uuid6==2024.7.10
+django-redis==5.4.0
+redis==5.0.8

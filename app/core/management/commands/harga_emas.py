@@ -21,8 +21,8 @@ class Command(BaseCommand):
         
         # process.settings.set('FEED_URI', 'output.json) 
         # add spider to process
-        # process.crawl(HargaEmasSpider)
-        process.crawl(HargaEmasXESpider)  
+        process.crawl(HargaEmasSpider)
+        # process.crawl(HargaEmasXESpider)  
         
         process.start()
         
