@@ -51,3 +51,12 @@ class gold_price(models.Model):
 
     def __str__(self):
         return f"Gold Price {self.gold_price_id} - Base: {self.gold_price_base}"
+
+
+
+class gold_price_source(models.Model):
+    gold_price_source_id = UUIDv7Field(primary_key=True,unique=True,editable=False)
+    gold_price_source = models.CharField(max_length=50, default="")  # sumber harga emas
+    gold_price_weight = models.IntegerField(default=1)  # berat emas
+    gold_price_base = models.DecimalField(max_digits=10, decimal_places=2)  # harga dasar emas dr api
+    timestamps = models.DateTimeField(auto_now_add=True)

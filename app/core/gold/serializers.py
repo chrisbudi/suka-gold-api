@@ -8,6 +8,7 @@ from django_filters import rest_framework as filters
 from core.models import (
     gold,
     gold_price_config,
+    gold_price,
     gold_cert_price
     ) 
 
@@ -50,6 +51,25 @@ class GoldPriceConfigServiceFilter(filters.FilterSet):
         fields = {
             'gpc_code': ['icontains'],
             'gpc_description': ['icontains'],
+        }
+#endregion
+
+#region Gold Price
+class GoldPriceSerializer(serializers.ModelSerializer):
+    """Serializer for gold object"""
+
+    class Meta:
+        model = gold_price
+        fields = ['gold_price_source', 'gold_price_weight', 'gold_price_base', 'gold_price_sell', 'gold_price_buy', 'timestamps']
+        read_only_fields = ['gold_price_id',]
+
+
+class GoldPriceServiceFilter(filters.FilterSet):
+    class Meta:
+        model = gold_price
+
+        fields = {
+            'gold_price_source': ['icontains'],
         }
 #endregion
 
