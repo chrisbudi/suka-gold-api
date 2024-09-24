@@ -19,9 +19,9 @@ app_name = 'gold'
 gold_urls = [
     path('', gold_view.GoldServiceViewSet.as_view({'get': 'list'}), name='list_gold'),
     path('create', gold_view.GoldServiceViewSet.as_view({'post': 'create'}), name='post_gold'),
-    path('<str:id>/', gold_view.GoldServiceViewSet.as_view({'patch': 'update'}), name='patch_gold'),
-    path('<str:id>/', gold_view.GoldServiceViewSet.as_view({'delete': 'destroy'}), name='delete_gold'),
-    path('<str:id>/', gold_view.GoldServiceViewSet.as_view({'get': 'retrieve'}), name='get_gold'),
+    path('<int:id>/', gold_view.GoldServiceViewSet.as_view({'patch': 'update'}), name='patch_gold'),
+    path('<int:id>/', gold_view.GoldServiceViewSet.as_view({'delete': 'destroy'}), name='delete_gold'),
+    path('<int:id>/', gold_view.GoldServiceViewSet.as_view({'get': 'retrieve'}), name='get_gold'),
 ]
 
 gold_cert_price_urls = [
@@ -44,9 +44,9 @@ gold_price_urls = [
 gold_price_config_urls = [
     path('', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'get': 'list'}), name='list_gold_config'),
     path('create', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'post': 'create'}), name='create_gold_config'),
-    path('<int:id>/', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'patch': 'update'}), name='patch_gold_config'),
-    path('<int:id>/', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'delete': 'destroy'}), name='delete_gold_config'),
-    path('<int:id>/', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'get': 'retrieve'}), name='get_gold_config'),
+    path('<str:id>/', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'patch': 'update'}), name='patch_gold_config'),
+    path('<str:id>/', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'delete': 'destroy'}), name='delete_gold_config'),
+    path('<str:id>/', gold_price_config_view.GoldPriceConfigServiceViewSet.as_view({'get': 'retrieve'}), name='get_gold_config'),
 ]
 
 urlpatterns = [

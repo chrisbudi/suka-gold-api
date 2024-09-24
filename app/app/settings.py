@@ -143,8 +143,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'NAMAS API',
-    'DESCRIPTION': 'Apps backend for namas',
+    'TITLE': 'NEMAS API',
+    'DESCRIPTION': 'Apps backend for nemas',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }

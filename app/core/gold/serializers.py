@@ -19,7 +19,14 @@ class GoldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = gold
-        fields = ['gold_weight', 'type', 'brand', 'certificate_number', 'create_time', 'create_user', 'upd_time', 'upd_user']
+        fields = ['gold_weight', 
+                  'type', 
+                  'brand',
+                  'certificate_number', 
+                  'create_time',
+                  'create_user',
+                  'upd_time', 
+                  'upd_user']
         read_only_fields = ['gold_id',]
 
 
@@ -40,7 +47,18 @@ class GoldPriceConfigSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = gold_price_config
-        fields = ['gpc_code', 'gpc_description', 'gold_price_weight', 'gold_price_setting_model', 'gpc_active', 'create_time', 'create_user', 'upd_time', 'upd_user']
+        fields = ['gpc_code', 
+                  'gpc_description', 
+                  'gold_price_weight', 
+                  'gold_price_setting_model_buy_weekday',
+                  'gold_price_setting_model_sell_weekday',
+                  'gold_price_setting_model_buy_weekend',
+                  'gold_price_setting_model_sell_weekend', 
+                  'gpc_active', 
+                  'create_time', 
+                  'create_user', 
+                  'upd_time', 
+                  'upd_user']
         read_only_fields = ['gpc_id',]
 
 
@@ -60,9 +78,13 @@ class GoldPriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = gold_price
-        fields = ['gold_price_source', 'gold_price_weight', 'gold_price_base', 'gold_price_sell', 'gold_price_buy', 'timestamps']
+        fields = ['gold_price_source', 
+                  'gold_price_weight', 
+                  'gold_price_base', 
+                  'gold_price_sell', 
+                  'gold_price_buy',
+                  'timestamps']
         read_only_fields = ['gold_price_id',]
-
 
 class GoldPriceServiceFilter(filters.FilterSet):
     class Meta:
@@ -80,7 +102,12 @@ class GoldCertPriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = gold_cert_price
-        fields = ['cert_code','gold_weight', 'cert_price', 'create_time', 'create_user']
+        fields = ['cert_code',
+                  'cert_id',
+                  'gold_weight', 
+                  'cert_price', 
+                  'create_time', 
+                  'create_user']
         read_only_fields = ['cert_id',]
 
 

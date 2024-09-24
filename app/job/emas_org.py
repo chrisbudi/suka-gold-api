@@ -22,17 +22,23 @@ class HargaEmasSpider(scrapy.Spider):
             idr_price = idr_price.strip()
             print(f"Extracted IDR Price: {idr_price}")
             
-            day_index = calendar.day_name[datetime.now().weekday()] 
-            print(f"Day Index: {day_index}")
+            week_param = ""
+            # get day index
             
             # define price buy and sell from from base price
-            price_buy_config = gold_price_config.objects.get(gpc_code=f'BUYDAY1') # BUYDAY[day_index]
-            price_sell_config = gold_price_config.objects.get(gpc_code=f'SELLDAY1') # SELLDAY[day_index]
+            price_config = gold_price_config.objects.get(gpc_active=True)
+            
+            day_index = datetime.today().weekday()
+            print(f"Day Index: {day_index}")
+            if day_index == 5 or day_index == 6:
+                week_param = "WEEKEND"
+            else:
+                week_param = "WEEKDAY"
             
             
-            
-            price_buy = price_buy_config.calculate_price(float(idr_price.replace('.', '').replace(',', '.')))
-            price_sell = price_sell_config.calculate_price(float(idr_price.replace('.', '').replace(',', '.')))
+            price_buy = price_config.calculate_price(f"BUY{week_param}",float(idr_price.replace('.', '').replace(',', '.')))
+            price_sell = price_config.calculate_price(f"BUY{week_param}",float(idr_price.replace('.', '').replace(',', '.')))
+
             print(f"Price Buy: {price_buy}")
             print(f"Price Sell: {price_sell}")
             gps =  gold_price_source(gold_price_source='HE',

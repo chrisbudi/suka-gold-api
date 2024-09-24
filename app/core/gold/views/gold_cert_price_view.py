@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 @extend_schema(
-    tags=['gold - cert price config'],
+    tags=['gold - cert price'],
 )
 class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
@@ -17,7 +17,7 @@ class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class  = objectFilter
     pagination_class = pagination.LimitOffsetPagination  # Adjust pagination class as needed
-
+   
     def list(self, request):
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
@@ -48,7 +48,6 @@ class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
             return response.Response(serializer.data)
         else:
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     
     def delete(self, request, id=None):
         queryset = modelInfo.objects.all()
