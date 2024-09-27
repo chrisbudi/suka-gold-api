@@ -60,6 +60,7 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
 
 # Install Gunicorn
 RUN /py/bin/pip install gunicorn
+
 # Configure Nginx
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
@@ -70,7 +71,7 @@ RUN sed -i 's/user nginx;/user django-user;/g' /etc/nginx/nginx.conf && \
     chown -R django-user:django-user /etc/nginx
 
 # Expose the HTTPS port for Nginx
-EXPOSE 443
+EXPOSE 8000
 
 # Start Nginx and Gunicorn with HTTPS
-# CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]
+CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]

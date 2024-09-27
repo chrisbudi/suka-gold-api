@@ -18,52 +18,7 @@ services:
       - SELENIUM_URL=http://app.selenium:4444/wd/hub
     command: >
       sh -c "python manage.py wait_for_db &&
-             gunicorn app.wsgi:application --bind 0.0.0.0:8000 --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --cert-reqs=0"
-    # depends_on:
-    #   - app.selenium
-
-  app.selenium:
-    image: selenium/hub:latest
-    container_name: selenium-hub
-    ports:
-      - "4444:4444"
-  app.chrome:
-    image: selenium/node-chrome:latest
-    depends_on:
-      - app.selenium
-    environment:
-      - HUB_HOST=app.selenium
-      - SE_EVENT_BUS_HOST=app.selenium
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-    volumes:
-      - /dev/shm:/dev/shm
-
-  # app.db:
-  #   image: postgres:13.1-alpine
-  #   environment:
-  #     - POSTGRES_DB=devdb
-  #     - POSTGRES_USER=app
-  #     - POSTGRES_PASSWORD=app
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5430:5432"
-
-  # app.seq:
-  #   image: datalust/seq:latest
-  #   container_name: Seq
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #   ports:
-  #     - 5341:5341
-  #     - 8081:80
-
-  # app.redis:
-  #   image: redis:6.0.9-alpine
-  #   ports:
-  #     - "6379:6379"
-  #   restart: always
+             gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"
 
 volumes:
   postgres_data:
