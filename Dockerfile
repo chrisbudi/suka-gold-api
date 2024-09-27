@@ -1,35 +1,76 @@
-FROM python:3.12-alpine3.20
+# Builder stage
+FROM python:3.12-alpine3.20 AS builder
 
-ENV PYTHONUNBUFFERED 1
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/py/bin:$PATH"
 
-COPY ./requirements.txt /tmp/requirements.txt
-COPY ./requirements.dev.txt /tmp/requirements.dev.txt
-COPY ./app /app
+# Copy requirements files
+COPY ./requirements.txt ./requirements.dev.txt /tmp/
 
+# Set working directory
 WORKDIR /app
-EXPOSE 8000 
 
+# Argument to determine if it's a development build
 ARG DEV=false
 
-
+# Install dependencies and create a virtual environment
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client && \
-    apk add --update --no-cache --virtual .tmp-build-dev \
+    apk add --update --no-cache --virtual .tmp-build-deps \
     build-base postgresql-dev musl-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ "$DEV" = "true" ]; then /py/bin/pip install -r /tmp/requirements.dev.txt; fi && \
     rm -rf /tmp && \
-    apk del .tmp-build-dev && \
-    adduser \
-    --disabled-password \
-    --home /home/django-user \
-    --gecos "" \
-    django-user && \
+    apk del .tmp-build-deps
+
+# Copy application code
+COPY ./app /app
+
+# Runtime stage
+FROM python:3.12-alpine3.20
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    SSL_CERT_FILE=/etc/ssl/certs/selfsigned.crt \
+    SSL_KEY_FILE=/etc/ssl/private/selfsigned.key \
+    HTTPS_PORT=8000 \
+    PATH="/py/bin:$PATH"
+
+# Copy virtual environment from builder stage
+COPY --from=builder /py /py
+
+# Copy application code from builder stage
+COPY --from=builder /app /app
+
+# Set working directory
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk add --update --no-cache postgresql-client openssl nginx && \
+    adduser --disabled-password --home /home/django-user --gecos "" django-user && \
     mkdir -p /home/django-user && \
-    chown -R django-user:django-user /home/django-user
+    chown -R django-user:django-user /home/django-user && \
+    mkdir -p /etc/ssl/certs /etc/ssl/private && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/selfsigned.key \
+    -out /etc/ssl/certs/selfsigned.crt \
+    -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
 
+# Install Gunicorn
+RUN /py/bin/pip install gunicorn
+# Configure Nginx
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-ENV PATH "/py/bin:$PATH"
+# Ensure Nginx runs as non-root user
+RUN sed -i 's/user nginx;/user django-user;/g' /etc/nginx/nginx.conf && \
+    chown -R django-user:django-user /var/lib/nginx && \
+    chown -R django-user:django-user /var/log/nginx && \
+    chown -R django-user:django-user /etc/nginx
 
-USER django-user
+# Expose the HTTPS port for Nginx
+EXPOSE 443
+
+# Start Nginx and Gunicorn with HTTPS
+# CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]

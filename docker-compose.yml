@@ -18,10 +18,9 @@ services:
       - SELENIUM_URL=http://app.selenium:4444/wd/hub
     command: >
       sh -c "python manage.py wait_for_db &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
-    depends_on:
-      - app.selenium
+             gunicorn app.wsgi:application --bind 0.0.0.0:8000 --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --cert-reqs=0"
+    # depends_on:
+    #   - app.selenium
 
   app.selenium:
     image: selenium/hub:latest
