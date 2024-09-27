@@ -31,7 +31,9 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '52.221.181.88'
+]
 
 
 # Application definition
