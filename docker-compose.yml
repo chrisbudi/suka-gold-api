@@ -11,17 +11,16 @@ services:
     volumes:
       - ./app:/app
     environment:
-      - DB_HOST=app.db
-      - DB_NAME=devdb
-      - DB_USER=app
-      - DB_PASS=app
+      - DB_HOST=nemasdb.cr2my0uo8cbt.ap-southeast-1.rds.amazonaws.com
+      - DB_NAME=nemasdb
+      - DB_USER=postgres
+      - DB_PASS=exXTF6COcKZEJjfnhMvU
       - SELENIUM_URL=http://app.selenium:4444/wd/hub
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     depends_on:
-      - app.db
       - app.selenium
 
   app.selenium:
@@ -41,16 +40,16 @@ services:
     volumes:
       - /dev/shm:/dev/shm
 
-  app.db:
-    image: postgres:13.1-alpine
-    environment:
-      - POSTGRES_DB=devdb
-      - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=app
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5430:5432"
+  # app.db:
+  #   image: postgres:13.1-alpine
+  #   environment:
+  #     - POSTGRES_DB=devdb
+  #     - POSTGRES_USER=app
+  #     - POSTGRES_PASSWORD=app
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5430:5432"
 
   # app.seq:
   #   image: datalust/seq:latest

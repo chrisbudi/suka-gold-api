@@ -21,8 +21,14 @@ class gold_price_config(models.Model):
     def __str__(self):
         return f"GPC {self.gpc_id} - Weight: {self.gold_price_weight}"
     
-    def calculate_price(self, types: str, base_price: decimal.Decimal) -> decimal.Decimal:   
+    def calculate_price(self, types: str, base_price: float) -> decimal.Decimal:   
         switch= {
+            # The line `"BUYWEEKDAY": self.gold_price_setting_model_buy_weekday,` is creating a
+            # key-value pair in a dictionary called `switch`. The key is `"BUYWEEKDAY"` and the value
+            # is the value of the `gold_price_setting_model_buy_weekday` attribute of the current
+            # instance of the `gold_price_config` class. This dictionary is used to map different
+            # types of price calculations based on the `types` parameter passed to the
+            # `calculate_price` method.
             "BUYWEEKDAY": self.gold_price_setting_model_buy_weekday,
             "SELLWEEKDAY": self.gold_price_setting_model_sell_weekday,
             "BUYWEEKEND": self.gold_price_setting_model_buy_weekend,
