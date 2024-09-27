@@ -56,7 +56,16 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/ssl/private/selfsigned.key \
     -out /etc/ssl/certs/selfsigned.crt \
-    -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
+    -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=52.221.181.88"
+# RUN apk add --update --no-cache postgresql-client openssl nginx && \
+#     adduser --disabled-password --home /home/django-user --gecos "" django-user && \
+#     mkdir -p /home/django-user && \
+#     chown -R django-user:django-user /home/django-user && \
+#     mkdir -p /etc/ssl/certs /etc/ssl/private && \
+#     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+#     -keyout /etc/ssl/private/selfsigned.key \
+#     -out /etc/ssl/certs/selfsigned.crt \
+#     -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
 
 # Install Gunicorn
 RUN /py/bin/pip install gunicorn
