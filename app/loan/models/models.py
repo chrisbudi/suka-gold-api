@@ -2,7 +2,6 @@ from django.db import models
 from django_ulid.models import ULIDField, ulid
 
 from django.conf import settings
-from app.user.tests.test_user_api import create_user
 
 # master config
 
@@ -40,7 +39,8 @@ class gold_loan(models.Model):
     update_time=models.DateTimeField(auto_now=True)
     update_user=models.CharField(max_length=255)
     create_time=models.DateTimeField(auto_created=True)
-    create_user=models.CharField(max_length=255)     
+    create_user=models.CharField(max_length=255)    
+     
     def __str__(self):
         return ""
     

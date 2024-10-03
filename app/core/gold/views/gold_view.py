@@ -34,7 +34,7 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = objectSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(create_user=request.user)
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -44,7 +44,7 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
         info = get_object_or_404(queryset, pk=id)
         serializer = objectSerializer(info, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(create_user=request.user)
             return response.Response(serializer.data)
         else:
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

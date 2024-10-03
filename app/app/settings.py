@@ -32,7 +32,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = [
-    '52.221.181.88'
+    '52.221.181.88',
+    'localhost',
 ]
 
 
@@ -157,3 +158,8 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+AUTHENTICATION_BACKENDS = [
+    'user.services.UsernameEmailPhoneBackend',
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+]

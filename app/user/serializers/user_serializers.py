@@ -38,7 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
         
 class AuthenticatedTokenSerializer(serializers.Serializer):
     """Serializer for user authentication"""
-    email = serializers.EmailField()
+    identifier = serializers.CharField(write_only=True)  # Can be username, email, or phone number
     password = serializers.CharField(
         style={'input_type': 'password'},
         trim_whitespace=False
@@ -46,20 +46,25 @@ class AuthenticatedTokenSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         """Validate and authenticate the user"""
-        email = attrs.get('email')
+        identifier = attrs.get('identifier')
         password = attrs.get('password')
 
-        user = authenticate(
-            request=self.context.get('request'),
-            username=email,
-            password=password
-        )
-
-        if not user:
-            msg = _('Unable to authenticate with provided credentials')
+        if not identifier or not password:
+            msg = ('Must include "identifier" and "password".')
             raise serializers.ValidationError(msg, code='authentication')
-
-        attrs['user'] = user
         return attrs
+
+        # user = authenticate(
+        #     request=self.context.get('request'),
+        #     username=email,
+        #     password=password
+        # )
+
+        # if not user:
+        #     msg = ('Unable to authenticate with provided credentials')
+        #     raise serializers.ValidationError(msg, code='authentication')
+
+        # attrs['user'] = user
+        # return attrs
     
  

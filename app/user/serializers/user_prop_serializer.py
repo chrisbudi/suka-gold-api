@@ -2,14 +2,13 @@
 
 from django.contrib.auth import (
     get_user_model,
-    authenticate
 )
 from django.utils.translation import ngettext_lazy as _
 
 from rest_framework import serializers
 from user.models import (
-    UserKtp,
-    UserProp,
+    user_ktp,
+    user_props,
     )
 
 
@@ -18,9 +17,23 @@ class UserPropSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
     class Meta:
-        model = get_user_model()
-        fields = ('email', 'password', 'name')
-        extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
+        model = user_props
+        fields = (
+            'wallet_amt',
+            'gold_amt',
+            'invest_gold_wgt',
+            'loan_wgt',
+            'loan_amt',
+            'photo',
+            'bank',
+            'rek_number',
+            'npwp',
+            'level',
+            'address',
+            'address_post_code',
+            'create_time',
+            'create_user',
+        )
 
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
@@ -31,7 +44,6 @@ class UserPropSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
  
-        # print(password, "password");
         if password:
             user.set_password(password)
             user.save()
@@ -41,6 +53,11 @@ class UserPropSerializer(serializers.ModelSerializer):
 class UserKtpSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = UserKtp
-        fields = ('no_ktp', 'name', 'birth_date', 'birth_place', 'address', 'city', 'phone_number', 'email')
+        model = user_ktp
+        fields = ('ktp_number', 
+                  'ktp_photo',
+                  'ktp_address',
+                  'ktp_address_post_code',
+                  'ktp_city_id',
+                  )
         

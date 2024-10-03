@@ -12,3 +12,4 @@ webdriver-manager==4.0.2
 uuid6==2024.7.10
 django-redis==5.4.0
 redis==5.0.8
+phonenumbers==8.13.46

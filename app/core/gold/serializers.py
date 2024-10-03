@@ -19,14 +19,15 @@ class GoldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = gold
-        fields = ['gold_weight', 
-                  'type', 
-                  'brand',
-                  'certificate_number', 
-                  'create_time',
-                  'create_user',
-                  'upd_time', 
-                  'upd_user']
+        fields = [
+            'gold_weight', 
+            'type', 
+            'brand',
+            'certificate_number', 
+            'create_time',
+            'create_user',
+            'upd_time', 
+            'upd_user']
         read_only_fields = ['gold_id',]
 
 

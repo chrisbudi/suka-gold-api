@@ -19,23 +19,43 @@ from core.fields.uuidv7_field import UUIDv7Field
 class user_manager(BaseUserManager):
     """Managers for users"""
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, user_name=None, email=None, phone_number=None, password=None, **extra_fields):
         """Create and return a new user"""
-        if not email:
-            raise ValueError('Users must have an email address')
-        user = self.model(email=self.normalize_email(email), **extra_fields)
+        if not email and not phone_number:
+            raise ValueError('the user must have either an email or phone number')
+        user = self.model(
+            user_name=user_name,
+            email=self.normalize_email(email), 
+            phone_number=phone_number, 
+            **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, user_name=None, email=None, phone_number=None, password=None):
         """Create and return a new user"""
-        if not email:
-            raise ValueError('Users must have an email address')
-        user = self.create_user(email, password)
+        user = self.create_user(user_name,email, phone_number, password)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
+        
+        # create user props data
+        user_props.objects.create(
+            user=user,
+            wallet_amt=0,
+            gold_wgt=0, 
+            invest_gold_wgt=0,
+            loan_wgt=0, 
+            loan_amt=0,
+            photo="",
+            bank="",
+            rek_number="",
+            npwp="",
+            level="", 
+            address="", 
+            address_post_code="", 
+            create_time="", 
+            create_user="")
         return user
 
 class user(AbstractBaseUser, PermissionsMixin):
@@ -43,8 +63,9 @@ class user(AbstractBaseUser, PermissionsMixin):
     Custom user model that supports using email instead of username
     """
     id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField(max_length=255, unique=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+    user_name = models.CharField(max_length=255, unique=True, null=True, blank=True)   
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
@@ -57,10 +78,18 @@ class user(AbstractBaseUser, PermissionsMixin):
     objects = user_manager()
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['phone_number']
+    
+    def has_perm(self, perm: str, obj: None = ...) -> bool:
+        return super().has_perm(perm, obj)    
+
+
+    def has_module_perms(self, app_label: str) -> bool:
+        return super().has_module_perms(app_label)
     
     class Meta:
         indexes = [
-            models.Index(fields=['id', 'email']),
+            models.Index(fields=['id', 'email', 'user_name']),
         ]
         
 class user_props(models.Model):
@@ -77,7 +106,6 @@ class user_props(models.Model):
     # make user id as primary key
     id = UUIDv7Field(primary_key=True, unique=True, editable=False)
     wallet_amt = models.DecimalField(max_digits=12, decimal_places=2)
-    gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     invest_gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     loan_wgt = models.DecimalField(max_digits=10, decimal_places=4)
@@ -103,5 +131,6 @@ class user_ktp(models.Model):
     ktp_address = models.CharField(max_length=255)
     ktp_address_post_code = models.CharField(max_length=255)
     ktp_city_id = models.CharField(max_length=255)
-    ktp_create_time = models.CharField(max_length=255)
-    ktp_create_user = models.CharField(max_length=255)
+    create_time = models.CharField(max_length=255)
+    create_user = models.CharField(max_length=255)
+
