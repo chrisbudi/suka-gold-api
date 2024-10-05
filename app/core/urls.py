@@ -10,6 +10,7 @@ from core.information.urls import urlpatterns as information_urls
 app_name = "core"
 
 urlpatterns = [
-   path('gold/', include(gold_urls)),
-   path('information/', include(information_urls)),
+    path("gold/", include(gold_urls)),
+    path("information/", include(information_urls)),
+    path("address/", include("core.address.urls")),
 ]
