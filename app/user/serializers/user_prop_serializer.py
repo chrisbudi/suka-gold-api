@@ -20,7 +20,7 @@ class UserPropSerializer(serializers.ModelSerializer):
         model = user_props
         fields = (
             'wallet_amt',
-            'gold_amt',
+            'gold_wgt',
             'invest_gold_wgt',
             'loan_wgt',
             'loan_amt',

@@ -34,6 +34,7 @@ CSRF_COOKIE_SECURE = True
 ALLOWED_HOSTS = [
     '52.221.181.88',
     'localhost',
+    '172.18.0.1',
 ]
 
 

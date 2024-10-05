@@ -107,8 +107,7 @@ class GoldCertPriceSerializer(serializers.ModelSerializer):
                   'cert_id',
                   'gold_weight', 
                   'cert_price', 
-                  'create_time', 
-                  'create_user']
+                  ]
         read_only_fields = ['cert_id',]
 
 

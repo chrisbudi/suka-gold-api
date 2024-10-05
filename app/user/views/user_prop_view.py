@@ -8,12 +8,16 @@ from rest_framework.settings import api_settings
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 from user.serializers import (
     UserPropSerializer,
     UserKtpSerializer
 )
 
-
+@extend_schema(
+    tags=['User - User Prop create'],
+)
 class CreateUserPropView(generics.CreateAPIView):
     """Create a new user in the system"""
     serializer_class = UserPropSerializer
@@ -23,6 +27,10 @@ class CreateUserPropView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(create_user=self.request.user)
 
+
+@extend_schema(
+    tags=['User - User Prop retrieve update'],
+)
 class RetrieveUpdateUserPropView(generics.RetrieveUpdateAPIView):
     """Create a new user in the system"""
     serializer_class = UserPropSerializer
@@ -33,6 +41,10 @@ class RetrieveUpdateUserPropView(generics.RetrieveUpdateAPIView):
         """Retrieve and return authenticated user"""
         return self.request.user
 
+
+@extend_schema(
+    tags=['User - User ktp create'],
+)
 class CreateUserKtpView(generics.CreateAPIView):
     """Create a new user in the system"""
     serializer_class = UserKtpSerializer
@@ -43,6 +55,9 @@ class CreateUserKtpView(generics.CreateAPIView):
         serializer.save(create_user=self.request.user)
     
 
+@extend_schema(
+    tags=['User - User ktp retrieve update'],
+)
 class RetrieveUpdateUserKtpView(generics.RetrieveUpdateAPIView):
     """Create a new user in the system"""
     serializer_class = UserKtpSerializer

@@ -43,15 +43,22 @@ class AuthenticatedTokenSerializer(serializers.Serializer):
         style={'input_type': 'password'},
         trim_whitespace=False
     )
-
+    print("AuthenticatedTokenSerializer", identifier, password)
     def validate(self, attrs):
         """Validate and authenticate the user"""
         identifier = attrs.get('identifier')
         password = attrs.get('password')
 
+        user = authenticate(
+            request=self.context.get('request'),
+            username=identifier,
+            password=password
+        )
+        
         if not identifier or not password:
             msg = ('Must include "identifier" and "password".')
             raise serializers.ValidationError(msg, code='authentication')
+        attrs['user'] = user
         return attrs
 
         # user = authenticate(
