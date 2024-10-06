@@ -9,6 +9,10 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     province_view,
+    city_view,
+    district_view,
+    sub_district_view,
+    postal_code_view,
 )
 
 router = DefaultRouter()
@@ -25,7 +29,45 @@ province_url = [
     path('<int:id>', province_view.ProviceViewSet.as_view({'get': 'retrieve'}), name='get_province')
 ]
 
+city_url = [
+    path('', city_view.CityViewSet.as_view({'get': 'list'}), name='list_city'),
+    path('create', city_view.CityViewSet.as_view({'post': 'create'}), name='post_city'),
+    path('<int:id>', city_view.CityViewSet.as_view({'patch': 'update'}), name='patch_city'),
+    path('<int:id>', city_view.CityViewSet.as_view({'delete': 'destroy'}), name='delete_city'),
+    path('<int:id>', city_view.CityViewSet.as_view({'get': 'retrieve'}), name='get_city')
+]
+
+
+district_url = [
+    path('', district_view.DistrictViewSet.as_view({'get': 'list'}), name='list_district'),
+    path('create', district_view.DistrictViewSet.as_view({'post': 'create'}), name='post_district'),
+    path('<int:id>', district_view.DistrictViewSet.as_view({'patch': 'update'}), name='patch_district'),
+    path('<int:id>', district_view.DistrictViewSet.as_view({'delete': 'destroy'}), name='delete_district'),
+    path('<int:id>', district_view.DistrictViewSet.as_view({'get': 'retrieve'}), name='get_district')
+]
+
+
+subdistrict_url = [
+    path('', sub_district_view.SubDistrictViewSet.as_view({'get': 'list'}), name='list_sub_district'),
+    path('create', sub_district_view.SubDistrictViewSet.as_view({'post': 'create'}), name='post_sub_district'),
+    path('<int:id>', sub_district_view.SubDistrictViewSet.as_view({'patch': 'update'}), name='patch_sub_district'),
+    path('<int:id>', sub_district_view.SubDistrictViewSet.as_view({'delete': 'destroy'}), name='delete_sub_district'),
+    path('<int:id>', sub_district_view.SubDistrictViewSet.as_view({'get': 'retrieve'}), name='get_sub_district')
+]
+
+
+postal_code_url = [
+    path('', postal_code_view.PostalCodeViewSet.as_view({'get': 'list'}), name='list_postal_code'),
+    path('create', postal_code_view.PostalCodeViewSet.as_view({'post': 'create'}), name='post_postal_code'),
+    path('<int:id>', postal_code_view.PostalCodeViewSet.as_view({'patch': 'update'}), name='patch_postal_code'),
+    path('<int:id>', postal_code_view.PostalCodeViewSet.as_view({'delete': 'destroy'}), name='delete_postal_code'),
+    path('<int:id>', postal_code_view.PostalCodeViewSet.as_view({'get': 'retrieve'}), name='get_postal_code')
+]
 
 urlpatterns = [
     path('province/', include(province_url)),
+    path('city/', include(city_url)),
+    path('district/', include(district_url)),
+    path('sub_district/', include(subdistrict_url)),
+    path('postal_code/', include(postal_code_url)),
 ]

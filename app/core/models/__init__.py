@@ -2,7 +2,7 @@ from .address import (
     city,
     province,
     district,
-    sub_district,
+    subdistrict,
     postal_code,
 )
 from .gold import (

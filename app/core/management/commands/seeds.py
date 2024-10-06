@@ -5,7 +5,7 @@ from core.models.address import (
     province,
     city,
     district,
-    sub_district,
+    subdistrict,
     postal_code,
 )
 
@@ -60,28 +60,28 @@ class Command(BaseCommand):
                         city_id=row["city_id"],
                     )
             print("Data seeded successfully")
-        if table == "sub_district":
+        if table == "subdistrict":
             with open(csv_file, "r") as file:
                 reader = csv.DictReader(file, delimiter=separator)
                 for row in reader:
-                    sub_districts = []
+                    subdistricts = []
                     count = 0
                     for row in reader:
-                        sub_districts.append(
-                            sub_district(
+                        subdistricts.append(
+                            subdistrict(
                                 subdistrict_id=row["subdistrict_id"],
                                 subdistrict_name=row["subdistrict_name"],
                                 district_id=row["district_id"],
                             )
                         )
 
-                        if len(sub_districts) == 50:
+                        if len(subdistricts) == 50:
                             count += 1
                             print(count)
-                            sub_district.objects.bulk_create(sub_districts)
-                            sub_districts = []
-                    if sub_districts:
-                        sub_district.objects.bulk_create(sub_districts)
+                            subdistrict.objects.bulk_create(subdistricts)
+                            subdistricts = []
+                    if subdistricts:
+                        subdistrict.objects.bulk_create(subdistricts)
             print("Data seeded successfully")
         if table == "postal_code":
             with open(csv_file, "r") as file:
