@@ -1,18 +1,18 @@
-from core.address.serializers import (
-    SubDistrictSerializer as customSerializer,
-    SubDistrictFilter as customFilter,
+from core.address.api.serializers import (
+    ProvinceSerializer as customSerializer,
+    ProvinceFilter as customFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response, permissions
-from core.models import subdistrict as modelInfo
+from core.domain import province as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 @extend_schema(
-    tags=["Address - Sub District "],
+    tags=["Address - Province"],
 )
-class SubDistrictViewSet(viewsets.ModelViewSet):
+class ProviceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = customSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

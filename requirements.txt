@@ -3,8 +3,6 @@ djangorestframework>=3.15.0,<3.15.2
 django-filter>=2.4.0,<2.5.3
 psycopg2==2.9.9
 drf-spectacular>=0.27.0,<0.27.2
-django-ulid==0.0.4
-ulid-py==1.1.0
 django-crontab==0.7.1
 scrapy==2.11.2
 selenium==4.24.0

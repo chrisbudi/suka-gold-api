@@ -1,18 +1,18 @@
-from core.address.serializers import (
-    ProvinceSerializer as customSerializer,
-    ProvinceFilter as customFilter,
+from core.address.api.serializers import (
+    SubDistrictSerializer as customSerializer,
+    SubDistrictFilter as customFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response, permissions
-from core.models import province as modelInfo
+from core.domain import subdistrict as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 @extend_schema(
-    tags=["Address - Province"],
+    tags=["Address - Sub District "],
 )
-class ProviceViewSet(viewsets.ModelViewSet):
+class SubDistrictViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = customSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -22,6 +22,11 @@ class ProviceViewSet(viewsets.ModelViewSet):
     )  # Adjust pagination class as needed
 
     def list(self, request):
+        limit = request.query_params.get("limit", 10)
+        offset = request.query_params.get("offset", 0)
+        self.pagination_class.default_limit = limit
+        # self.pagination_class. = offset
+
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)

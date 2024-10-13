@@ -1,9 +1,8 @@
-
 from django.db import models
-from django_ulid.models import ULIDField, ulid
-from core.models.address import city
+from core.domain.address import city
+from core.fields.uuidv7_field import UUIDv7Field
 
-   
+
 class user_props(models.Model):
 
     city = models.ForeignKey(
@@ -12,7 +11,7 @@ class user_props(models.Model):
     )
 
     # make user id as primary key
-    id = ULIDField(primary_key=True, unique=True, default=ulid.new, editable=False, max_length=26)
+    id = UUIDv7Field(primary_key=True, unique=True, editable=False)
     wallet_amt = models.DecimalField(max_digits=12, decimal_places=2)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     gold_wgt = models.DecimalField(max_digits=10, decimal_places=4)
@@ -28,4 +27,3 @@ class user_props(models.Model):
     address_post_code = models.CharField(max_length=255)
     create_time = models.DateTimeField(auto_created=True)
     create_user = models.CharField(max_length=255)
-

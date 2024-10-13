@@ -1,9 +1,9 @@
-from core.address.serializers import (
+from core.address.api.serializers import (
     CitySerializer as customSerializer,
     CityFilter as customFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response, permissions
-from core.models import city as modelInfo
+from core.domain import city as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter

@@ -5,7 +5,7 @@ Serializer for recipe api
 from rest_framework import serializers
 from django_filters import rest_framework as filters
 
-from core.models import (
+from core.domain import (
     province,
     city,
     district,

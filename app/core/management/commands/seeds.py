@@ -1,7 +1,7 @@
 import csv
 from django.core.management.base import BaseCommand
 from concurrent.futures import ThreadPoolExecutor
-from core.models.address import (
+from core.domain.address import (
     province,
     city,
     district,
