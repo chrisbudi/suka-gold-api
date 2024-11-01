@@ -19,6 +19,11 @@ services:
     command: >
       sh -c "python manage.py wait_for_db &&
              gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"
-
+  web.nemas:
+    image: idrislabdev/nemas-admin-docker:v1.0
+    container_name: web.nemas
+    restart: always
+    ports:
+      - 5005:5005
 volumes:
   postgres_data:
