@@ -32,11 +32,7 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = [
-    "52.221.181.88",
-    "localhost",
-    "172.18.0.1",
-]
+ALLOWED_HOSTS = ["52.221.181.88", "localhost", "172.18.0.1", "3.0.17.240"]
 
 
 # Application definition
