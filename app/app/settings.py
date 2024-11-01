@@ -32,7 +32,13 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ["52.221.181.88", "localhost", "172.18.0.1", "3.0.17.240"]
+ALLOWED_HOSTS = [
+    "52.221.181.88",
+    "localhost",
+    "172.18.0.1",
+    "3.0.17.240",
+    "18.138.179.185",
+]
 
 
 # Application definition
@@ -73,6 +79,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://localhost:5005",
     "https://52.221.181.88:5005",
     "https://172.18.0.1",
+    "https://18.138.179.185",
 ]
 
 
