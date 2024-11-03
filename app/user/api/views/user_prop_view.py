@@ -10,56 +10,58 @@ from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
-from user.serializers import (
-    UserPropSerializer,
-    UserKtpSerializer
-)
+from user.api.serializers import UserPropSerializer, UserKtpSerializer
+
 
 @extend_schema(
-    tags=['User - User Prop create'],
+    tags=["User - User Prop create"],
 )
 class CreateUserPropView(generics.CreateAPIView):
     """Create a new user in the system"""
+
     serializer_class = UserPropSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-    
+
     def perform_create(self, serializer):
         serializer.save(create_user=self.request.user)
 
 
 @extend_schema(
-    tags=['User - User Prop retrieve update'],
+    tags=["User - User Prop retrieve update"],
 )
 class RetrieveUpdateUserPropView(generics.RetrieveUpdateAPIView):
     """Create a new user in the system"""
+
     serializer_class = UserPropSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-    
+
     def get_object(self):
         """Retrieve and return authenticated user"""
         return self.request.user
 
 
 @extend_schema(
-    tags=['User - User ktp create'],
+    tags=["User - User ktp create"],
 )
 class CreateUserKtpView(generics.CreateAPIView):
     """Create a new user in the system"""
+
     serializer_class = UserKtpSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         serializer.save(create_user=self.request.user)
-    
+
 
 @extend_schema(
-    tags=['User - User ktp retrieve update'],
+    tags=["User - User ktp retrieve update"],
 )
 class RetrieveUpdateUserKtpView(generics.RetrieveUpdateAPIView):
     """Create a new user in the system"""
+
     serializer_class = UserKtpSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -67,4 +69,3 @@ class RetrieveUpdateUserKtpView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         """Retrieve and return authenticated user"""
         return self.request.user
-

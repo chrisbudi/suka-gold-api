@@ -1,5 +1,4 @@
 import scrapy
-import calendar
 
 from core.domain import gold_price
 from datetime import datetime
