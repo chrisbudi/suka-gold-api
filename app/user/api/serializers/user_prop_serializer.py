@@ -1,5 +1,3 @@
-
-
 from django.contrib.auth import (
     get_user_model,
 )
@@ -9,8 +7,7 @@ from rest_framework import serializers
 from user.models import (
     user_ktp,
     user_props,
-    )
-
+)
 
 
 class UserPropSerializer(serializers.ModelSerializer):
@@ -19,20 +16,20 @@ class UserPropSerializer(serializers.ModelSerializer):
     class Meta:
         model = user_props
         fields = (
-            'wallet_amt',
-            'gold_wgt',
-            'invest_gold_wgt',
-            'loan_wgt',
-            'loan_amt',
-            'photo',
-            'bank',
-            'rek_number',
-            'npwp',
-            'level',
-            'address',
-            'address_post_code',
-            'create_time',
-            'create_user',
+            "wallet_amt",
+            "gold_wgt",
+            "invest_gold_wgt",
+            "loan_wgt",
+            "loan_amt",
+            "photo",
+            "bank",
+            "rek_number",
+            "npwp",
+            "level",
+            "address",
+            "address_post_code",
+            "create_time",
+            "create_user",
         )
 
     def create(self, validated_data):
@@ -41,23 +38,24 @@ class UserPropSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Update a user, setting the password correctly and return it"""
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
- 
+
         if password:
             user.set_password(password)
             user.save()
 
         return user
 
+
 class UserKtpSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = user_ktp
-        fields = ('ktp_number', 
-                  'ktp_photo',
-                  'ktp_address',
-                  'ktp_address_post_code',
-                  'ktp_city_id',
-                  )
-        
+        fields = (
+            "ktp_number",
+            "ktp_photo",
+            "ktp_address",
+            "ktp_address_post_code",
+            "ktp_city_id",
+        )
