@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework",
     "django_filters",
+    "taggit",
     "corsheaders",
     "core",
     "user",
@@ -106,6 +107,12 @@ WSGI_APPLICATION = "app.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+
+
+print("DB_HOST:", os.environ.get("DB_HOST"))
+print("DB_NAME:", os.environ.get("DB_NAME"))
+print("DB_USER:", os.environ.get("DB_USER"))
+print("DB_PASS:", os.environ.get("DB_PASS"))
 
 DATABASES = {
     "default": {
@@ -175,7 +182,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    "user.services.UsernameEmailPhoneBackend",
+    "user.domain.services.UsernameEmailPhoneBackend",
     "django.contrib.auth.backends.ModelBackend",  # Default backend
 ]
 

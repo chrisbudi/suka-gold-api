@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class information_educational(models.Model):
     information_educational_id = models.AutoField(primary_key=True)
     information_name = models.CharField(max_length=255)
@@ -18,14 +19,14 @@ class information_faq(models.Model):
     information_answer = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.information_name
+        return self.information_title
+
 
 class information_customer_service(models.Model):
     information_customer_service_id = models.AutoField(primary_key=True)
     information_phone = models.CharField(max_length=20)
     information_name = models.CharField(max_length=255)
-    
-    
+
     def __str__(self):
         return self.information_name
 
@@ -41,7 +42,6 @@ class information_rating(models.Model):
         return self.information_rate_name
 
 
-
 class information_promo(models.Model):
     id_promo = models.AutoField(primary_key=True)
     promo_code = models.CharField(max_length=255)  # kode untuk dapat promo
@@ -52,14 +52,22 @@ class information_promo(models.Model):
     promo_end_date = models.DateTimeField()
     promo_tag = models.CharField(max_length=255)  # SHARE
     promo_url_background = models.CharField(max_length=255)
-    promo_diskon = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Optional
-    promo_cashback = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Optional
-    promo_cashback_tipe_user = models.CharField(max_length=255, blank=True, null=True)  # Optional
-    merchant_cashback = models.CharField(max_length=255, blank=True, null=True)  # Optional
-    createtime = models.DateTimeField(auto_now_add=True)
-    createuser = models.CharField(max_length=255)
-    updtime = models.DateTimeField(auto_now=True)
-    upduser = models.CharField(max_length=255)
+    promo_diskon = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )  # Optional
+    promo_cashback = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )  # Optional
+    promo_cashback_tipe_user = models.CharField(
+        max_length=255, blank=True, null=True
+    )  # Optional
+    merchant_cashback = models.CharField(
+        max_length=255, blank=True, null=True
+    )  # Optional
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=255)
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.CharField(max_length=255)
 
     def __str__(self):
         return self.promo_name

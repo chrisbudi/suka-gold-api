@@ -20,3 +20,7 @@ from .infrormations import (
     information_rating,
     information_promo,
 )
+
+from .order_promo import (
+    order_promo,
+)

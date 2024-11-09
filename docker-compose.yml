@@ -31,5 +31,6 @@ services:
   #   restart: always
   #   ports:
   #     - 5005:5005
-volumes:
-  postgres_data:
+
+# volumes:
+# postgres_data:
