@@ -15,6 +15,7 @@ class GoldSerializer(serializers.ModelSerializer):
     class Meta:
         model = gold
         fields = [
+            "gold_id",
             "gold_weight",
             "type",
             "brand",
@@ -48,6 +49,7 @@ class GoldPriceConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = gold_price_config
         fields = [
+            "gpc_id",
             "gpc_code",
             "gpc_description",
             "gold_price_weight",
@@ -86,6 +88,7 @@ class GoldPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = gold_price
         fields = [
+            "gold_price_id",
             "gold_price_source",
             "gold_price_weight",
             "gold_price_base",
