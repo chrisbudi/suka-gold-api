@@ -10,7 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
-    environment:
+    env_file:
       - .env
     command: >
       sh -c "python manage.py wait_for_db &&
