@@ -89,10 +89,10 @@ class InformationPromoSerializer(serializers.ModelSerializer):
             "promo_cashback",
             "promo_cashback_tipe_user",
             "merchant_cashback",
-            "createtime",
-            "createuser",
-            "updtime",
-            "upduser",
+            "create_time",
+            "create_user",
+            "upd_time",
+            "upd_user",
         ]
         read_only_fields = [
             "id_promo",
