@@ -11,17 +11,7 @@ services:
     volumes:
       - ./app:/app
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_PORT=${DB_PORT}
-      - SELENIUM_URL=http://app.selenium:4444/wd/hub
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
-      - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME}
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - .env
     command: >
       sh -c "python manage.py wait_for_db &&
              gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"
