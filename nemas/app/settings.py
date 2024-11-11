@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework.authtoken",
     "rest_framework",
+    "rest_framework_simplejwt",
     "django_filters",
     "taggit",
     "corsheaders",
@@ -108,11 +110,6 @@ WSGI_APPLICATION = "app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-
-print("DB_HOST:", os.environ.get("DB_HOST"))
-print("DB_NAME:", os.environ.get("DB_NAME"))
-print("DB_USER:", os.environ.get("DB_USER"))
-print("DB_PASS:", os.environ.get("DB_PASS"))
 
 DATABASES = {
     "default": {
@@ -171,6 +168,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "user.user"
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication"
+    ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -179,12 +179,34 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Apps backend for nemas",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,  # Set to True to include the schema at /schema/
+    "AUTHENTICATION_WHITELIST": ["rest_framework.authentication.SessionAuthentication"],
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+    },
+    "SWAGGER_UI_DIST": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.0.0/swagger-ui-bundle.js",
+    "OAUTH2_CONFIG": None,
+    "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
+    "COMPONENT_SPLIT_REQUEST": False,
+    "ENABLE_API_DOCS": True,
+    "EXCLUDE_PATHS": ["/admin"],
+    "SERVE_PUBLIC": True,
+    "OAS_VERSION": "3.0.0",
+    "SECURITY": [{"bearerAuth": []}],
+    "SERVERS": [{"url": "/api"}],
 }
 
 AUTHENTICATION_BACKENDS = [
     "user.domain.services.UsernameEmailPhoneBackend",
     "django.contrib.auth.backends.ModelBackend",  # Default backend
 ]
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
 
 
 # S3Config
