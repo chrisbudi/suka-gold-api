@@ -185,7 +185,9 @@ SPECTACULAR_SETTINGS = {
         "deepLinking": True,
     },
     "SECURITY": [{"BearerAuth": []}],
-    "AUTHENTICATION_WHITELIST": ["rest_framework.authentication.SessionAuthentication"],
+    "AUTHENTICATION_WHITELIST": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication"
+    ],
     "SCHEMA_PATH_PREFIX": r"",
     "SERVERS": [{"url": "/"}],
     "ENABLE_API_DOCS": True,
