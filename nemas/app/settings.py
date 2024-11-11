@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "drf_spectacular",
-    "rest_framework.authtoken",
     "rest_framework",
+    "rest_framework.authentication",
     "rest_framework_simplejwt",
     "django_filters",
     "taggit",
@@ -168,9 +168,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "user.user"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication"
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -179,23 +180,25 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Apps backend for nemas",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,  # Set to True to include the schema at /schema/
-    "AUTHENTICATION_WHITELIST": ["rest_framework.authentication.SessionAuthentication"],
     "COMPONENT_SPLIT_REQUEST": True,
     "SWAGGER_UI_SETTINGS": {
         "deepLinking": True,
     },
-    "SWAGGER_UI_DIST": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.0.0/swagger-ui-bundle.js",
-    "OAUTH2_CONFIG": None,
+    "SECURITY": [{"BearerAuth": []}],  # This enables JWT token auth in Swagger UI
+    "AUTHENTICATION_WHITELIST": ["rest_framework.authentication.SessionAuthentication"],
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
-    "COMPONENT_SPLIT_REQUEST": False,
+    "SERVERS": [{"url": "/api"}],
     "ENABLE_API_DOCS": True,
     "EXCLUDE_PATHS": ["/admin"],
     "SERVE_PUBLIC": True,
     "OAS_VERSION": "3.0.0",
-    "SECURITY": [{"bearerAuth": []}],
-    "SERVERS": [{"url": "/api"}],
+    "SECURITY_DEFINITIONS": {
+        "BearerAuth": {
+            "type": "https",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        },
+    },
 }
 
 AUTHENTICATION_BACKENDS = [

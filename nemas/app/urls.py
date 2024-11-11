@@ -19,11 +19,17 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
+from rest_framework.authentication import SessionAuthentication
+
 from django.contrib import admin
 from django.urls import path, include
 
 from core import urls as coreUrl
 from user.api import urls as userUrl
+
+
+authentication_classes = [SessionAuthentication]
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
