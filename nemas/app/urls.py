@@ -25,10 +25,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from core import urls as coreUrl
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from user.api import urls as userUrl
 
 
-authentication_classes = [SessionAuthentication]
+authentication_classes = [JWTAuthentication]
 
 
 urlpatterns = [

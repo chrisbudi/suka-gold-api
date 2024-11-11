@@ -2,7 +2,7 @@
 views for the user API
 """
 
-from rest_framework import generics, authentication, permissions
+from rest_framework import generics, permissions
 from rest_framework.settings import api_settings
 
 from rest_framework_simplejwt.views import (
@@ -11,8 +11,10 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from user.api.serializers import UserSerializer, AuthenticatedTokenSerializer
+
+from user.api.serializers import UserSerializer, AuthTokenObtainPairSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -24,21 +26,21 @@ class CreateUserView(generics.CreateAPIView):
 class CreateTokenView(TokenObtainPairView):
     """Create a new auth token for user"""
 
-    serializer_class = AuthenticatedTokenSerializer
+    serializer_class = AuthTokenObtainPairSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
 class ManageRefreshTokenView(TokenRefreshView):
     """Implement refresh token"""
 
-    serializer_class = AuthenticatedTokenSerializer
+    serializer_class = AuthTokenObtainPairSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
 class ManageVerifyTokenView(TokenVerifyView):
     """Implement verify token"""
 
-    serializer_class = AuthenticatedTokenSerializer
+    serializer_class = AuthTokenObtainPairSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
@@ -46,7 +48,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated user"""
 
     serializer_class = UserSerializer
-    authentication_classes = [authentication.TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):

@@ -8,6 +8,13 @@ from django.utils.translation import ngettext_lazy as _
 from rest_framework import serializers
 
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+
+
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 

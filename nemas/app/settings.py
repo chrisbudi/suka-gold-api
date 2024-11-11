@@ -29,7 +29,7 @@ DEBUG = True
 
 SECURE_SSL_REDIRECT = True
 
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
 
 CSRF_COOKIE_SECURE = True
 
@@ -184,17 +184,17 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_SETTINGS": {
         "deepLinking": True,
     },
-    "SECURITY": [{"BearerAuth": []}],  # This enables JWT token auth in Swagger UI
+    "SECURITY": [{"BearerAuth": []}],
     "AUTHENTICATION_WHITELIST": ["rest_framework.authentication.SessionAuthentication"],
-    "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
-    "SERVERS": [{"url": "/api"}],
+    "SCHEMA_PATH_PREFIX": r"",
+    "SERVERS": [{"url": "/"}],
     "ENABLE_API_DOCS": True,
     "EXCLUDE_PATHS": ["/admin"],
     "SERVE_PUBLIC": True,
     "OAS_VERSION": "3.0.0",
     "SECURITY_DEFINITIONS": {
         "BearerAuth": {
-            "type": "https",
+            "type": "http",
             "scheme": "bearer",
             "bearerFormat": "JWT",
         },
@@ -207,8 +207,21 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "JTI_CLAIM": "jti",
 }
 
 

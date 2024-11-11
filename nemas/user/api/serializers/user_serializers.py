@@ -7,13 +7,16 @@ from django.utils.translation import ngettext_lazy as _
 
 from rest_framework import serializers
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
     class Meta:
         model = get_user_model()
-        fields = ("email", "phone", "password", "name")
+        fields = ("email", "phone_number", "password", "name")
         extra_kwargs = {"password": {"min_length": 5}}
 
     def create(self, validated_data):
@@ -33,24 +36,27 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class AuthenticatedTokenSerializer(serializers.Serializer):
-    """Serializer for user authentication"""
-
-    identifier = serializers.CharField()  # Can be username, email, or phone number
-    password = serializers.CharField(trim_whitespace=True)
-    print("AuthenticatedTokenSerializer", identifier, password)
+class AuthTokenObtainPairSerializer(serializers.Serializer):
+    # Override fields to use identifier instead of username
+    identifier = serializers.CharField()
+    password = serializers.CharField(trim_whitespace=True, write_only=True)
 
     def validate(self, attrs):
-        """Validate and authenticate the user"""
         identifier = attrs.get("identifier")
         password = attrs.get("password")
 
+        # Authenticate user based on identifier (username/email/phone)
         user = authenticate(
             request=self.context.get("request"), username=identifier, password=password
         )
 
-        if not identifier or not password:
-            msg = 'Must include "identifier" and "password".'
+        if user is None:
+            msg = "Unable to authenticate with provided credentials."
             raise serializers.ValidationError(msg, code="authentication")
-        attrs["user"] = user
-        return attrs
+
+        # If user is authenticated, proceed to generate tokens
+        refresh = RefreshToken.for_user(user)
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
