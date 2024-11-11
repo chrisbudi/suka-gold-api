@@ -24,10 +24,9 @@ from rest_framework.authentication import SessionAuthentication
 from django.contrib import admin
 from django.urls import path, include
 
-from core import urls as coreUrl
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from user.api import urls as userUrl
-
+from core import urls as coreUrl
 
 authentication_classes = [JWTAuthentication]
 
@@ -40,7 +39,30 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
-    path("api/users/", include(userUrl)),
+    # core shema
+    path(
+        "api/schema/core/",
+        SpectacularAPIView.as_view(urlconf="core.urls"),
+        name="core-schema",
+    ),
+    path(
+        "api/schema/core/docs",
+        SpectacularSwaggerView.as_view(url_name="core-schema"),
+        name="core-swagger-ui",
+    ),
+    # split schema
+    path(
+        "api/schema/users/",
+        SpectacularAPIView.as_view(urlconf="user.api.urls"),
+        name="user-schema",
+    ),
+    path(
+        "api/schema/users/docs",
+        SpectacularSwaggerView.as_view(url_name="user-schema"),
+        name="user-swagger-ui",
+    ),
+    # api user
+    path("api/users/", include(userUrl), name="user"),
     path("api/core/", include(coreUrl)),
 ]
 
