@@ -5,9 +5,12 @@ from .user_views import (
     ManageRefreshTokenView,
     ManageVerifyTokenView,
 )
+
 from .user_prop_view import (
-    CreateUserPropView,
-    RetrieveUpdateUserPropView,
-    CreateUserKtpView,
-    RetrieveUpdateUserKtpView,
+    UserPropView,
 )
+
+# from .user_ktp_view import (
+#     CreateUserKtpView,
+#     RetrieveUpdateUserKtpView,
+# )

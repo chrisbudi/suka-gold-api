@@ -2,20 +2,13 @@
 Serializers for user api view
 """
 
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model
 from django.utils.translation import ngettext_lazy as _
 
 from rest_framework import serializers
 
 
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
-
-
-class UserSerializer(serializers.ModelSerializer):
+class UserVerificationSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
     class Meta:
@@ -25,6 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
+        # create user prop
+
         return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):

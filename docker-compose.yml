@@ -12,6 +12,8 @@ services:
       - ./nemas:/nemas
     env_file:
       - .env
+    depends_on:
+      - app.redis
     command: >
       sh -c "python manage.py wait_for_db &&
              gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"
@@ -21,6 +23,11 @@ services:
   #   restart: always
   #   ports:
   #     - 5005:5005
-
+  app.redis:
+    image: redis:alpine
+    container_name: app.redis
+    restart: always
+    ports:
+      - 6379:6379
 # volumes:
 # postgres_data:

@@ -35,6 +35,7 @@ CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = [
     "52.221.181.88",
+    "127.0.0.1",
     "localhost",
     "172.18.0.1",
     "3.0.17.240",
@@ -175,6 +176,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "NEMAS API",
     "DESCRIPTION": "Apps backend for nemas",
@@ -239,3 +241,24 @@ AWS_S3_REGION_NAME = os.getenv(
     "AWS_S3_REGION_NAME", "us-east-1"
 )  # Default to 'us-east-1' if not specified
 AWS_QUERYSTRING_AUTH = False  # Optional: Disable query parameter authentication in URLs
+
+
+# celery settings
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_ACCEPT_CONTENT = ["json"]  # Use JSON for task serialization
+CELERY_TASK_SERIALIZER = "json"
+
+# Channels config
+ASGI_APPLICATION = "nemas.asgi.application"
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv("REDIS_URL", "redis://127.0.0.1:6379")],
+        },
+    },
+}

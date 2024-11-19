@@ -10,6 +10,8 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from user.models import user_props
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
@@ -21,18 +23,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
-        return get_user_model().objects.create_user(**validated_data)
+        user = get_user_model().objects.create_user(**validated_data)
+        # build user props
+        print("user", user)
+        return user
 
     def update(self, instance, validated_data):
         """Update a user, setting the password correctly and return it"""
         password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
-
-        # print(password, "password");
         if password:
-            user.set_password(password)
             user.save()
-
         return user
 
 
