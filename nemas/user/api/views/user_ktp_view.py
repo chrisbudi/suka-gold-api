@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 
 from user.api.serializers import UserKtpSerializer
-from nemas.user.models.users import user_ktp
 
 
 @extend_schema(

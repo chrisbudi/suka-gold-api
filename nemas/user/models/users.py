@@ -7,12 +7,11 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
-
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from core.domain.address import city
 from core.fields.uuidv7_field import UUIDv7Field
-
+import time
 
 # Create your models here.
 
@@ -20,6 +19,7 @@ from core.fields.uuidv7_field import UUIDv7Field
 class user_manager(BaseUserManager):
     """Managers for users"""
 
+    @transaction.atomic
     def create_user(
         self,
         user_name=None,
@@ -31,6 +31,7 @@ class user_manager(BaseUserManager):
         """Create and return a new user"""
         if not email and not phone_number:
             raise ValueError("the user must have either an email or phone number")
+
         user = self.model(
             user_name=user_name,
             email=self.normalize_email(email),
@@ -51,10 +52,12 @@ class user_manager(BaseUserManager):
             photo="",
             bank="",
             rek_number="",
-            npwp="",
             level="",
             address="",
             address_post_code="",
+            create_user="system",
+            create_time=time.time(),
+            update_user="system",
         )
 
         return user
@@ -86,13 +89,16 @@ class user(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     pin = models.CharField(max_length=6)
 
-    create_time = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_created=True)
     create_user = models.CharField(max_length=255)
+
+    update_time = models.DateTimeField(auto_now=True)
+    update_user = models.CharField(max_length=255)
 
     objects = user_manager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["phone_number"]
+    REQUIRED_FIELDS = ["user_name", "phone_number"]
 
     def has_perm(self, perm: str, obj: None = ...) -> bool:
         return super().has_perm(perm, obj)
@@ -108,8 +114,7 @@ class user(AbstractBaseUser, PermissionsMixin):
 
 class user_props(models.Model):
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_props"
     )
 
     city = models.ForeignKey(
@@ -128,7 +133,7 @@ class user_props(models.Model):
     bank = models.CharField(max_length=255)
     rek_number = models.CharField(max_length=255)
     level = models.CharField(max_length=255)
-    level_id = models.IntegerField()
+    level_id = models.IntegerField(blank=True, null=True)
     address = models.CharField(max_length=255)
     address_post_code = models.CharField(max_length=255)
     create_user = models.CharField(max_length=255)
@@ -143,19 +148,19 @@ class user_ktp(models.Model):
         on_delete=models.CASCADE,
     )
 
-    ktp_nik = models.CharField(max_length=255)
-    ktp_nama = models.CharField(max_length=255)
-    ktp_birth_date = models.CharField(max_length=255)
-    ktp_birth_place = models.CharField(max_length=255)
-    ktp_address = models.CharField(max_length=255)
-    ktp_district = models.CharField(max_length=255)
-    ktp_sub_district = models.CharField(max_length=255)
-    ktp_nh_no = models.CharField(max_length=255)
-    ktp_religion = models.CharField(max_length=255)
-    ktp_marital_status = models.CharField(max_length=255)
-    ktp_job = models.CharField(max_length=255)
-    ktp_citizen = models.CharField(max_length=255)
-    ktp_photo = models.CharField(max_length=255)
-    ktp_city_id = models.CharField(max_length=255)
-    create_time = models.CharField(max_length=255)
-    create_user = models.CharField(max_length=255)
+    ktp_nik = models.CharField(max_length=255, blank=True, null=True)
+    ktp_nama = models.CharField(max_length=255, blank=True, null=True)
+    ktp_birth_date = models.DateField(blank=True, null=True)
+    ktp_birth_place = models.CharField(max_length=255, blank=True, null=True)
+    ktp_address = models.CharField(max_length=255, blank=True, null=True)
+    ktp_district = models.CharField(max_length=255, blank=True, null=True)
+    ktp_sub_district = models.CharField(max_length=255, blank=True, null=True)
+    ktp_nh_no = models.CharField(max_length=255, blank=True, null=True)
+    ktp_religion = models.CharField(max_length=255, blank=True, null=True)
+    ktp_marital_status = models.CharField(max_length=255, blank=True, null=True)
+    ktp_job = models.CharField(max_length=255, blank=True, null=True)
+    ktp_citizen = models.CharField(max_length=255, blank=True, null=True)
+    ktp_photo = models.CharField(max_length=255, blank=True, null=True)
+    ktp_city_id = models.CharField(max_length=255, blank=True, null=True)
+    create_time = models.CharField(max_length=255, blank=True, null=True)
+    create_user = models.CharField(max_length=255, blank=True, null=True)

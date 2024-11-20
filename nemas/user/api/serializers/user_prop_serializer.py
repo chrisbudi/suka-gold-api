@@ -26,6 +26,4 @@ class UserPropSerializer(serializers.ModelSerializer):
             "address_post_code",
             "create_time",
             "create_user",
-            "update_time",
-            "update_user",
         )

@@ -24,5 +24,10 @@ class UserPropView(generics.RetrieveAPIView):
     """View user prop view in the system"""
 
     serializer_class = UserPropSerializer
-    authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES
+    authentication_classes = [JWTAuthentication]
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        print(user, "user")
+        return self.serializer_class.Meta.model.objects.filter(user_id=user)
