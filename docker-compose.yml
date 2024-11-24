@@ -30,3 +30,10 @@ services:
     restart: always
     ports:
       - "6379:6379"
+
+  web:
+    image: idrislabdev/nemas-admin-docker:v1.0
+    container_name: web.nemas
+    restart: always
+    ports:
+      - 5005:5005
