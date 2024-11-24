@@ -10,6 +10,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     informations_customer_service_view as views_customer_service,
     informations_promo_view as views_promo,
+    informations_article_view as views_article,
     informations_educational_view as views_educational,
     informations_rating_view as views_rating,
 )
@@ -143,9 +144,38 @@ rating_urls = [
     ),
 ]
 
+# promo
+article_url = [
+    path(
+        "",
+        views_article.InformationArticleViewSet.as_view({"get": "list"}),
+        name="list_article",
+    ),
+    path(
+        "create/",
+        views_article.InformationArticleViewSet.as_view({"post": "create"}),
+        name="post_article",
+    ),
+    path(
+        "<str:id>/",
+        views_article.InformationArticleViewSet.as_view({"patch": "update"}),
+        name="patch_article",
+    ),
+    path(
+        "<str:id>/",
+        views_article.InformationArticleViewSet.as_view({"delete": "destroy"}),
+        name="delete_article",
+    ),
+    path(
+        "<str:id>/",
+        views_article.InformationArticleViewSet.as_view({"get": "retrieve"}),
+        name="get_article",
+    ),
+]
 urlpatterns = [
     path("customer_service/", include(customer_service_urls)),
     path("educational/", include(educational_urls)),
     path("promo/", include(promo_urls)),
     path("rating/", include(rating_urls)),
+    path("article/", include(article_url)),
 ]

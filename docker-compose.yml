@@ -9,25 +9,24 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./nemas:/nemas:delegated
+      - ./nemas:/nemas # Mount the local directory to the container
     env_file:
       - .env
     depends_on:
-      - app.redis
+      - redis
+    environment:
+      - USE_HTTPS=${USE_HTTPS:-false}
     command: >
       sh -c "python manage.py wait_for_db &&
-             gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"
-  # web.nemas:
-  #   image: idrislabdev/nemas-admin-docker:v1.0
-  #   container_name: web.nemas
-  #   restart: always
-  #   ports:
-  #     - 5005:5005
-  app.redis:
+             if [ \"$USE_HTTPS\" = \"true\" ]; then
+               nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application;
+             else
+               python manage.py runserver 0.0.0.0:8000;
+             fi"
+
+  redis:
     image: redis:alpine
-    container_name: app.redis
+    container_name: redis
     restart: always
     ports:
-      - 6379:6379
-# volumes:
-# postgres_data:
+      - "6379:6379"

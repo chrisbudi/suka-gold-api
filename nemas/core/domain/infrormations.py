@@ -42,6 +42,21 @@ class information_rating(models.Model):
         return self.information_rate_name
 
 
+class information_article(models.Model):
+    information_article_id = models.AutoField(primary_key=True)
+    information_article_name = models.CharField(max_length=255)
+    information_article_body = models.TextField(blank=True, null=True)
+    article_date = models.DateTimeField(blank=True, null=True)
+    article_publish_date = models.DateTimeField(blank=True, null=True)
+    article_updated_date = models.DateTimeField(blank=True, null=True)
+    article_author = models.CharField(max_length=255, blank=True, null=True)
+    article_source = models.URLField(max_length=255, blank=True, null=True)
+    article_link = models.URLField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.information_article_name
+
+
 class information_promo(models.Model):
     id_promo = models.AutoField(primary_key=True)
     promo_code = models.CharField(max_length=255)  # kode untuk dapat promo

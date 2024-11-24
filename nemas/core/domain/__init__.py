@@ -19,6 +19,7 @@ from .infrormations import (
     information_educational,
     information_rating,
     information_promo,
+    information_article,
 )
 
 from .order_promo import (

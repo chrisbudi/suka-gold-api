@@ -12,7 +12,7 @@ COPY ./requirements.txt ./requirements.dev.txt /tmp/
 WORKDIR /nemas
 
 # Argument to determine if it's a development build
-ARG DEV=true
+ARG DEV=false
 
 # Install dependencies and create a virtual environment
 RUN python -m venv /py && \
@@ -71,4 +71,4 @@ RUN sed -i 's/user nginx;/user django-user;/g' /etc/nginx/nginx.conf && \
 EXPOSE 8000
 
 # Start Nginx and Gunicorn with HTTPS
-CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 nemas.wsgi:application"]
+CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]

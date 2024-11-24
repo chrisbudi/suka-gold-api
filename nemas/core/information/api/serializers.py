@@ -10,6 +10,7 @@ from core.domain import (
     information_promo,
     information_customer_service,
     information_rating,
+    information_article,
 )
 
 
@@ -138,6 +139,41 @@ class InformationRatingFilter(filters.FilterSet):
 
         fields = {
             "information_rate_name": ["icontains"],
+        }
+
+
+# endregion
+
+
+# region Information Article
+class InformationArticleSerializer(serializers.ModelSerializer):
+    """Serializer for information Article object"""
+
+    class Meta:
+        model = information_article
+        fields = [
+            "information_article_id",
+            "information_article_name",
+            "information_article_body",
+            "article_date",
+            "article_publish_date",
+            "article_updated_date",
+            "article_author",
+            "article_source",
+            "article_link",
+        ]
+        read_only_fields = [
+            "information_rate_id",
+        ]
+
+
+class InformationArticleFilter(filters.FilterSet):
+    class Meta:
+        model = information_article
+
+        fields = {
+            "information_article_name": ["icontains"],
+            "article_publish_date": ["exact", "gte", "lte"],
         }
 
 

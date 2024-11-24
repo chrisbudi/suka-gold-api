@@ -26,12 +26,17 @@ SECRET_KEY = "django-insecure-(&h@k#kwnn%=m+o8nd()-ck0a$5k)nlpfu1nh@n5-12#+#kcxq
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() == "true"
 
-SECURE_SSL_REDIRECT = True
 
-SESSION_COOKIE_SECURE = False
-
-CSRF_COOKIE_SECURE = True
+if USE_HTTPS:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 ALLOWED_HOSTS = [
     "52.221.181.88",
