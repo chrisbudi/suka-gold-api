@@ -48,6 +48,7 @@ class InformationEducationalSerializer(serializers.ModelSerializer):
     class Meta:
         model = information_educational
         fields = [
+            "information_educational_id",
             "information_name",
             "information_notes",
             "information_url",
@@ -77,6 +78,7 @@ class InformationPromoSerializer(serializers.ModelSerializer):
     class Meta:
         model = information_promo
         fields = [
+            "id_promo",
             "promo_code",
             "leveling_user",
             "promo_name",
@@ -118,7 +120,13 @@ class InformationRatingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = information_rating
-        fields = ["information_rate_name", "rate", "message", "publish"]
+        fields = [
+            "information_rate_id",
+            "information_rate_name",
+            "rate",
+            "message",
+            "publish",
+        ]
         read_only_fields = [
             "information_rate_id",
         ]

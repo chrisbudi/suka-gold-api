@@ -13,9 +13,8 @@ from core.domain.address import city
 from core.fields.uuidv7_field import UUIDv7Field
 import time
 
+
 # Create your models here.
-
-
 class user_manager(BaseUserManager):
     """Managers for users"""
 
@@ -39,6 +38,7 @@ class user_manager(BaseUserManager):
             **extra_fields
         )
         user.set_password(password)
+        user.create_time = time.time()
         user.save(using=self._db)
 
         # create user props data
@@ -58,6 +58,7 @@ class user_manager(BaseUserManager):
             create_user="system",
             create_time=time.time(),
             update_user="system",
+            update_time=time.time(),
         )
 
         return user
@@ -89,11 +90,11 @@ class user(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     pin = models.CharField(max_length=6)
 
-    create_time = models.DateTimeField(auto_created=True)
-    create_user = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=256)
 
     update_time = models.DateTimeField(auto_now=True)
-    update_user = models.CharField(max_length=255)
+    update_user = models.CharField(max_length=256)
 
     objects = user_manager()
 
@@ -120,6 +121,7 @@ class user_props(models.Model):
     city = models.ForeignKey(
         city,
         on_delete=models.CASCADE,
+        null=True,
     )
 
     # make user id as primary key
@@ -137,7 +139,7 @@ class user_props(models.Model):
     address = models.CharField(max_length=255)
     address_post_code = models.CharField(max_length=255)
     create_user = models.CharField(max_length=255)
-    create_time = models.DateTimeField(auto_created=True)
+    create_time = models.DateTimeField(auto_now_add=True)
     update_user = models.CharField(max_length=255)
     update_time = models.DateTimeField(auto_now=True)
 
@@ -148,19 +150,19 @@ class user_ktp(models.Model):
         on_delete=models.CASCADE,
     )
 
-    ktp_nik = models.CharField(max_length=255, blank=True, null=True)
-    ktp_nama = models.CharField(max_length=255, blank=True, null=True)
-    ktp_birth_date = models.DateField(blank=True, null=True)
-    ktp_birth_place = models.CharField(max_length=255, blank=True, null=True)
-    ktp_address = models.CharField(max_length=255, blank=True, null=True)
-    ktp_district = models.CharField(max_length=255, blank=True, null=True)
-    ktp_sub_district = models.CharField(max_length=255, blank=True, null=True)
-    ktp_nh_no = models.CharField(max_length=255, blank=True, null=True)
-    ktp_religion = models.CharField(max_length=255, blank=True, null=True)
-    ktp_marital_status = models.CharField(max_length=255, blank=True, null=True)
-    ktp_job = models.CharField(max_length=255, blank=True, null=True)
-    ktp_citizen = models.CharField(max_length=255, blank=True, null=True)
-    ktp_photo = models.CharField(max_length=255, blank=True, null=True)
-    ktp_city_id = models.CharField(max_length=255, blank=True, null=True)
-    create_time = models.CharField(max_length=255, blank=True, null=True)
+    ktp_nik = models.CharField(max_length=255)
+    ktp_nama = models.CharField(max_length=255)
+    ktp_birth_date = models.DateField(blank=True)
+    ktp_birth_place = models.CharField(max_length=255)
+    ktp_address = models.CharField(max_length=255)
+    ktp_district = models.CharField(max_length=255)
+    ktp_sub_district = models.CharField(max_length=255)
+    ktp_nh_no = models.CharField(max_length=255)
+    ktp_religion = models.CharField(max_length=255)
+    ktp_marital_status = models.CharField(max_length=255)
+    ktp_job = models.CharField(max_length=255)
+    ktp_citizen = models.CharField(max_length=255)
+    ktp_photo = models.CharField(max_length=255)
+    ktp_city_id = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=255, blank=True, null=True)

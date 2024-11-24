@@ -12,7 +12,7 @@ COPY ./requirements.txt ./requirements.dev.txt /tmp/
 WORKDIR /nemas
 
 # Argument to determine if it's a development build
-ARG DEV=false
+ARG DEV=true
 
 # Install dependencies and create a virtual environment
 RUN python -m venv /py && \
@@ -33,9 +33,6 @@ FROM python:3.12-alpine3.20
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    SSL_CERT_FILE=/etc/ssl/certs/selfsigned.crt \
-    SSL_KEY_FILE=/etc/ssl/private/selfsigned.key \
-    HTTPS_PORT=8000 \
     PATH="/py/bin:$PATH"
 
 # Copy virtual environment from builder stage
@@ -57,15 +54,6 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
     -keyout /etc/ssl/private/selfsigned.key \
     -out /etc/ssl/certs/selfsigned.crt \
     -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=52.221.181.88"
-# RUN apk add --update --no-cache postgresql-client openssl nginx && \
-#     adduser --disabled-password --home /home/django-user --gecos "" django-user && \
-#     mkdir -p /home/django-user && \
-#     chown -R django-user:django-user /home/django-user && \
-#     mkdir -p /etc/ssl/certs /etc/ssl/private && \
-#     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-#     -keyout /etc/ssl/private/selfsigned.key \
-#     -out /etc/ssl/certs/selfsigned.crt \
-#     -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
 
 # Install Gunicorn
 RUN /py/bin/pip install gunicorn

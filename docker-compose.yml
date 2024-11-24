@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./nemas:/nemas
+      - ./nemas:/nemas:delegated
     env_file:
       - .env
     depends_on:
