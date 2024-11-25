@@ -79,7 +79,7 @@ class InformationPromoSerializer(serializers.ModelSerializer):
     class Meta:
         model = information_promo
         fields = [
-            "id_promo",
+            "promo_id",
             "promo_code",
             "leveling_user",
             "promo_name",
@@ -98,8 +98,17 @@ class InformationPromoSerializer(serializers.ModelSerializer):
             "upd_user",
         ]
         read_only_fields = [
-            "id_promo",
+            "promo_id",
         ]
+
+
+class PromoUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    def validate_file(self, value):
+        if value.size > 10 * 1024 * 1024:  # 10MB limit
+            raise serializers.ValidationError("File size exceeds 10MB")
+        return value
 
 
 class InformationPromoFilter(filters.FilterSet):

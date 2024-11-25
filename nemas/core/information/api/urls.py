@@ -99,18 +99,23 @@ promo_urls = [
         name="post_promo",
     ),
     path(
-        "<str:id>/",
+        "<int:id>/",
         views_promo.InformationPromoViewSet.as_view({"patch": "update"}),
         name="patch_promo",
     ),
     path(
-        "<str:id>/",
+        "<int:id>/",
         views_promo.InformationPromoViewSet.as_view({"delete": "destroy"}),
         name="delete_promo",
     ),
     path(
-        "<str:id>/",
+        "<int:id>/",
         views_promo.InformationPromoViewSet.as_view({"get": "retrieve"}),
+        name="get_promo",
+    ),
+    path(
+        "upload/<int:id>/",
+        views_promo.PromoUploadAPIView.as_view({"post": "upload"}),
         name="get_promo",
     ),
 ]

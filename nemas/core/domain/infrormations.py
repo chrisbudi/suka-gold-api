@@ -58,7 +58,7 @@ class information_article(models.Model):
 
 
 class information_promo(models.Model):
-    id_promo = models.AutoField(primary_key=True)
+    promo_id = models.AutoField(primary_key=True)
     promo_code = models.CharField(max_length=255)  # kode untuk dapat promo
     leveling_user = models.CharField(max_length=50)  # all level, silver, gold, platinum
     promo_name = models.CharField(max_length=255)

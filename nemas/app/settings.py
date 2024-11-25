@@ -26,9 +26,8 @@ SECRET_KEY = "django-insecure-(&h@k#kwnn%=m+o8nd()-ck0a$5k)nlpfu1nh@n5-12#+#kcxq
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# <editor-fold desc="Description">
 USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() == "true"
-
-
 if USE_HTTPS:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
@@ -37,6 +36,7 @@ else:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
+# </editor-fold>
 
 ALLOWED_HOSTS = [
     "52.221.181.88",
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "rest_framework.authentication",
     "rest_framework_simplejwt",
     "django_filters",
+    "django_celery_beat",
     "taggit",
     "corsheaders",
     "core",
@@ -238,16 +239,13 @@ SIMPLE_JWT = {
 
 
 # Add these settings to configure S3 storage
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_REGION_NAME = os.getenv(
-    "AWS_S3_REGION_NAME", "us-east-1"
-)  # Default to 'us-east-1' if not specified
-AWS_QUERYSTRING_AUTH = False  # Optional: Disable query parameter authentication in URLs
-
-
+AWS_S3 = {
+    "ACCESS_KEY_ID": os.getenv("AWS_ACCESS_KEY_ID"),
+    "SECRET_ACCESS_KEY": os.getenv("AWS_ACCESS_KEY_ID"),
+    "BUCKET_NAME": os.getenv("AWS_STORAGE_BUCKET_NAME"),
+    "REGION_NAME": os.getenv("AWS_S3_REGION_NAME", "us-east-1"),
+    "CUSTOM_DOMAIN": f"{os.getenv('AWS_STORAGE_BUCKET_NAME')}s3.amazonaws.com",
+}
 # celery settings
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
@@ -256,7 +254,7 @@ CELERY_ACCEPT_CONTENT = ["json"]  # Use JSON for task serialization
 CELERY_TASK_SERIALIZER = "json"
 
 # Channels config
-ASGI_APPLICATION = "nemas.asgi.application"
+ASGI_APPLICATION = "app.asgi.application"
 
 
 CHANNEL_LAYERS = {
