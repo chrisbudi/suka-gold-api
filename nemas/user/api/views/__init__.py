@@ -1,6 +1,7 @@
 from .user_views import (
     CreateUserView,
     CreateTokenView,
+    CreateSuperUserView,
     ManageUserView,
     ManageRefreshTokenView,
     ManageVerifyTokenView,

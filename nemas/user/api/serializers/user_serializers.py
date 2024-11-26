@@ -18,21 +18,29 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ("email", "phone_number", "password", "name")
-        extra_kwargs = {"password": {"min_length": 5}}
+        fields = ("user_name", "email", "phone_number", "password", "name")
+        extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
+
+    def validate(self, attrs):
+        """Validate the data"""
+        if self.context.get("is_superuser", False) and not attrs.get("user_name"):
+            raise serializers.ValidationError(
+                {"user_name": "This field is required for superusers."}
+            )
+        return attrs
 
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
-        user = get_user_model().objects.create_user(**validated_data)
-        # build user props
-        print("user", user)
-        return user
+        if self.context.get("is_superuser", False):
+            return get_user_model().objects.create_superuser(**validated_data)
+        return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
         """Update a user, setting the password correctly and return it"""
         password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
         if password:
+            user.set_password(password)
             user.save()
         return user
 

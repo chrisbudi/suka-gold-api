@@ -23,6 +23,18 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
+class CreateSuperUserView(generics.CreateAPIView):
+    """Create a new superuser in the system"""
+
+    serializer_class = UserSerializer
+
+    def get_serializer_context(self):
+        """Add context to the serializer"""
+        context = super().get_serializer_context()
+        context["is_superuser"] = True
+        return context
+
+
 class CreateTokenView(TokenObtainPairView):
     """Create a new auth token for user"""
 

@@ -25,6 +25,7 @@ class user_manager(BaseUserManager):
         email=None,
         phone_number=None,
         password=None,
+        name=None,
         **extra_fields
     ):
         """Create and return a new user"""
@@ -35,6 +36,7 @@ class user_manager(BaseUserManager):
             user_name=user_name,
             email=self.normalize_email(email),
             phone_number=phone_number,
+            name=name,
             **extra_fields
         )
         user.set_password(password)
@@ -64,10 +66,18 @@ class user_manager(BaseUserManager):
         return user
 
     def create_superuser(
-        self, user_name=None, email=None, phone_number=None, password=None
+        self,
+        user_name=None,
+        email=None,
+        phone_number=None,
+        password=None,
+        name=None,
+        **extra_fields
     ):
         """Create and return a new user"""
-        user = self.create_user(user_name, email, phone_number, password)
+        user = self.create_user(
+            user_name, email, phone_number, password, name, **extra_fields
+        )
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)

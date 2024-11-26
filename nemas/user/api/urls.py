@@ -8,6 +8,7 @@ from .views import (
     ManageRefreshTokenView,
     ManageVerifyTokenView,
     CreateUserView,
+    CreateSuperUserView,
     ManageUserView,
     # user props
     UserPropView,
@@ -24,6 +25,7 @@ urlpatterns = [
     path("token/refresh/", ManageRefreshTokenView.as_view(), name="token_refresh"),
     path("token/verify/", ManageVerifyTokenView.as_view(), name="token_verify"),
     path("create/", CreateUserView.as_view(), name="create"),
+    path("create/super_user/", CreateSuperUserView.as_view(), name="create_super_user"),
     # path("token/", CreateTokenView.as_view(), name="token"),
     path("me/", ManageUserView.as_view(), name="me"),
     # path(
