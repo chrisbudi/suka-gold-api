@@ -2,11 +2,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from django.core.management.base import BaseCommand
 
-# from emas_org import HargaEmasSpider
-
-from job import HargaEmasSpider
-
-# from app.emas_xe import harga_emas_spider
+from core.job import HargaEmasSpider
 
 
 class Command(BaseCommand):
@@ -15,13 +11,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         process = CrawlerProcess(get_project_settings())
         process.settings.set("FEED_FORMAT", "json")
-
-        # format disable cache
         process.settings.set("HTTPCACHE_ENABLED", False)
 
-        # process.settings.set('FEED_URI', 'output.json)
         # add spider to process
         process.crawl(HargaEmasSpider)
-        # process.crawl(HargaEmasXESpider)
 
         process.start()

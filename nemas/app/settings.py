@@ -213,7 +213,7 @@ SPECTACULAR_SETTINGS = {
 
 AUTHENTICATION_BACKENDS = [
     "user.domain.services.UsernameEmailPhoneBackend",
-    "django.contrib.auth.backends.ModelBackend",  # Default backend
+    # "django.contrib.auth.backends.ModelBackend",  # Default backend
 ]
 
 SIMPLE_JWT = {
