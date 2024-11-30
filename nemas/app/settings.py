@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_filters",
     "django_celery_beat",
+    "django_celery_results",
+    "channels",
     "taggit",
     "corsheaders",
     "core",
@@ -236,7 +238,21 @@ SIMPLE_JWT = {
 
 
 # S3Config
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("CACHE_LOCATION"),  # Redis database 1
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Optional: password if Redis requires authentication
+            # "PASSWORD": "your_redis_password",
+        },
+    }
+}
 
 # Add these settings to configure S3 storage
 AWS_S3 = {
@@ -248,10 +264,16 @@ AWS_S3 = {
 }
 # celery settings
 
+
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/1")
 CELERY_ACCEPT_CONTENT = ["json"]  # Use JSON for task serialization
 CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_RESULT_EXTENDED = True  # Optional: Enable extended result info
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 300
+
 
 # Channels config
 ASGI_APPLICATION = "app.asgi.application"

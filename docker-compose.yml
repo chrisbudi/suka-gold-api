@@ -6,6 +6,7 @@ services:
       context: .
       args:
         - DEV=true
+    image: chbudi9/nemasapp # Build the app image and tag it
     ports:
       - "8000:8000"
     volumes:
@@ -32,17 +33,20 @@ services:
       - "6379:6379"
 
   celery_worker:
-    build: .
-    command: celery -A app worker --loglevel=info
+    image: chbudi9/nemasapp
+    command: celery -A app worker --loglevel=info & celery -A app beat --loglevel=info
+    volumes:
+      - ./nemas:/nemas # Mount the local directory to the container
     env_file:
       - .env
     depends_on:
       - redis
 
   flower:
-    build:
-      context: .
-    command: celery -A app flower --port=5555
+    image: chbudi9/nemasapp
+    command: celery -A app --broker=redis://redis/0 flower --port=5555 --db=/flower_db --persistent=True
+    volumes:
+      - ./nemas:/nemas # Mount the local directory to the container
     env_file:
       - .env
     ports:
