@@ -3,8 +3,6 @@ from core.information.api.serializers import (
     InformationPromoFilter as promoFilter,
     PromoUploadSerializer as uploadSerializer,
 )
-from shared_kernel.services.s3_services import S3Service
-
 
 from rest_framework import status, viewsets, filters, pagination, response, permissions
 from core.domain import information_promo as modelInfo
@@ -88,17 +86,17 @@ class PromoUploadAPIView(viewsets.ModelViewSet):
                 return response.Response(
                     {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
                 )
-            s3_service = S3Service()  # Instantiate the service
+            # s3_service = S3Service()  # Instantiate the service
             try:
                 # Generate file name for S3 (you can customize this logic)
                 file_name = f"uploads/{file.name}"
-                file_url = s3_service.upload_file(
-                    file_obj=file, file_name=file_name, content_type=file.content_type
-                )
-                return response.Response(
-                    {"message": "File uploaded successfully", "file_url": file_url},
-                    status=status.HTTP_201_CREATED,
-                )
+                # file_url = s3_service.upload_file(
+                #     file_obj=file, file_name=file_name, content_type=file.content_type
+                # )
+                # return response.Response(
+                #     {"message": "File uploaded successfully", "file_url": file_url},
+                #     status=status.HTTP_201_CREATED,
+                # )
             except Exception as e:
                 return response.Response(
                     {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR

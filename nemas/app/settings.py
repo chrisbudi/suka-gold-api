@@ -84,7 +84,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -93,7 +92,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://52.221.181.88:5005",
     "https://172.18.0.1",
     "https://18.138.179.185:5005",
-    "https://nemas-admin.vercel.app/",
+    "https://nemas-admin.vercel.app",
 ]
 
 
