@@ -251,6 +251,7 @@ CACHES = {
             # Optional: password if Redis requires authentication
             # "PASSWORD": "your_redis_password",
         },
+        "KEY_PREFIX": "nemas",
     }
 }
 

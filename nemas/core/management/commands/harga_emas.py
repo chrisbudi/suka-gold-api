@@ -3,6 +3,8 @@ from scrapy.utils.project import get_project_settings
 from django.core.management.base import BaseCommand
 
 from core.job import HargaEmasSpider
+from shared_kernel.services.redis_service import redis_service
+from core.services.price_service import price_service
 
 
 class Command(BaseCommand):
@@ -17,3 +19,18 @@ class Command(BaseCommand):
         process.crawl(HargaEmasSpider)
 
         process.start()
+        process.stop()
+
+        self.stdout.write(self.style.SUCCESS("Scrapy spider successfully executed"))
+
+        # update price web socket
+        # run_harga_emas_update()
+
+        redis = redis_service()
+        price = redis.get("price")
+
+        if price:
+            priceService = price_service()
+            priceService.publish_price(price)
+
+        return "Execute process harga emas success"

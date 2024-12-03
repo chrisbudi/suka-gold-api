@@ -20,7 +20,7 @@ class Command(BaseCommand):
         db_up = False
         while db_up is False:
             try:
-                self.check(databases=["default"])
+                self.check_migrations()
                 db_up = True
             except (OperationalError, Psycopg2Error):
                 self.stdout.write("Database unavailable, waiting 1 second...")

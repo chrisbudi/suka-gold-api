@@ -4,6 +4,8 @@ from core.domain import gold_price
 from datetime import datetime
 from core.domain import gold_price_config, gold_price_source
 from asgiref.sync import sync_to_async
+from core.services.price_service import price_service
+from shared_kernel.services.redis_service import redis_service
 
 
 class HargaEmasSpider(scrapy.Spider):
@@ -60,4 +62,14 @@ class HargaEmasSpider(scrapy.Spider):
                 timestamps=datetime.now(),
             )
             gprice.save()
+
+            # create object in with price buy and sell then publish it into websocket consumer
+            price = {
+                "price_buy": price_buy,
+                "price_sell": price_sell,
+            }
+
+            redis = redis_service()
+            redis.set("price", str(price))
+
             print(f"Succesfully saved IDR Price: {idr_price}")
