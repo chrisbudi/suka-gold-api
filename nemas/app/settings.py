@@ -93,6 +93,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://52.221.181.88:5005",
     "https://172.18.0.1",
     "https://18.138.179.185:5005",
+    "https://nemas-admin.vercel.app/",
 ]
 
 
