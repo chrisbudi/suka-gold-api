@@ -102,7 +102,7 @@ class EducationalUploadAPIView(viewsets.ModelViewSet):
                 )
             s3_service = S3Service()
             try:
-                file_name = f"promo/{file.name}"
+                file_name = f"educational/{file.name}"
                 file_url = s3_service.upload_file(
                     file_obj=file, file_name=file_name, content_type=file.content_type
                 )

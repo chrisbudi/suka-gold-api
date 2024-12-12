@@ -96,6 +96,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
     user_name = models.CharField(max_length=255, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
+    user_type = models.CharField(max_length=255, default="user")
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -103,7 +104,9 @@ class user(AbstractBaseUser, PermissionsMixin):
         validators=[
             MaxValueValidator(999999),
             MinValueValidator(100000),
-        ]
+        ],
+        null=True,
+        blank=True,
     )
 
     create_time = models.DateTimeField(auto_now_add=True)
