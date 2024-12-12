@@ -86,7 +86,7 @@ educational_urls = [
     ),
     path(
         "upload/<int:id>/",
-        views_promo.PromoUploadAPIView.as_view({"post": "upload"}),
+        views_educational.EducationalUploadAPIView.as_view({"post": "upload"}),
         name="upload_image_educational",
     ),
 ]
@@ -182,6 +182,7 @@ article_url = [
         name="get_article",
     ),
 ]
+
 urlpatterns = [
     path("customer_service/", include(customer_service_urls)),
     path("educational/", include(educational_urls)),

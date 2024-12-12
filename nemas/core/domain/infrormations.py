@@ -52,6 +52,7 @@ class information_article(models.Model):
     article_author = models.CharField(max_length=255, blank=True, null=True)
     article_source = models.URLField(max_length=255, blank=True, null=True)
     article_link = models.URLField(max_length=255, blank=True, null=True)
+    article_background = models.URLField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.information_article_name

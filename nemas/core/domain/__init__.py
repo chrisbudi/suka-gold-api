@@ -22,6 +22,6 @@ from .infrormations import (
     information_article,
 )
 
-from .order_promo import (
-    order_promo,
+from .gold_promo import (
+    gold_promo,
 )

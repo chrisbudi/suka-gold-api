@@ -5,7 +5,7 @@ Serializer for recipe api
 from rest_framework import serializers
 from django_filters import rest_framework as filters
 
-from core.domain import gold, gold_price_config, gold_price, gold_cert_price
+from core.domain import gold, gold_price_config, gold_price, gold_cert_price, gold_promo
 
 
 # region Gold
@@ -140,3 +140,46 @@ class GoldCertPriceServiceFilter(filters.FilterSet):
 
 
 # endregion
+
+
+# region promo
+class GoldPromoSerializer(serializers.ModelSerializer):
+    """Serializer for gold Promo object"""
+
+    class Meta:
+        model = gold_promo
+        fields = [
+            "gold_promo_id",
+            "gold_promo_code",
+            "gold_promo_description",
+            "gold_promo_weight",
+            "gold_promo_amt_pct",
+            "gold_promo_amt",
+            "gold_promo_min_weight",
+            "gold_promo_max_weight",
+            "gold_promo_min_amt",
+            "gold_promo_max_amt",
+            "gold_promo_start_date",
+            "gold_promo_end_date",
+            "gold_promo_active",
+            "create_time",
+            "create_user",
+            "upd_time",
+            "upd_user",
+        ]
+        read_only_fields = [
+            "gold_promo_id",
+        ]
+
+
+class GoldPromoFilter(filters.FilterSet):
+    class Meta:
+        model = gold_promo
+
+        fields = {
+            "gold_promo_code": ["icontains"],
+            "gold_promo_description": ["icontains"],
+        }
+
+
+# end region

@@ -4,7 +4,7 @@ URL mapping for core app
 
 from django.urls import path, include
 
-from core.gold.api.urls import urlpatterns as gold_urls
+from core.gold.urls import urlpatterns as gold_urls
 from core.information.api.urls import urlpatterns as information_urls
 from core.address.api.urls import urlpatterns as address_urls
 from . import consumer

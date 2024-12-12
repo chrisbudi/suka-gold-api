@@ -35,7 +35,7 @@ urlpatterns = [
     #     name="user_prop_create",
     # ),
     path(
-        "user_prop/",
+        "user/prop/",
         UserPropView.as_view(),
         name="user_prop_retrieve",
     ),
