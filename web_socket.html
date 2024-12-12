@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+
+<body>
+    <h1>WebSocket Client</h1>
+    <div>
+        <label for="message">Message:</label>
+        <input type="text" id="message" placeholder="Enter a message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div>
+        <h3>Messages:</h3>
+        <ul id="messages"></ul>
+    </div>
+
+    <script>
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/');
+
+        // Connection opened
+        socket.onopen = function () {
+            console.log('WebSocket connection established.');
+            appendMessage('WebSocket connection established.');
+        };
+
+        // Listen for messages
+        socket.onmessage = function (event) {
+            console.log('Message from server:', event.data);
+            appendMessage(`Server: ${event.data}`);
+        };
+
+        // Connection closed
+        socket.onclose = function () {
+            console.log('WebSocket connection closed.');
+            appendMessage('WebSocket connection closed.');
+        };
+
+        // Error handling
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+            appendMessage('WebSocket error occurred.');
+        };
+
+        // Send a message to the server
+        function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+
+            if (message && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ message }));
+                appendMessage(`You: ${message}`);
+                messageInput.value = ''; // Clear the input field
+            } else {
+                console.error('WebSocket is not open or message is empty.');
+            }
+        }
+
+        // Append a message to the messages list
+        function appendMessage(message) {
+            const messagesList = document.getElementById('messages');
+            const listItem = document.createElement('li');
+            listItem.textContent = message;
+            messagesList.appendChild(listItem);
+        }
+    </script>
+</body>
+
+</html>

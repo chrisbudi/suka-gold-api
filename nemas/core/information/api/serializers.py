@@ -60,6 +60,15 @@ class InformationEducationalSerializer(serializers.ModelSerializer):
         ]
 
 
+class EducationalUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    def validate_file(self, value):
+        if value.size > 10 * 1024 * 1024:  # 10MB limit
+            raise serializers.ValidationError("File size exceeds 10MB")
+        return value
+
+
 class InformationEducationalServiceFilter(filters.FilterSet):
     class Meta:
         model = information_educational
@@ -87,7 +96,6 @@ class InformationPromoSerializer(serializers.ModelSerializer):
             "promo_start_date",
             "promo_end_date",
             "promo_tag",
-            "promo_url_background",
             "promo_diskon",
             "promo_cashback",
             "promo_cashback_tipe_user",

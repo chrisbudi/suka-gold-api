@@ -9,6 +9,7 @@ from core.domain import information_promo as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from shared_kernel.services.s3_services import S3Service
 
 
 @extend_schema(
@@ -74,6 +75,20 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
 
 
 class PromoUploadAPIView(viewsets.ModelViewSet):
+
+    @extend_schema(
+        request=uploadSerializer,
+        responses={
+            201: {
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            }
+        },
+        tags=["Information - Promo"],
+    )
     def upload(self, request, *args, **kwargs):
         serializer = uploadSerializer(data=request.data)
         if serializer.is_valid():
@@ -86,17 +101,23 @@ class PromoUploadAPIView(viewsets.ModelViewSet):
                 return response.Response(
                     {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
                 )
-            # s3_service = S3Service()  # Instantiate the service
+            s3_service = S3Service()
             try:
-                # Generate file name for S3 (you can customize this logic)
-                file_name = f"uploads/{file.name}"
-                # file_url = s3_service.upload_file(
-                #     file_obj=file, file_name=file_name, content_type=file.content_type
-                # )
-                # return response.Response(
-                #     {"message": "File uploaded successfully", "file_url": file_url},
-                #     status=status.HTTP_201_CREATED,
-                # )
+                file_name = f"promo/{file.name}"
+                file_url = s3_service.upload_file(
+                    file_obj=file, file_name=file_name, content_type=file.content_type
+                )
+                # update information_promo model where modelid
+                id = request.data.get("id")
+                information_promo = modelInfo.objects.get(id=id)
+                if information_promo:
+                    information_promo.promo_url_background = file_url
+                    information_promo.save()
+
+                return response.Response(
+                    {"message": "File uploaded successfully", "file_url": file_url},
+                    status=status.HTTP_201_CREATED,
+                )
             except Exception as e:
                 return response.Response(
                     {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR

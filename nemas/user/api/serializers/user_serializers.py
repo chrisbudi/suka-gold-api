@@ -10,7 +10,9 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from user.models import user_props
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+from user.models import user
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -43,6 +45,21 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return user
+
+
+class UserPinSerializer(serializers.Serializer):
+    """Serializer for inserting a user pin"""
+
+    pin = serializers.IntegerField(
+        validators=[
+            MaxValueValidator(999999),
+            MinValueValidator(100000),
+        ]
+    )
+
+    class Meta:
+        model = user
+        fields = ["pin"]
 
 
 class AuthTokenObtainPairSerializer(serializers.Serializer):

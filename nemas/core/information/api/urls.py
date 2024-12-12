@@ -84,6 +84,11 @@ educational_urls = [
         views_educational.InformationEducationViewSet.as_view({"get": "retrieve"}),
         name="get_educational",
     ),
+    path(
+        "upload/<int:id>/",
+        views_promo.PromoUploadAPIView.as_view({"post": "upload"}),
+        name="upload_image_educational",
+    ),
 ]
 
 # promo
@@ -116,7 +121,7 @@ promo_urls = [
     path(
         "upload/<int:id>/",
         views_promo.PromoUploadAPIView.as_view({"post": "upload"}),
-        name="get_promo",
+        name="upload_image_promo",
     ),
 ]
 

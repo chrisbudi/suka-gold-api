@@ -12,6 +12,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from core.domain.address import city
 from core.fields.uuidv7_field import UUIDv7Field
 import time
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 # Create your models here.
@@ -98,7 +99,12 @@ class user(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    pin = models.CharField(max_length=6)
+    pin = models.IntegerField(
+        validators=[
+            MaxValueValidator(999999),
+            MinValueValidator(100000),
+        ]
+    )
 
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=256)
@@ -111,7 +117,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["user_name", "phone_number"]
 
-    def has_perm(self, perm: str, obj: None = ...) -> bool:
+    def has_perm(self, perm: str, obj: None = None) -> bool:
         return super().has_perm(perm, obj)
 
     def has_module_perms(self, app_label: str) -> bool:

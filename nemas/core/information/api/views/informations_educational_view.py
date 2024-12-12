@@ -2,12 +2,14 @@ from rest_framework.decorators import api_view
 from core.information.api.serializers import (
     InformationEducationalSerializer as infoSerializer,
     InformationEducationalServiceFilter as educationFilter,
+    EducationalUploadSerializer as uploadSerializer,
 )
 from rest_framework import status, viewsets, filters, pagination, response, permissions
 from core.domain import information_educational as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from shared_kernel.services.s3_services import S3Service
 
 
 @extend_schema(
@@ -69,3 +71,55 @@ class InformationEducationViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+class EducationalUploadAPIView(viewsets.ModelViewSet):
+
+    @extend_schema(
+        request=uploadSerializer,
+        responses={
+            201: {
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            }
+        },
+        tags=["Information - Educational"],
+    )
+    def upload(self, request, *args, **kwargs):
+        serializer = uploadSerializer(data=request.data)
+        if serializer.is_valid():
+            if (
+                isinstance(serializer.validated_data, dict)
+                and "file" in serializer.validated_data
+            ):
+                file = serializer.validated_data["file"]
+            else:
+                return response.Response(
+                    {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
+                )
+            s3_service = S3Service()
+            try:
+                file_name = f"promo/{file.name}"
+                file_url = s3_service.upload_file(
+                    file_obj=file, file_name=file_name, content_type=file.content_type
+                )
+                # update information promo url
+                educational_id = request.query_params.get("id")
+                if educational_id:
+                    educational = modelInfo.objects.get(educational_id=educational_id)
+                    educational.information_background = file_url
+                    educational.save()
+
+                return response.Response(
+                    {"message": "File uploaded successfully", "file_url": file_url},
+                    status=status.HTTP_201_CREATED,
+                )
+            except Exception as e:
+                return response.Response(
+                    {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

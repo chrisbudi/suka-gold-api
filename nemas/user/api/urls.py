@@ -12,6 +12,7 @@ from .views import (
     ManageUserView,
     # user props
     UserPropView,
+    UserPinView,
 )
 
 
@@ -38,6 +39,7 @@ urlpatterns = [
         UserPropView.as_view(),
         name="user_prop_retrieve",
     ),
+    path("user/pin/", UserPinView.as_view(), name="user-pin"),
     # path("user_ktp/create", CreateUserKtpView.as_view(), name="user_ktp_create"),
     # path(
     #     "user_ktp/",
