@@ -2,12 +2,15 @@ from rest_framework.decorators import api_view
 from core.information.api.serializers import (
     InformationArticleSerializer as infoSerializer,
     InformationArticleFilter as ratingFilter,
+    InformationArticleUploadSerializer as uploadSerializer,
 )
 from rest_framework import status, viewsets, filters, pagination, response, permissions
 from core.domain import information_article as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from shared_kernel.services.s3_services import S3Service
+from rest_framework.decorators import action
 
 
 @extend_schema(
@@ -69,3 +72,52 @@ class InformationArticleViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
+    @extend_schema(
+        request=uploadSerializer,
+        responses={
+            201: {
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            }
+        },
+    )
+    @action(detail=False, methods=["post"], url_path="upload")
+    def upload(self, request, id=None):
+        serializer = uploadSerializer(data=request.data)
+
+        if serializer.is_valid():
+            if (
+                isinstance(serializer.validated_data, dict)
+                and "file" in serializer.validated_data
+            ):
+                file = serializer.validated_data["file"]
+            else:
+                return response.Response(
+                    {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
+                )
+            s3_service = S3Service()
+            try:
+                file_name = f"article/{file.name}"
+                file_url = s3_service.upload_file(
+                    file_obj=file, file_name=file_name, content_type=file.content_type
+                )
+                # update information_promo model where modelid
+                information = modelInfo.objects.get(information_article_id=id)
+                if information:
+                    information.article_background = file_url
+                    information.save()
+
+                return response.Response(
+                    {"message": "File uploaded successfully", "file_url": file_url},
+                    status=status.HTTP_201_CREATED,
+                )
+            except Exception as e:
+                return response.Response(
+                    {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

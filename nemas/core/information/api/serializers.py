@@ -177,6 +177,7 @@ class InformationArticleSerializer(serializers.ModelSerializer):
             "article_publish_date",
             "article_updated_date",
             "article_author",
+            "article_background",
             "article_source",
             "article_link",
         ]
@@ -193,6 +194,15 @@ class InformationArticleFilter(filters.FilterSet):
             "information_article_name": ["icontains"],
             "article_publish_date": ["exact", "gte", "lte"],
         }
+
+
+class InformationArticleUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    def validate_file(self, value):
+        if value.size > 10 * 1024 * 1024:  # 10MB limit
+            raise serializers.ValidationError("File size exceeds 10MB")
+        return value
 
 
 # endregion

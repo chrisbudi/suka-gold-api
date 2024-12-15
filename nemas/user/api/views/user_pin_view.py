@@ -34,4 +34,3 @@ class UserPinView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except (InvalidToken, TokenError) as e:
             return Response({"detail": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

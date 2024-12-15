@@ -167,19 +167,24 @@ article_url = [
         name="post_article",
     ),
     path(
-        "<str:id>/",
+        "<int:id>/",
         views_article.InformationArticleViewSet.as_view({"patch": "update"}),
         name="patch_article",
     ),
     path(
-        "<str:id>/",
+        "<int:id>/",
         views_article.InformationArticleViewSet.as_view({"delete": "destroy"}),
         name="delete_article",
     ),
     path(
-        "<str:id>/",
+        "<int:id>/",
         views_article.InformationArticleViewSet.as_view({"get": "retrieve"}),
         name="get_article",
+    ),
+    path(
+        "upload/<int:id>",
+        views_article.InformationArticleViewSet.as_view({"post": "upload"}),
+        name="upload_article",
     ),
 ]
 
