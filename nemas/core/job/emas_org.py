@@ -11,7 +11,7 @@ from shared_kernel.services.redis_service import redis_service
 class HargaEmasSpider(scrapy.Spider):
     name = "harga_emas_org"
     allowed_domains = ["harga-emas.org"]
-    start_urls = ["https://harga-emas.org/1-gram/"]
+    start_urls = ["http://harga-emas.org/1-gram/"]
 
     def parse(self, response):
         # Locate the table with class "in_table" and target the specific row for IDR
@@ -46,6 +46,7 @@ class HargaEmasSpider(scrapy.Spider):
 
             print(f"Price Buy: {price_buy}")
             print(f"Price Sell: {price_sell}")
+
             gps = gold_price_source(
                 gold_price_source="HE",
                 gold_price_weight=1,
@@ -53,6 +54,12 @@ class HargaEmasSpider(scrapy.Spider):
             )
             gps.save()
 
+            # update all price where status is active to not active
+            gold_price.objects.filter(gold_price_active=True).update(
+                gold_price_active=False
+            )
+
+            # save new price
             gprice = gold_price(
                 gold_price_source="HE",
                 gold_price_sell=price_sell,
@@ -69,7 +76,7 @@ class HargaEmasSpider(scrapy.Spider):
                 "price_sell": price_sell,
             }
 
-            redis = redis_service()
-            redis.set("price", str(price))
+            # redis = redis_service()
+            # redis.set("price", str(price))
 
             print(f"Succesfully saved IDR Price: {idr_price}")

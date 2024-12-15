@@ -281,6 +281,13 @@ CELERY_TASK_TIME_LIMIT = 300
 ASGI_APPLICATION = "app.asgi.application"
 
 
+# Redis configuration
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
+REDIS_DB = os.getenv("REDIS_DB", 0)
+REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "")
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",

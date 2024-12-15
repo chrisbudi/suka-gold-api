@@ -22,7 +22,7 @@ class GoldPriceServiceViewSet(viewsets.ModelViewSet):
     )  # Adjust pagination class as needed
 
     def list(self, request):
-        queryset = modelInfo.objects.all()
+        queryset = modelInfo.objects.filter(gold_price_active=False).all()
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = objectSerializer(paginated_queryset, many=True)
@@ -31,6 +31,12 @@ class GoldPriceServiceViewSet(viewsets.ModelViewSet):
     def get(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
+        serializer = objectSerializer(info)
+        return response.Response(serializer.data)
+
+    def get_active(self, request):
+        queryset = modelInfo.objects.filter(gold_price_active=True).only()
+        info = get_object_or_404(queryset)
         serializer = objectSerializer(info)
         return response.Response(serializer.data)
 

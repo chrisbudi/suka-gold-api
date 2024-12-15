@@ -88,6 +88,11 @@ gold_price_urls = [
         name="patch_gold_price",
     ),
     path(
+        "active",
+        gold_price_view.GoldPriceServiceViewSet.as_view({"get": "get_active"}),
+        name="get_active_gold_price",
+    ),
+    path(
         "<str:id>/",
         gold_price_view.GoldPriceServiceViewSet.as_view({"delete": "destroy"}),
         name="delete_gold_price",

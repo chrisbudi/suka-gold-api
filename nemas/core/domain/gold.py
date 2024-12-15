@@ -56,6 +56,7 @@ class gold_price(models.Model):
     gold_price_buy = models.DecimalField(
         max_digits=10, decimal_places=2
     )  # harga dasar + goldpricesetting_buy
+    gold_price_active = models.BooleanField(default=True)
     timestamps = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

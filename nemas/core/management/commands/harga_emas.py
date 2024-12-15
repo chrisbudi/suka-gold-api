@@ -26,11 +26,11 @@ class Command(BaseCommand):
         # update price web socket
         # run_harga_emas_update()
 
-        redis = redis_service()
-        price = redis.get("price")
+        # redis = redis_service()
+        # price = redis.get("price")
 
-        if price:
-            priceService = price_service()
-            priceService.publish_price(price)
+        # if price:
+        #     priceService = price_service()
+        #     priceService.publish_price(price)
 
         return "Execute process harga emas success"
