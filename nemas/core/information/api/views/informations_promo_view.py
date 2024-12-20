@@ -34,9 +34,9 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
-    def get(self, request, pk=None):
+    def get(self, request, id=None):
         queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=pk)
+        info = get_object_or_404(queryset, pk=id)
         serializer = infoSerializer(info)
         return response.Response(serializer.data)
 
@@ -50,9 +50,9 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    def update(self, request, pk=None):
+    def update(self, request, id=None):
         queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=pk)
+        info = get_object_or_404(queryset, pk=id)
         serializer = infoSerializer(info, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -62,9 +62,9 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    def delete(self, request, pk=None):
+    def delete(self, request, id=None):
         queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=pk)
+        info = get_object_or_404(queryset, pk=id)
         info.delete()
         return response.Response(
             {
