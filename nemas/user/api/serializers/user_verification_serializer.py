@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ngettext_lazy as _
 
 from rest_framework import serializers
+from user.models.users import user
 
 
 class UserVerificationSerializer(serializers.ModelSerializer):

@@ -262,7 +262,7 @@ AWS_S3 = {
     "SECRET_ACCESS_KEY": os.getenv("AWS_SECRET_ACCESS_KEY"),
     "BUCKET_NAME": os.getenv("AWS_STORAGE_BUCKET_NAME"),
     "REGION_NAME": os.getenv("AWS_S3_REGION_NAME", "us-east-1"),
-    "CUSTOM_DOMAIN": f"{os.getenv('AWS_STORAGE_BUCKET_NAME')}s3.ap.southeast-1.amazonaws.com",
+    "CUSTOM_DOMAIN": f"{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.ap-southeast-1.amazonaws.com",
 }
 # celery settings
 

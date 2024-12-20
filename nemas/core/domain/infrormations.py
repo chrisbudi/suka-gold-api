@@ -8,6 +8,11 @@ class information_educational(models.Model):
     information_url = models.URLField(max_length=200, blank=True, null=True)
     information_background = models.TextField(blank=True, null=True)
 
+    def update_image_path(self, fileUrl):
+        self.information_background = fileUrl
+        self.save()
+        return f"information/{self.information_name}/{self.information_url}"
+
     def __str__(self):
         return self.information_name
 
