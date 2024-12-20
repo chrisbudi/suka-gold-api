@@ -119,7 +119,7 @@ promo_urls = [
         name="get_promo",
     ),
     path(
-        "upload/<int:id>/",
+        "upload/<str:id>/",
         views_promo.PromoUploadAPIView.as_view({"post": "upload"}),
         name="upload_image_promo",
     ),

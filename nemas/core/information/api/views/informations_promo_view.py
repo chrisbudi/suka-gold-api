@@ -89,7 +89,7 @@ class PromoUploadAPIView(viewsets.ModelViewSet):
         },
         tags=["Information - Promo"],
     )
-    def upload(self, request, *args, **kwargs):
+    def upload(self, request, id, *args, **kwargs):
         serializer = uploadSerializer(data=request.data)
         if serializer.is_valid():
             if (
@@ -108,11 +108,16 @@ class PromoUploadAPIView(viewsets.ModelViewSet):
                     file_obj=file, file_name=file_name, content_type=file.content_type
                 )
                 # update information_promo model where modelid
-                id = request.data.get("id")
-                information_promo = modelInfo.objects.get(id=id)
-                if information_promo:
+
+                try:
+                    information_promo = modelInfo.objects.get(promo_id=id)
                     information_promo.promo_url_background = file_url
                     information_promo.save()
+                except modelInfo.DoesNotExist:
+                    return response.Response(
+                        {"error": "Information Promo not found"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
 
                 return response.Response(
                     {"message": "File uploaded successfully", "file_url": file_url},

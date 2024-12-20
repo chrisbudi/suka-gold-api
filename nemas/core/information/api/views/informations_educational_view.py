@@ -88,7 +88,7 @@ class EducationalUploadAPIView(viewsets.ModelViewSet):
         },
         tags=["Information - Educational"],
     )
-    def upload(self, request, *args, **kwargs):
+    def upload(self, request, id=None):
         serializer = uploadSerializer(data=request.data)
         if serializer.is_valid():
             if (
@@ -107,11 +107,8 @@ class EducationalUploadAPIView(viewsets.ModelViewSet):
                     file_obj=file, file_name=file_name, content_type=file.content_type
                 )
                 # update information promo url
-                educational_id = request.query_params.get("id")
-                if educational_id:
-                    educational = modelInfo.objects.get(educational_id=educational_id)
-                    educational.information_background = file_url
-                    educational.save()
+                educational = modelInfo.objects.get(pk=id)
+                educational.update_image_path(fileUrl=file_url)
 
                 return response.Response(
                     {"message": "File uploaded successfully", "file_url": file_url},
