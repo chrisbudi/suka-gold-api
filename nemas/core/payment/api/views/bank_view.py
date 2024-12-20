@@ -1,18 +1,18 @@
-from core.gold.api.serializers import (
-    GoldPriceConfigSerializer as objectSerializer,
-    GoldPriceConfigServiceFilter as objectFilter,
+from core.payment.api.serializers import (
+    BankSerializer as objectSerializer,
+    BankFilter as objectFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response
-from core.domain import gold_price_config as modelInfo
+from core.domain import bank as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 @extend_schema(
-    tags=["gold - price config"],
+    tags=["payment - bank"],
 )
-class GoldPriceConfigServiceViewSet(viewsets.ModelViewSet):
+class BankServiceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = objectSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -37,8 +37,6 @@ class GoldPriceConfigServiceViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = objectSerializer(data=request.data)
         if serializer.is_valid():
-            # update all object gcp_active into false
-            modelInfo.objects.filter(gcp_active=True).update(gcp_active=False)
             serializer.save(create_user=request.user)
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -49,7 +47,7 @@ class GoldPriceConfigServiceViewSet(viewsets.ModelViewSet):
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = objectSerializer(info, data=request.data)
+        serializer = objectSerializer(info, datia=request.data)
         if serializer.is_valid():
             serializer.save(create_user=request.user)
             return response.Response(serializer.data)

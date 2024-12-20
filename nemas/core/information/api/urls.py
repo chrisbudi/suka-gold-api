@@ -182,7 +182,7 @@ article_url = [
         name="get_article",
     ),
     path(
-        "upload/<int:id>",
+        "upload/<int:id>/",
         views_article.InformationArticleViewSet.as_view({"post": "upload"}),
         name="upload_article",
     ),

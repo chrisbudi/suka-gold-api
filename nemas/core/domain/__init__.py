@@ -5,6 +5,11 @@ from .address import (
     subdistrict,
     postal_code,
 )
+
+from .bank import (
+    bank,
+)
+
 from .gold import (
     gold,
     gold_price,
