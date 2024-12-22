@@ -12,7 +12,9 @@ from .views import (
     ManageUserView,
     # user props
     UserPropView,
+    UserKtpView,
     UserPinView,
+    CreateKtpIfNotVerify,
 )
 
 
@@ -27,7 +29,6 @@ urlpatterns = [
     path("token/verify/", ManageVerifyTokenView.as_view(), name="token_verify"),
     path("create/", CreateUserView.as_view(), name="create"),
     path("create/super_user/", CreateSuperUserView.as_view(), name="create_super_user"),
-    # path("token/", CreateTokenView.as_view(), name="token"),
     path("me/", ManageUserView.as_view(), name="me"),
     # path(
     #     "user_prop/create/",
@@ -38,6 +39,21 @@ urlpatterns = [
         "user/prop/",
         UserPropView.as_view(),
         name="user_prop_retrieve",
+    ),
+    path(
+        "user/ktp/",
+        UserKtpView.as_view(),
+        name="user_ktp_retrieve",
+    ),
+    path(
+        "user/ktp/verify",
+        CreateKtpIfNotVerify.as_view({"post": "upload_ktp_verify_user"}),
+        name="user_ktp_verify",
+    ),
+    path(
+        "user/ktp/verify/approve",
+        CreateKtpIfNotVerify.as_view({"post": "submit_verify"}),
+        name="user_ktp_verify_approve",
     ),
     path("user/pin/", UserPinView.as_view(), name="user-pin"),
     # path("user_ktp/create", CreateUserKtpView.as_view(), name="user_ktp_create"),

@@ -13,19 +13,28 @@ class UserKtpSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = user_ktp
-        fields = ()
+        fields = (
+            "nik",
+            "full_name",
+            "date_of_birth",
+            "place_of_birth",
+            "address",
+            "district",
+            "adminitrative_village",
+            "gender",
+            "religion",
+            "marital_status",
+            "occupation",
+            "nationality",
+            "photo_url",
+            "city",
+        )
 
-    # def create(self, validated_data):
-    #     """Create a new user with encrypted password and return it"""
-    #     return get_user_model().objects.create_user(**validated_data)
 
-    # def update(self, instance, validated_data):
-    #     """Update a user, setting the password correctly and return it"""
-    #     password = validated_data.pop("password", None)
-    #     user = super().update(instance, validated_data)
+class UploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
 
-    #     if password:
-    #         user.set_password(password)
-    #         user.save()
-
-    #     return user
+    def validate_file(self, value):
+        if value.size > 10 * 1024 * 1024:  # 10MB limit
+            raise serializers.ValidationError("File size exceeds 10MB")
+        return value

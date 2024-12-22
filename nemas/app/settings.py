@@ -296,3 +296,12 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+VERIHUB = {
+    "CLIENT_URL": os.getenv("VERIHUB_CLIENT_URL"),
+    "CLIENT_TOKEN": os.getenv("VERIHUB_CLIENT_TOKEN"),
+    "APP_ID": os.getenv("VERIHUB_APP_ID"),
+    "API_KEY": os.getenv("VERIHUB_API_KEY"),
+    "KTP_SYNC": os.getenv("VERIHUB_URL_KTP_SYNC"),
+}

@@ -32,7 +32,6 @@ class UserPropView(APIView):
     def get(self, request):
         # get then
         try:
-            print(request.user)
             user_props = UserProps.objects.get(user=request.user)
             user_props_data = dict(UserPropSerializer(user_props).data)
             return Response(

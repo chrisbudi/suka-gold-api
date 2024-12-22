@@ -6,7 +6,4 @@ from .user_serializers import (
 
 from .user_prop_serializer import UserPropSerializer
 
-from .user_ktp_serializer import UserKtpSerializer
-
-
-# from .user_verification_serializer import UserVerificationSerializer
+from .user_ktp_serializer import UserKtpSerializer, UploadSerializer
