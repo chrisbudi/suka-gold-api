@@ -15,9 +15,11 @@ class BankSerializer(serializers.ModelSerializer):
     class Meta:
         model = bank
         fields = [
+            "bank_id",
             "bank_name",
             "bank_code",
             "bank_logo_url",
+            "bank_merchant_code",
             "bank_active",
             "create_time",
             "create_user",
@@ -26,6 +28,10 @@ class BankSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "bank_id",
+            "create_time",
+            "create_user",
+            "upd_time",
+            "upd_user",
         ]
 
 

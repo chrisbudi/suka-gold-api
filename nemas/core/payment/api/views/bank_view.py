@@ -47,7 +47,7 @@ class BankServiceViewSet(viewsets.ModelViewSet):
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = objectSerializer(info, datia=request.data)
+        serializer = objectSerializer(info, data=request.data)
         if serializer.is_valid():
             serializer.save(create_user=request.user)
             return response.Response(serializer.data)
