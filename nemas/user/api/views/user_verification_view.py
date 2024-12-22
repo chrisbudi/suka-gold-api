@@ -59,10 +59,11 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
             verihub = verihub_services.VerihubService()
             image = image_services
             try:
-                strImage = image.image_to_base64(file)
+                strImage = image.image_to_base64(file, request.user.id)
+
                 payload = {"image": strImage, "validate_quality": False}
                 result = verihub.verify_ktp_file(payload)
-                image.upload_file_to_temp(file, request.user.id)
+
                 return response.Response(
                     {"message": "File uploaded successfully", "result": result},
                     status=status.HTTP_201_CREATED,
@@ -71,22 +72,50 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                 return response.Response(
                     {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
-
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # Check if the user is already verified
-        serializer.save(create_user=self.request.user)
 
     @extend_schema(
         request=UserKtpSerializer,
+        responses={
+            201: {"type": "object", "properties": {"message": {"type": "string"}}}
+        },
         tags=["User - KTP Verification"],
     )
     def submit_verify(self, request):
-        serializer_class = UserKtpSerializer(request.data)
-        if serializer_class.is_valid():
-            s3 = s3_services.S3Service()
-            image = image_services.get_file_from_temp(request.user.id)
-            imageS3 = s3.upload_file(image, f"KTP/{image.name}")
-            serializer_class.save(create_user=self.request.user, photo_url=imageS3)
+        serializer = UserKtpSerializer(data=request.data)
+        try:
+
+            if serializer.is_valid():
+                image = image_services.get_file_from_temp(request.user.id)
+                print(image, "image", "serializer success")
+                s3 = s3_services.S3Service()
+                imageS3 = s3.upload_file(image, f"KTP/{str(request.user.id)}.jpg")
+                instance = modelInfo.objects.filter(user=self.request.user).first()
+                if instance:
+                    instance.photo_url = imageS3
+                    instance.updated_user = str(self.request.user)
+                    instance.save()
+                else:
+                    instance = modelInfo.objects.create(
+                        user=self.request.user,
+                        create_user=str(self.request.user),
+                        photo_url=imageS3,
+                    )
+                serializer = UserKtpSerializer(instance)
+                print(serializer, instance, "imageS3", "serializer success")
+                image_services.delete_file_from_temp(request.user.id)
+                return response.Response(
+                    {"message": "KTP verified successfully"},
+                    status=status.HTTP_201_CREATED,
+                )
+
+            return response.Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return response.Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @extend_schema(

@@ -20,14 +20,15 @@ class UserKtpSerializer(serializers.ModelSerializer):
             "place_of_birth",
             "address",
             "district",
-            "adminitrative_village",
+            "administrative_village",
             "gender",
             "religion",
             "marital_status",
             "occupation",
             "nationality",
-            "photo_url",
             "city",
+            "blood_type",
+            "reference_id",
         )
 
 
