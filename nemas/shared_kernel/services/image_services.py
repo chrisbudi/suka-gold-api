@@ -17,7 +17,7 @@ def image_to_base64(file, user_id: uuid.UUID):
 
     upload_file_to_temp(file, user_id)
     file = get_file_from_temp(user_id)
-    return base64.b64encode(file).decode("utf-8")
+    return base64.b64encode(file.read()).decode("utf-8")
 
 
 def upload_file_to_temp(file, user_id: uuid.UUID):
