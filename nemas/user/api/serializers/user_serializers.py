@@ -61,6 +61,11 @@ class UserPinSerializer(serializers.Serializer):
         model = user
         fields = ["pin"]
 
+    def update(self, instance, validated_data):
+        instance.pin = validated_data.get("pin", instance.pin)
+        instance.save()
+        return instance
+
 
 class AuthTokenObtainPairSerializer(serializers.Serializer):
     # Override fields to use identifier instead of username

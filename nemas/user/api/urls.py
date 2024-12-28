@@ -56,7 +56,7 @@ urlpatterns = [
         name="user_ktp_verify_approve",
     ),
     path("user/pin/", UserPinView.as_view(), name="user-pin"),
-    # path("user_ktp/create", CreateUserKtpView.as_view(), name="user_ktp_create"),
+    # path("user/pin/create", UserPinView.as_view(), name="user-pin-create"),
     # path(
     #     "user_ktp/",
     #     RetrieveUpdateUserKtpView.as_view(),
