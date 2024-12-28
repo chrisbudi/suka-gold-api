@@ -87,6 +87,7 @@ class information_promo(models.Model):
     )  # Optional
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=255)
+    show_banner = models.BooleanField(default=True)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.CharField(max_length=255)
 

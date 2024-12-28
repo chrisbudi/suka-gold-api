@@ -99,6 +99,11 @@ promo_urls = [
         name="list_promo",
     ),
     path(
+        "active/",
+        views_promo.InformationPromoViewSet.as_view({"get": "list_active"}),
+        name="list_active_promo",
+    ),
+    path(
         "create/",
         views_promo.InformationPromoViewSet.as_view({"post": "create"}),
         name="post_promo",

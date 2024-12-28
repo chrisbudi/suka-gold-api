@@ -27,8 +27,53 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
 
     permission_classes = (permissions.AllowAny,)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="limit",
+                type=int,
+                location="query",
+                description="Limit the number of results",
+            ),
+            OpenApiParameter(
+                name="offset",
+                type=int,
+                location="query",
+                description="Offset the results by a certain number",
+            ),
+            OpenApiParameter(
+                name="search", type=str, location="query", description="Search term"
+            ),
+        ]
+    )
     def list(self, request):
         queryset = modelInfo.objects.all()
+        filter_queryset = self.filter_queryset(queryset)
+        paginated_queryset = self.paginate_queryset(filter_queryset)
+        serializer = infoSerializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="limit",
+                type=int,
+                location="query",
+                description="Limit the number of results",
+            ),
+            OpenApiParameter(
+                name="offset",
+                type=int,
+                location="query",
+                description="Offset the results by a certain number",
+            ),
+            OpenApiParameter(
+                name="search", type=str, location="query", description="Search term"
+            ),
+        ]
+    )
+    def list_active(self, request):
+        queryset = modelInfo.objects.filter(show_banner=True)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = infoSerializer(paginated_queryset, many=True)

@@ -101,6 +101,7 @@ class InformationPromoSerializer(serializers.ModelSerializer):
             "promo_cashback_tipe_user",
             "promo_url_background",
             "merchant_cashback",
+            "show_banner",
             "create_time",
             "create_user",
             "upd_time",
