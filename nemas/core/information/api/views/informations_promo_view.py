@@ -72,7 +72,7 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
             ),
         ]
     )
-    def list_active(self, request):
+    def list_show(self, request):
         queryset = modelInfo.objects.filter(show_banner=True)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
@@ -155,7 +155,7 @@ class PromoUploadAPIView(viewsets.ModelViewSet):
                 # update information_promo model where modelid
 
                 try:
-                    information_promo = modelInfo.objects.get(promo_id=id)
+                    information_promo = modelInfo.objects.get(pk=id)
                     information_promo.promo_url_background = file_url
                     information_promo.save()
                 except modelInfo.DoesNotExist:
