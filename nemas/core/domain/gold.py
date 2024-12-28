@@ -1,6 +1,8 @@
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 
+from decimal import Decimal as decimal
+
 # Gold Models
 
 
@@ -18,7 +20,15 @@ class gold(models.Model):
     gold_weight = models.IntegerField()
     type = models.CharField(max_length=50)  # bar-mintedbar
     brand = models.CharField(max_length=255)  # marva gold, antam
-    certificate_number = models.CharField(max_length=255)
+    certificate_code = models.CharField(max_length=255)
+    certificate_weight = models.DecimalField(
+        max_digits=10, decimal_places=4, default=decimal(0.00)
+    )
+    gold_image_1 = models.CharField(max_length=255, default="")
+    gold_image_2 = models.CharField(max_length=255, default="")
+    gold_image_3 = models.CharField(max_length=255, default="")
+    gold_image_4 = models.CharField(max_length=255, default="")
+    gold_image_5 = models.CharField(max_length=255, default="")
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=255)
     upd_time = models.DateTimeField(auto_now=True)

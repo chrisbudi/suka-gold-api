@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 from core.domain.address import postal_code
-from app.gold_transaction.domain.models.order_gold import order_gold
+from gold_transaction.domain.models.order_gold import order_gold
 from core.domain import gold, gold_price_config, gold_cert_price
 
 

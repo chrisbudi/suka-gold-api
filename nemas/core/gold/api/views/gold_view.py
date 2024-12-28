@@ -1,5 +1,6 @@
 from core.gold.api.serializers import (
     GoldSerializer as objectSerializer,
+    GoldUploadSerializer as uploadSerializer,
     GoldServiceFilter as objectFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response
@@ -7,6 +8,8 @@ from core.domain import gold as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from shared_kernel.services.s3_services import S3Service
+import os
 
 
 @extend_schema(
@@ -66,3 +69,67 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
+    @extend_schema(
+        request=uploadSerializer,
+        responses={
+            201: {
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            }
+        },
+        tags=["gold"],
+    )
+    def upload(self, request, id, *args, **kwargs):
+        serializer = uploadSerializer(data=request.data)
+        if serializer.is_valid():
+            if (
+                isinstance(serializer.validated_data, dict)
+                and "file" in serializer.validated_data
+            ):
+                file = serializer.validated_data["file"]
+            else:
+                return response.Response(
+                    {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
+                )
+            s3_service = S3Service()
+            try:
+                file_extension = os.path.splitext(file.name)[1]
+                file_name = f"gold/{str(id)}/{serializer.validated_data["gold_image_code"]}{file_extension}"
+                file_url = s3_service.upload_file(
+                    file_obj=file, file_name=file_name, content_type=file.content_type
+                )
+                # update information_promo model where modelid
+
+                try:
+                    information_promo = modelInfo.objects.get(pk=id)
+                    if serializer.validated_data["gold_image_code"] == "image1":
+                        information_promo.gold_image_1 = file_url
+                    if serializer.validated_data["gold_image_code"] == "image2":
+                        information_promo.gold_image_2 = file_url
+                    if serializer.validated_data["gold_image_code"] == "image3":
+                        information_promo.gold_image_3 = file_url
+                    if serializer.validated_data["gold_image_code"] == "image4":
+                        information_promo.gold_image_4 = file_url
+                    if serializer.validated_data["gold_image_code"] == "image5":
+                        information_promo.gold_image_5 = file_url
+                    information_promo.save()
+                except modelInfo.DoesNotExist:
+                    return response.Response(
+                        {"error": "Information Promo not found"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+
+                return response.Response(
+                    {"message": "File uploaded successfully", "file_url": file_url},
+                    status=status.HTTP_201_CREATED,
+                )
+            except Exception as e:
+                return response.Response(
+                    {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

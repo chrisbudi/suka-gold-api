@@ -19,7 +19,13 @@ class GoldSerializer(serializers.ModelSerializer):
             "gold_weight",
             "type",
             "brand",
-            "certificate_number",
+            "certificate_code",
+            "certificate_weight",
+            "gold_image_1",
+            "gold_image_2",
+            "gold_image_3",
+            "gold_image_4",
+            "gold_image_5",
             "create_time",
             "create_user",
             "upd_time",
@@ -37,6 +43,32 @@ class GoldServiceFilter(filters.FilterSet):
         fields = {
             "type": ["icontains"],
         }
+
+
+class GoldUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    class GoldImageCodeEnum(serializers.ChoiceField):
+        IMAGE1 = "image1"
+        IMAGE2 = "image2"
+        IMAGE3 = "image3"
+        IMAGE4 = "image4"
+        IMAGE5 = "image5"
+
+        CHOICES = [
+            (IMAGE1, "image1"),
+            (IMAGE2, "image2"),
+            (IMAGE3, "image3"),
+            (IMAGE4, "image4"),
+            (IMAGE5, "image5"),
+        ]
+
+    gold_image_code = serializers.ChoiceField(choices=GoldImageCodeEnum.CHOICES)
+
+    def validate_file(self, value):
+        if value.size > 10 * 1024 * 1024:  # 10MB limit
+            raise serializers.ValidationError("File size exceeds 10MB")
+        return value
 
 
 # endregion

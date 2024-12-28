@@ -41,6 +41,11 @@ gold_urls = [
         gold_view.GoldServiceViewSet.as_view({"get": "retrieve"}),
         name="get_gold",
     ),
+    path(
+        "upload/<int:id>/",
+        gold_view.GoldServiceViewSet.as_view({"post": "upload"}),
+        name="upload_image_promo",
+    ),
 ]
 
 gold_cert_price_urls = [

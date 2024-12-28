@@ -99,7 +99,7 @@ promo_urls = [
         name="list_promo",
     ),
     path(
-        "active/",
+        "active",
         views_promo.InformationPromoViewSet.as_view({"get": "list_active"}),
         name="list_active_promo",
     ),
