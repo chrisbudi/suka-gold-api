@@ -8,5 +8,6 @@ import subprocess
 def run_harga_emas_process():
     subprocess.run(["python", "manage.py", "harga_emas"], check=True)
     # update price web socket
+    print("Task executed successfully!")
 
     return "Execute process harga emas success"

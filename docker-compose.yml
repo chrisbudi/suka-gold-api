@@ -34,7 +34,7 @@ services:
 
   celery_worker:
     image: chbudi9/nemasapp
-    command: sh -c "celery -A app worker --loglevel=debug & celery -A app beat --loglevel=debug"
+    command: sh -c "celery -A app worker --loglevel=info & celery -A app beat --scheduler django_celery_beat.schedulers:DatabaseScheduler --loglevel=info"
     volumes:
       - ./nemas:/nemas # Mount the local directory to the container
     env_file:
