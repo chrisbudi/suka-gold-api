@@ -6,14 +6,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import (
     status,
     viewsets,
-    filters,
-    pagination,
     response,
     views,
     permissions,
 )
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 from user.api.serializers import UserKtpSerializer, UploadSerializer
 from user.models import user_ktp as modelInfo
 from shared_kernel.services import image_services, s3_services, verihub_services

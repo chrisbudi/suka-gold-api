@@ -55,7 +55,15 @@ urlpatterns = [
         CreateKtpIfNotVerify.as_view({"post": "submit_verify"}),
         name="user_ktp_verify_approve",
     ),
-    path("user/pin/", UserPinView.as_view(), name="user-pin"),
+    path(
+        "user/pin/submit/", UserPinView.as_view({"post": "post"}), name="user-pin-post"
+    ),
+    path("user/pin/get/", UserPinView.as_view({"get": "get"}), name="user-pin-get"),
+    path(
+        "user/pin/verify/",
+        UserPinView.as_view({"post": "verify"}),
+        name="user-pin-verify",
+    ),
     # path(
     #     "user_ktp/",
     #     RetrieveUpdateUserKtpView.as_view(),
