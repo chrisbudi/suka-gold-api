@@ -20,7 +20,7 @@ class gold(models.Model):
     gold_weight = models.IntegerField()
     type = models.CharField(max_length=50)  # bar-mintedbar
     brand = models.CharField(max_length=255)  # marva gold, antam
-    certificate_code = models.CharField(max_length=255)
+    certificate_number = models.CharField(max_length=255)
     certificate_weight = models.DecimalField(
         max_digits=10, decimal_places=4, default=decimal(0.00)
     )

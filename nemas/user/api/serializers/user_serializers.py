@@ -66,6 +66,19 @@ class UserPinSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+    def validate(self, data):
+        user_id = data.get("id")
+        pin = data.get("pin")
+
+        # verify the pin if the pin is correct
+        try:
+            userModel = user.objects.get(id=user_id)
+        except user.DoesNotExist:
+            raise serializers.ValidationError("Invalid user or PIN.")
+
+        if userModel.pin != pin:
+            raise serializers.ValidationError("Invalid user or PIN.")
+
 
 class AuthTokenObtainPairSerializer(serializers.Serializer):
     # Override fields to use identifier instead of username

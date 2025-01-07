@@ -18,9 +18,12 @@ class UserPinView(APIView):
 
     def get(self, request):
         try:
-            # Return the current user's pin
-            serializer = modelSerializer(request.user)
-            return Response(serializer.data)
+            # Update the current user's pin
+            serializer = modelSerializer(request.user, data=request.data, partial=True)
+            if serializer.is_valid():
+                if serializer.validated_data:  # verify the pin if the pin is correct
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except (InvalidToken, TokenError) as e:
             return Response({"detail": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -28,12 +31,8 @@ class UserPinView(APIView):
         try:
             # Update the current user's pin
             serializer = modelSerializer(request.user, data=request.data, partial=True)
-            print(serializer, "serializer")
             if serializer.is_valid():
-                print(serializer.validated_data, "serializer data")
-
                 user = serializer.update(request.user, serializer.validated_data)
-                print(user, "user")
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except (InvalidToken, TokenError) as e:
