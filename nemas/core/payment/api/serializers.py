@@ -44,4 +44,13 @@ class BankFilter(filters.FilterSet):
         }
 
 
+class BankUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    def validate_file(self, value):
+        if value.size > 10 * 1024 * 1024:  # 10MB limit
+            raise serializers.ValidationError("File size exceeds 10MB")
+        return value
+
+
 # endregion

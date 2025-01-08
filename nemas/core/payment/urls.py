@@ -40,6 +40,11 @@ bank_urls = [
         bank_view.BankServiceViewSet.as_view({"get": "retrieve"}),
         name="get_bank",
     ),
+    path(
+        "upload/<str:id>/",
+        bank_view.BankServiceViewSet.as_view({"post": "upload"}),
+        name="upload_bank",
+    ),
 ]
 
 urlpatterns = [

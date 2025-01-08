@@ -15,8 +15,6 @@ from drf_spectacular.utils import extend_schema
 from user.api.serializers import UserKtpSerializer, UploadSerializer
 from user.models import user_ktp as modelInfo
 from shared_kernel.services import image_services, s3_services, verihub_services
-import tempfile
-import os
 
 
 @extend_schema(
@@ -85,7 +83,6 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 image = image_services.get_file_from_temp(request.user.id)
-                print(image, "image", "serializer success")
                 s3 = s3_services.S3Service()
                 imageS3 = s3.upload_file(image, f"KTP/{str(request.user.id)}.jpg")
                 instance = modelInfo.objects.filter(user=self.request.user).first()
@@ -100,7 +97,6 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                         photo_url=imageS3,
                     )
                 serializer = UserKtpSerializer(instance)
-                print(serializer, instance, "imageS3", "serializer success")
                 image_services.delete_file_from_temp(request.user.id)
                 return response.Response(
                     {"message": "KTP verified successfully"},
