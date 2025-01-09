@@ -303,3 +303,13 @@ VERIHUB = {
     "API_KEY": os.getenv("VERIHUB_API_KEY"),
     "KTP_SYNC": os.getenv("VERIHUB_URL_KTP_SYNC"),
 }
+
+
+# Email configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "your_email@gmail.com"  # Replace with your email address
+EMAIL_HOST_PASSWORD = "your_password"  # Replace with your email password
+DEFAULT_FROM_EMAIL = "your_email@gmail.com"
