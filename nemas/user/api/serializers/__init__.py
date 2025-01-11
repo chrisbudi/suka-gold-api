@@ -7,3 +7,5 @@ from .user_serializers import (
 from .user_prop_serializer import UserPropSerializer
 
 from .user_ktp_serializer import UserKtpSerializer, UploadSerializer
+
+from .user_token_serializer import EmailSerializer

@@ -14,7 +14,8 @@ from rest_framework import (
 from drf_spectacular.utils import extend_schema
 from user.api.serializers import UserKtpSerializer, UploadSerializer
 from user.models import user_ktp as modelInfo
-from shared_kernel.services import image_services, s3_services, verihub_services
+from shared_kernel.services import image_services, s3_services
+from shared_kernel.services.external import verihub_services
 
 
 @extend_schema(
