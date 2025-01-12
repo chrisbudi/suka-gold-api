@@ -31,7 +31,7 @@ class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-class TokenSerializer(serializers.Serializer):
+class ResetPasswordSerializer(serializers.Serializer):
     """Serializer for request email"""
 
-    Token = serializers.CharField()
+    new_password = serializers.CharField()

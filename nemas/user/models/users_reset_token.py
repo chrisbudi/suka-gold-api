@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.timezone import now, timedelta
 from .users import user
 
-from user.signals import email_user_reset_password
+from user.signals import email_user_reset_password, email_user_reset_password_done
 
 
 class user_reset_token(models.Model):
@@ -45,6 +45,6 @@ class user_reset_token(models.Model):
             sender=self.__class__, user=self.user, reset_key=str(self.token)
         )
 
-    # def send_reset_password_email_done(self):
-    #     """Emit the password reset requested signal."""
-    #     email_user_reset_password_done.send(sender=self.__class__, user=self.user)
+    def send_reset_password_email_done(self):
+        """Emit the password reset requested signal."""
+        email_user_reset_password_done.send(sender=self.__class__, user=self.user)

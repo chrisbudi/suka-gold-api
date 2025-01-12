@@ -27,7 +27,7 @@ user_view_url = []
 
 urlpatterns = [
     path(
-        "token/request-reset-password",
+        "token/request-reset-password/",
         view=RequestPasswordResetView.as_view({"post": "post"}),
         name="token_reset_password",
     ),

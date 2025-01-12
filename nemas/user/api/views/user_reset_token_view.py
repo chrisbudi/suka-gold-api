@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework import viewsets
 from user.models import user, users_reset_token
 from drf_spectacular.utils import extend_schema
-from user.api.serializers import EmailSerializer
+from user.api.serializers import EmailSerializer, ResetPasswordSerializer
 
 
 @extend_schema(
@@ -36,22 +36,24 @@ class RequestPasswordResetView(viewsets.GenericViewSet):
     tags=["User - Reset Password"],
 )
 class ResetPasswordView(viewsets.GenericViewSet):
+    serializer_class = ResetPasswordSerializer
 
     def post(self, request, token):
-        new_password = request.POST.get("password")
+        serializer = ResetPasswordSerializer(data=request.data)
+        print(serializer, "serializer")
+        if not serializer.is_valid():
+            return JsonResponse(serializer.errors, status=400)
+
+        new_password = serializer.data["new_password"]  # type: ignore
+
         token_obj = get_object_or_404(users_reset_token.user_reset_token, token=token)
-
-        # Validate token
-        if not token_obj.is_valid():
-            return JsonResponse({"error": "Token is invalid or expired."}, status=400)
-
-        # Reset password
         user = token_obj.user
+
         user.set_password(new_password)
         user.save()
-        # Invalidate token
+
         token_obj.delete()
 
-        # token_obj.send_reset_password_email_done()
+        token_obj.send_reset_password_email_done()
 
         return JsonResponse({"message": "Password reset successful."})

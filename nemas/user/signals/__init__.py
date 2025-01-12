@@ -5,6 +5,7 @@ from django.dispatch import Signal
 # user_signup = Signal()
 
 email_user_reset_password = Signal()
+email_user_reset_password_done = Signal()
 # email_user_reset_pin = Signal()
 # email_user_reset_pin_done = Signal()
 
