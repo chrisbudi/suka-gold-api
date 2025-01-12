@@ -25,13 +25,23 @@ class UserTokenSerializer(serializers.ModelSerializer):
         extra_kwargs = {"token": {"write_only": True, "min_length": 5}}
 
 
-class EmailSerializer(serializers.Serializer):
+class ResetRequestSerializer(serializers.Serializer):
     """Serializer for request email"""
 
     email = serializers.EmailField()
+    TYPE_CHOICES = (
+        ("PIN", "PIN"),
+        ("Password", "Password"),
+    )
+    type = serializers.ChoiceField(choices=TYPE_CHOICES)
 
 
-class ResetPasswordSerializer(serializers.Serializer):
+class ApplyResetSerializer(serializers.Serializer):
     """Serializer for request email"""
 
-    new_password = serializers.CharField()
+    new_data = serializers.CharField()
+    TYPE_CHOICES = (
+        ("PIN", "PIN"),
+        ("Password", "Password"),
+    )
+    new_data_type = serializers.ChoiceField(choices=TYPE_CHOICES)

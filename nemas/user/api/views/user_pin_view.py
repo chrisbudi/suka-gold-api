@@ -41,7 +41,6 @@ class UserPinView(viewsets.ModelViewSet):
             print(request.data, "request data")
             serializer = modelSerializer(request.user, data=request.data)
             if serializer.is_valid():
-                print(serializer.validated_data, "validated data")
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

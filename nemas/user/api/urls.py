@@ -15,8 +15,8 @@ from .views import (
     UserKtpView,
     UserPinView,
     CreateKtpIfNotVerify,
-    ResetPasswordView,
-    RequestPasswordResetView,
+    ResetView,
+    RequestResetView,
 )
 
 
@@ -27,13 +27,13 @@ user_view_url = []
 
 urlpatterns = [
     path(
-        "token/request-reset-password/",
-        view=RequestPasswordResetView.as_view({"post": "post"}),
-        name="token_reset_password",
+        "token/request-reset-token/",
+        view=RequestResetView.as_view({"post": "post"}),
+        name="token_reset_request",
     ),
     path(
-        "token/reset-password/<str:token>/",
-        view=ResetPasswordView.as_view({"post": "post"}),
+        "token/reset-token/<str:token>/",
+        view=ResetView.as_view({"post": "post"}),
         name="token_reset_password_done",
     ),
     path("token/", CreateTokenView.as_view(), name="token_obtain_pair"),

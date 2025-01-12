@@ -3,7 +3,10 @@ from django.db import models
 from django.utils.timezone import now, timedelta
 from .users import user
 
-from user.signals import email_user_reset_password, email_user_reset_password_done
+from user.signals import (
+    email_user_reset_token_done,
+    email_user_reset_token,
+)
 
 
 class user_reset_token(models.Model):
@@ -28,23 +31,18 @@ class user_reset_token(models.Model):
     def is_valid(self):
         return now() < self.expires_at
 
-    # def send_reset_pin_email(self):
-    #     """Emit the PIN reset requested signal."""
-    #     email_user_reset_pin.send(
-    #         sender=self.__class__, user=self.user, token=self.token
-    #     )
-
-    # def send_reset_pin_email_done(self):
-    #     """Emit the PIN reset requested signal."""
-    #     email_user_reset_pin_done.send(sender=self.__class__, user=self.user)
-
-    def send_reset_password_email(self, request):
+    def send_reset_email(self, email_type):
         """Emit the password reset requested signal."""
-        print("send_reset_password_email produce", self.user, self.token)
-        email_user_reset_password.send(
-            sender=self.__class__, user=self.user, reset_key=str(self.token)
+        print(email_type, "email type")
+        email_user_reset_token.send(
+            sender=self.__class__,
+            user=self.user,
+            reset_key=str(self.token),
+            email_type=email_type,
         )
 
-    def send_reset_password_email_done(self):
+    def send_reset_email_done(self, email_type):
         """Emit the password reset requested signal."""
-        email_user_reset_password_done.send(sender=self.__class__, user=self.user)
+        email_user_reset_token_done.send(
+            sender=self.__class__, user=self.user, email_type=email_type
+        )

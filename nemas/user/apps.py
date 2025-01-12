@@ -6,4 +6,4 @@ class UserConfig(AppConfig):
     name = "user"
 
     def ready(self):
-        import user.signals.receiver.mail_user_reset_password  # noqa: F401 - This import is necessary for signal registration
+        import user.signals.receiver.mail_user_reset_token  # noqa: F401 - This import is necessary for signal registration
