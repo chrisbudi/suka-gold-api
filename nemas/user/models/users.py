@@ -1,3 +1,4 @@
+from enum import verify
 from django.conf import settings
 
 from django.contrib.auth.management import create_permissions
@@ -96,7 +97,11 @@ class user(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
     user_name = models.CharField(max_length=255, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
-    user_type = models.CharField(max_length=255, default="user")
+    user_type = models.CharField(max_length=100, default="user")
+    # unverified, verify KTP, verify Photo, verified, rejected, blacklisted
+    verify_status = models.CharField(max_length=100, default="unverified")
+    verify_updated_time = models.DateTimeField(null=True, blank=True)
+    verify_notes = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
