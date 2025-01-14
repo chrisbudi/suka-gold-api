@@ -5,7 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework import status
-from user.api.serializers import UserPinSerializer as modelSerializer
+from user.api.serializers import (
+    UserPinSerializer as modelSerializer,
+    UserPinVerifySerializer as modelVerifySerializer,
+)
 
 
 @extend_schema(
@@ -27,9 +30,9 @@ class UserPinView(viewsets.ModelViewSet):
     def post(self, request):
         try:
             # Update the current user's pin
-            serializer = modelSerializer(request.user, data=request.data, partial=True)
+            serializer = modelSerializer(request.user, data=request.data)
             if serializer.is_valid():
-                user = serializer.update(request.user, serializer.validated_data)
+                serializer.update(request.user, serializer.validated_data)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except (InvalidToken, TokenError) as e:
@@ -38,8 +41,7 @@ class UserPinView(viewsets.ModelViewSet):
     def verify(self, request):
         try:
             # validate pin of the current user
-            print(request.data, "request data")
-            serializer = modelSerializer(request.user, data=request.data)
+            serializer = modelVerifySerializer(request.user, data=request.data)
             if serializer.is_valid():
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

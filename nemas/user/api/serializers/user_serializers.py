@@ -52,8 +52,8 @@ class UserPinSerializer(serializers.Serializer):
 
     pin = serializers.IntegerField(
         validators=[
-            MaxValueValidator(999999),
-            MinValueValidator(100000),
+            MaxValueValidator(9999999, message="PIN must be less 7 digits."),
+            # MinValueValidator(999999, message="PIN must be more 5 digits."),
         ]
     )
 
@@ -62,9 +62,25 @@ class UserPinSerializer(serializers.Serializer):
         fields = ["pin"]
 
     def update(self, instance, validated_data):
+        print(validated_data, "validated_data")
         instance.pin = validated_data.get("pin", instance.pin)
         instance.save()
         return instance
+
+
+class UserPinVerifySerializer(serializers.Serializer):
+    """Serializer for inserting a user pin"""
+
+    pin = serializers.IntegerField(
+        validators=[
+            MaxValueValidator(1000000, message="PIN must be less 6 digits."),
+            MinValueValidator(99999, message="PIN must be more 6 digits."),
+        ]
+    )
+
+    class Meta:
+        model = user
+        fields = ["pin"]
 
     def validate(self, data, *args, **kwargs):
 

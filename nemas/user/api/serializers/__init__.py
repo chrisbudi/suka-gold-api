@@ -2,6 +2,7 @@ from .user_serializers import (
     UserSerializer,
     AuthTokenObtainPairSerializer,
     UserPinSerializer,
+    UserPinVerifySerializer,
 )
 
 from .user_prop_serializer import UserPropSerializer

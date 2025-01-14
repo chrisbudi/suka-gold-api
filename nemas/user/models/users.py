@@ -102,6 +102,8 @@ class user(AbstractBaseUser, PermissionsMixin):
     verify_status = models.CharField(max_length=100, default="unverified")
     verify_updated_time = models.DateTimeField(null=True, blank=True)
     verify_notes = models.TextField(null=True, blank=True)
+    photo_selfie_url = models.CharField(max_length=255, null=True, blank=True)
+    photo_ktp_url = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -131,6 +133,17 @@ class user(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label: str) -> bool:
         return super().has_module_perms(app_label)
+
+    def verify_update_state(self, status: str):
+        self.verify_status = status
+        self.verify_updated_time = time.time()
+        self.update_time = time.time()
+        self.save()
+
+    def verify_update_fail_notes(self, notes: str):
+        self.verify_notes = notes
+        self.update_time = time.time()
+        self.save()
 
     class Meta:
         indexes = [
@@ -188,7 +201,6 @@ class user_ktp(models.Model):
     marital_status = models.CharField(max_length=255)
     occupation = models.CharField(max_length=255)
     nationality = models.CharField(max_length=255)
-    photo_url = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     create_time = models.DateTimeField(auto_now_add=True)
     reference_id = models.CharField(max_length=255, blank=True, null=True)

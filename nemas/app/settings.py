@@ -302,6 +302,8 @@ VERIHUB = {
     "APP_ID": os.getenv("VERIHUB_APP_ID"),
     "API_KEY": os.getenv("VERIHUB_API_KEY"),
     "KTP_SYNC": os.getenv("VERIHUB_URL_KTP_SYNC"),
+    "COMPARE_PHOTO": os.getenv("VERIHUB_URL_COMPARE_PHOTO"),
+    "DATA_VERIFICATION": os.getenv("VERIHUB_URL_DATA_VERIFICATION"),
 }
 
 
