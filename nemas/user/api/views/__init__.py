@@ -11,7 +11,11 @@ from .user_prop_view import (
     UserPropView,
 )
 
-from .user_verification_view import UserKtpView, CreateKtpIfNotVerify
+from .user_verification_view import (
+    UserKtpView,
+    CreateKtpIfNotVerify,
+    CreateComparePhotoANDKtp,
+)
 
 
 from .user_pin_view import (

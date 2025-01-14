@@ -1,3 +1,4 @@
+from datetime import timezone
 from enum import verify
 from django.conf import settings
 
@@ -12,7 +13,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from core.domain.address import city
 from core.fields.uuidv7_field import UUIDv7Field
-import time
+from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -42,7 +43,7 @@ class user_manager(BaseUserManager):
             **extra_fields
         )
         user.set_password(password)
-        user.create_time = time.time()
+        user.create_time = datetime.now()
         user.save(using=self._db)
 
         # create user props data
@@ -60,9 +61,9 @@ class user_manager(BaseUserManager):
             address="",
             address_post_code="",
             create_user="system",
-            create_time=time.time(),
+            create_time=datetime.now(),
             update_user="system",
-            update_time=time.time(),
+            update_time=datetime.now(),
         )
 
         return user
@@ -136,14 +137,17 @@ class user(AbstractBaseUser, PermissionsMixin):
 
     def verify_update_state(self, status: str):
         self.verify_status = status
-        self.verify_updated_time = time.time()
-        self.update_time = time.time()
+        self.verify_updated_time = datetime.now()
+        self.update_time = datetime.now()
         self.save()
 
     def verify_update_fail_notes(self, notes: str):
         self.verify_notes = notes
-        self.update_time = time.time()
+        self.update_time = datetime.now()
         self.save()
+
+    def __str__(self):
+        return self.id
 
     class Meta:
         indexes = [

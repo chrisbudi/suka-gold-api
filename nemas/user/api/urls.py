@@ -17,6 +17,7 @@ from .views import (
     CreateKtpIfNotVerify,
     ResetView,
     RequestResetView,
+    CreateComparePhotoANDKtp,
 )
 
 
@@ -63,9 +64,14 @@ urlpatterns = [
         name="user_ktp_verify",
     ),
     path(
-        "user/ktp/verify/approve",
+        "user/ktp/verify/approve/",
         CreateKtpIfNotVerify.as_view({"post": "submit_verify"}),
         name="user_ktp_verify_approve",
+    ),
+    path(
+        "user/photo/compare/",
+        CreateComparePhotoANDKtp.as_view({"post": "compare_photo_ktp"}),
+        name="compare_photo_ktp",
     ),
     path(
         "user/pin/submit/", UserPinView.as_view({"post": "post"}), name="user-pin-post"

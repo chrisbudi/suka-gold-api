@@ -21,6 +21,9 @@ from user.api.serializers import (
 from user.models import user_ktp as modelInfo, user as userModel
 from shared_kernel.services import image_services, s3_services
 from shared_kernel.services.external import verihub_services
+from django.utils import timezone
+
+from datetime import datetime
 
 
 @extend_schema(
@@ -90,31 +93,34 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
             return response.Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
-        try:
+        if not isinstance(serializer.validated_data, dict):
+            raise TypeError("serializer.validated_data must be a dictionary")
 
+        try:
+            print(request.user.id, "user id")
             user = userModel.objects.get(pk=request.user.id)
 
             image = image_services.get_file_from_temp(request.user.id)
             s3 = s3_services.S3Service()
             image_s3_url = s3.upload_file(image, f"KTP/{str(request.user.id)}.jpg")
+
+            print(image_s3_url, "image_s3_url")
             # Check if the instance exists and update or create it
-            instance = modelInfo.objects.update_or_create(
+            validated_data = dict(serializer.validated_data)
+            instance, created = modelInfo.objects.update_or_create(
                 user=request.user,
                 defaults={
-                    "updated_user": str(request.user),
-                    "create_user": str(request.user),
+                    "updated_user": str(request.user.id),
+                    "create_user": str(request.user.id),
+                    **validated_data,
                 },
             )
-
-            serializer = UserKtpSerializer(instance)
-            serializer.save()
-
-            userModel.objects.filter(pk=request.user.id).update(
+            userModel.objects.filter(pk=str(request.user.id)).update(
                 photo_ktp_url=image_s3_url,
-                update_time=time.time(),
-                updated_user=str(request.user),
+                update_time=datetime.now(),
+                update_user=str(request.user.id),
             )
-
+            print("userModel.objects.filter(pk=request.user.id).update")
             user.verify_update_state("verify_ktp")
             # image_services.delete_file_from_temp(request.user.id)
             return response.Response(
@@ -175,7 +181,7 @@ class CreateComparePhotoANDKtp(viewsets.ModelViewSet):
         },
         tags=["User - KTP Verification"],
     )
-    def upload_photo_verify_user(self, request):
+    def compare_photo_ktp(self, request):
         serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
             if (
@@ -191,12 +197,13 @@ class CreateComparePhotoANDKtp(viewsets.ModelViewSet):
             verihub = verihub_services.VerihubService()
             image = image_services
             try:
+                print(request.user.id, "user id")
 
-                imageKtp = image_services.get_file_from_temp(request.user.id)
+                strImageKtp = image_services.get_file_from_temp_tobase64(
+                    request.user.id
+                )
+                # print(imageKtp.read(), "imageKtp")
                 strImagePhoto = image.image_to_base64(file, request.user.id)
-                strImageKtp = image.image_to_base64(imageKtp, request.user.id)
-                # image 1 = KTP
-                # image 2 = Selfie
                 payload = {
                     "image_1": strImageKtp,
                     "image_2": strImagePhoto,
@@ -207,29 +214,34 @@ class CreateComparePhotoANDKtp(viewsets.ModelViewSet):
                     "validate_quality": False,
                 }
                 result = verihub.compare_photo_file(payload)
+                print(result, "result 01")
                 # get similiarity result
-                if result["similarity_status"] == "True":
+                if result["similarity_status"] == True:
 
                     # get data from user ktp
                     user = userModel.objects.get(pk=request.user.id)
-                    user.verify_update_state("verify_photo")
-                    userKtp = modelInfo.objects.get(user=request.user)
+                    # user.verify_update_state("verify_photo")
+                    # userKtp = modelInfo.objects.get(user=request.user)
 
-                    payloadKtp = {
-                        "nik": userKtp.nik,
-                        "name": userKtp.full_name,
-                        "birth_date": userKtp.date_of_birth,
-                        "email": user.email,
-                        "phone": user.phone_number,
-                        "selfie_photo": strImagePhoto,
-                        "ktp_photo": strImageKtp,
-                    }
-
-                    result = verihub.verify_identity(payloadKtp)
-
-                    image_services.delete_file_from_temp(request.user.id)
+                    # payloadKtp = {
+                    #     "nik": userKtp.nik,
+                    #     "name": userKtp.full_name,
+                    #     "birth_date": userKtp.date_of_birth,
+                    #     "email": user.email,
+                    #     "phone": user.phone_number,
+                    #     "selfie_photo": strImagePhoto,
+                    #     "ktp_photo": strImageKtp,
+                    # }
+                    # print(payloadKtp, "payloadKtp")
+                    # result = verihub.verify_identity(payloadKtp)
+                    # print(result, "result 02")
+                    user.verify_update_state("verified")
+                    # image_services.delete_file_from_temp(request.user.id)
                     return response.Response(
-                        {"message": "result is similarity", "result": result},
+                        {
+                            "message": "successfully verify photo and ktp",
+                            "result": result,
+                        },
                         status=status.HTTP_202_ACCEPTED,
                     )
                 else:

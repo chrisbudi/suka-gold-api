@@ -52,8 +52,8 @@ class UserPinSerializer(serializers.Serializer):
 
     pin = serializers.IntegerField(
         validators=[
-            MaxValueValidator(9999999, message="PIN must be less 7 digits."),
-            # MinValueValidator(999999, message="PIN must be more 5 digits."),
+            MaxValueValidator(1000000, message="PIN must be 6 digits."),
+            MinValueValidator(99999, message="PIN must be 6 digits."),
         ]
     )
 
@@ -73,8 +73,8 @@ class UserPinVerifySerializer(serializers.Serializer):
 
     pin = serializers.IntegerField(
         validators=[
-            MaxValueValidator(1000000, message="PIN must be less 6 digits."),
-            MinValueValidator(99999, message="PIN must be more 6 digits."),
+            MaxValueValidator(1000000, message="PIN must be 6 digits."),
+            MinValueValidator(99999, message="PIN must be 6 digits."),
         ]
     )
 

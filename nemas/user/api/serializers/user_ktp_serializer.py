@@ -31,6 +31,8 @@ class UserKtpSerializer(serializers.ModelSerializer):
             "reference_id",
         )
 
+        read_only_fields = ("id",)
+
 
 class UploadSerializer(serializers.Serializer):
     file = serializers.FileField()

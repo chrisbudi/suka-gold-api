@@ -4,7 +4,7 @@ import tempfile
 import uuid
 
 
-def image_to_base64(file, user_id: uuid.UUID):
+def image_to_base64(file, user_id: uuid.UUID) -> str:
     """
     Converts an image file to a Base64 string.
 
@@ -50,6 +50,20 @@ def get_file_from_temp(file_id):
     temp_dir = tempfile.gettempdir()
     temp_file_path = os.path.join(temp_dir, str(file_id) + ".jpg")
     return open(str(temp_file_path), "rb")
+
+
+def get_file_from_temp_tobase64(file_id):
+    """
+    Retrieves a file from the temporary directory.
+
+    Returns:
+        file: File object.
+    """
+
+    temp_dir = tempfile.gettempdir()
+    temp_file_path = os.path.join(temp_dir, str(file_id) + ".jpg")
+    with open(temp_file_path, "rb") as file:
+        return base64.b64encode(file.read()).decode("utf-8")
 
 
 def delete_file_from_temp(file):
