@@ -65,6 +65,7 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
             verihub = verihub_services.VerihubService()
             image = image_services
             try:
+                image.upload_file_to_temp(file, request.user.id)
                 strImage = image.image_to_base64(file, request.user.id)
 
                 payload = {"image": strImage, "validate_quality": False}
