@@ -27,6 +27,7 @@ from django.urls import path, include
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from user.api import urls as userUrl
 from core import urls as coreUrl
+from ewallet.api import urls as ewalletUrl
 
 authentication_classes = [JWTAuthentication]
 
@@ -64,6 +65,7 @@ urlpatterns = [
     # api user
     path("api/users/", include(userUrl), name="user"),
     path("api/core/", include(coreUrl)),
+    path("api/ewallet/", include(ewalletUrl)),
 ]
 
 # urlpatterns = [

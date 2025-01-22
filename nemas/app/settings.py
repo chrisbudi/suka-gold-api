@@ -308,6 +308,14 @@ VERIHUB = {
 }
 
 
+XENDIT = {
+    "CLIENT_URL": os.getenv("XENDIT_CLIENT_URL"),
+    "CLIENT_SECRET_KEY": os.getenv("XENDIT_CLIENT_SECRET_KEY"),
+    "CLIENT_PUBLIC_KEY": os.getenv("XENDIT_CLIENT_PUBLIC_KEY"),
+    "WEBHOOK_KEY": os.getenv("XENDIT_WEBHOOK_KEY"),
+}
+
+
 # Email configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
