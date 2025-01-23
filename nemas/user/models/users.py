@@ -240,5 +240,5 @@ class user_ktp(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     reference_id = models.CharField(max_length=255, blank=True, null=True)
     create_user = models.CharField(max_length=255, blank=True, null=True)
-    update_time = models.DateTimeField(auto_now=True)
-    update_user = models.CharField(max_length=255, blank=True, null=True)
+    updated_time = models.DateTimeField(auto_now=True)
+    updated_user = models.CharField(max_length=255, blank=True, null=True)

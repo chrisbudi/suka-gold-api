@@ -17,6 +17,7 @@ class topup_transaction(models.Model):
 
     topup_timestamp = models.DateTimeField(auto_created=True)
     topup_amount = models.DecimalField(max_digits=16, decimal_places=2)
+    topup_total_amount = models.DecimalField(max_digits=16, decimal_places=2)
     topup_admin = models.DecimalField(max_digits=16, decimal_places=2)
     topup_payment_method = models.CharField(max_length=255)
     topup_payment_number = models.CharField(max_length=255)

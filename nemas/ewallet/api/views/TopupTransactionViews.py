@@ -71,6 +71,33 @@ class TopupTransactionView(viewsets.ModelViewSet):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def simulate_payment_va(self, request):
+        serializer = modelVASerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            userVa = UserVA.objects.filter(user=user).first()
+            if not userVa:
+                return Response(
+                    {"error": "User does not have virtual account"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            service = vaService()
+            payload = {
+                "external_id": "va_generated_user_" + user.id,
+                "bank_code": userVa.bank,
+                "name": user.name,
+                "account_number": userVa.va_number,
+                "amount": serializer.validated_data["topup_total_amount"],
+            }
+            virtual_account = service.va_payment_simulate(payload)
+            data = {
+                "total_amount": serializer.validated_data["toup_total_amount"],
+                "user_virtual_account": userVa.va_number,
+                "payment_status": virtual_account["status"],
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def generate_qris(self, request):
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
@@ -101,4 +128,26 @@ class TopupTransactionView(viewsets.ModelViewSet):
                 "user_virtual_account": qris["qr_string"],
             }
             return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def simulate_payment_qris(self, request):
+        serializer = modelqrisSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            service = qrisService()
+            payload = {
+                "external_id": "qris_generated_user_" + user.id + "_" + uuid.uuid4(),
+                "type": "DYNAMIC",
+                "currency": "IDR",
+                "amount": serializer.validated_data["topup_total_amount"],
+                "expires_at": time.time() + 7200,  # 2 hours in seconds
+                "channel_code": "ID_DANA",
+            }
+            qris = service.qris_payment_simulate(payload)
+            data = {
+                "total_amount": serializer.validated_data["toup_total_amount"],
+                "user_virtual_account": qris["qr_string"],
+                "payment_status": qris["status"],
+            }
+            return Response(data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
