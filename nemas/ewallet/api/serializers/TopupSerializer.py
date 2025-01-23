@@ -55,3 +55,9 @@ class TopupQrisSerializer(serializers.ModelSerializer):
 
 class SimulatedPaymentSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = topup_transaction
+        fields = [
+            "amount",
+        ]
