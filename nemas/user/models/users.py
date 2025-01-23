@@ -1,5 +1,6 @@
 from datetime import timezone
 from enum import verify
+from math import exp
 from django.conf import settings
 
 from django.contrib.auth.management import create_permissions
@@ -186,6 +187,36 @@ class user_props(models.Model):
     update_time = models.DateTimeField(auto_now=True)
 
 
+class user_virtual_account(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    va_number = models.CharField(max_length=50)
+    bank = models.CharField(max_length=50)
+    owner_id = models.CharField(max_length=50)
+    expiration_date = models.DateTimeField()
+    merchant_code = models.CharField(max_length=50)
+
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=100)
+    create_user_id = models.CharField(max_length=50)
+    update_time = models.DateTimeField(auto_now=True)
+    update_user = models.CharField(max_length=100)
+    update_user_id = models.CharField(max_length=50)
+
+    def save(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        if user:
+            if not self.pk:
+                self.create_user = user.username
+                self.create_user_id = user.id
+            self.update_user = user.username
+            self.update_user_id = user.id
+        super().save(*args, **kwargs)
+
+
 class user_ktp(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -209,5 +240,5 @@ class user_ktp(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     reference_id = models.CharField(max_length=255, blank=True, null=True)
     create_user = models.CharField(max_length=255, blank=True, null=True)
-    updated_time = models.DateTimeField(auto_now=True)
-    updated_user = models.CharField(max_length=255, blank=True, null=True)
+    update_time = models.DateTimeField(auto_now=True)
+    update_user = models.CharField(max_length=255, blank=True, null=True)
