@@ -50,5 +50,8 @@ class TopupQrisSerializer(serializers.ModelSerializer):
     def create(self, validated_data, *args, **kwargs):
         validated_data["topup_status"] = "pending"
         validated_data["topup_payment_method"] = "qris"
-        validated_data[""] = kwargs[""]
         return topup_transaction.objects.create(**validated_data)
+
+
+class SimulatedPaymentSerializer(serializers.ModelSerializer):
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
