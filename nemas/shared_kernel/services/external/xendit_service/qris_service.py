@@ -16,9 +16,14 @@ class QRISPaymentService(XenditService):
             response = requests.post(
                 self.base_url + "qr_codes",
                 headers=self.headers,
-                json=payload,
+                data=payload,
             )
 
+            # check if response is not 200
+            if response.status_code != 200:
+                return response.json()
+
+            response.raise_for_status()
             return response.json()
         except Exception as e:
             raise Exception(f"Failed to QRIS files : {str(e)}")

@@ -1,8 +1,6 @@
-from locale import currency
-from math import exp
-from os import name
-from pyexpat import model
-import time
+import decimal
+import json
+from datetime import datetime, timedelta
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
@@ -115,33 +113,39 @@ class TopupTransactionView(viewsets.ModelViewSet):
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             # check if user has virtual accoount if not have create one
-            qris = serializer.validated_data["topup_payment_ref"]
+            qris = serializer.validated_data["topup_payment_method"]
             user = request.user
 
             service = qrisService()
             # Generate static VA
             payload = {
-                "external_id": "qris_generated_user_" + user.id + "_" + uuid.uuid4(),
+                "reference_id": f"qris_generated_user_{user.id}_{str(uuid.uuid4())}",
                 "type": "DYNAMIC",
                 "currency": "IDR",
-                "amount": serializer.validated_data["topup_total_amount"],
-                "expires_at": time.time() + 7200,  # 2 hours in seconds
+                "amount": float(serializer.validated_data["topup_total_amount"]),
+                "expired_at": (datetime.now() + timedelta(hours=2)).strftime(
+                    "%Y-%m-%dT%H:%M:%S"
+                ),
                 "channel_code": "ID_DANA",
                 "is_closed": True,
             }
-            qris = service.qris_payment_generate(payload)
-
-            serializer.save(
-                user=user,
-                topup_payment_ref=qris["qr_string"],
-                external_id=payload["external_id"],
-            )
-
+            payload_json = json.dumps(payload)
+            qris = service.qris_payment_generate(payload_json)
+            print(qris, "qris")
+            # serializer.save(qris=qris, user=user)
             data = {
-                "total_amount": payload["toup_total_amount"],
+                "total_amount": payload["amount"],
                 "user_virtual_account": qris["qr_string"],
             }
             return Response(data, status=status.HTTP_201_CREATED)
+
+            # if qris:
+            #     print(qris, "qris", user, "user")
+            # else:
+            #     return Response(
+            #         {"error": "Failed to generate QRIS"},
+            #         status=status.HTTP_400_BAD_REQUEST,
+            #     )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(

@@ -157,13 +157,33 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Bangkok"
 
 USE_I18N = True
 
 USE_TZ = True
 
 HTTPCACHE_ENABLED = False
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": "api_errors.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
 
 
 # Static files (CSS, JavaScript, Images)
@@ -313,6 +333,7 @@ XENDIT = {
     "CLIENT_SECRET_KEY": os.getenv("XENDIT_CLIENT_SECRET_KEY"),
     "CLIENT_PUBLIC_KEY": os.getenv("XENDIT_CLIENT_PUBLIC_KEY"),
     "WEBHOOK_KEY": os.getenv("XENDIT_WEBHOOK_KEY"),
+    "API_VERSION": os.getenv("XENDIT_API_VERSION"),
 }
 
 
