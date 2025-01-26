@@ -110,42 +110,15 @@ class TopupTransactionView(viewsets.ModelViewSet):
         responses={200: modelVASerializer},
     )
     def generate_qris(self, request):
-        serializer = modelqrisSerializer(data=request.data)
+        serializer = modelqrisSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
-            # check if user has virtual accoount if not have create one
-            qris = serializer.validated_data["topup_payment_method"]
-            user = request.user
+            serializer.save()
 
-            service = qrisService()
-            # Generate static VA
-            payload = {
-                "reference_id": f"qris_generated_user_{user.id}_{str(uuid.uuid4())}",
-                "type": "DYNAMIC",
-                "currency": "IDR",
-                "amount": float(serializer.validated_data["topup_total_amount"]),
-                "expired_at": (datetime.now() + timedelta(hours=2)).strftime(
-                    "%Y-%m-%dT%H:%M:%S"
-                ),
-                "channel_code": "ID_DANA",
-                "is_closed": True,
-            }
-            payload_json = json.dumps(payload)
-            qris = service.qris_payment_generate(payload_json)
-            print(qris, "qris")
-            # serializer.save(qris=qris, user=user)
-            data = {
-                "total_amount": payload["amount"],
-                "user_virtual_account": qris["qr_string"],
-            }
-            return Response(data, status=status.HTTP_201_CREATED)
-
-            # if qris:
-            #     print(qris, "qris", user, "user")
-            # else:
-            #     return Response(
-            #         {"error": "Failed to generate QRIS"},
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
+            return Response(
+                serializer.context.get("response"), status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
