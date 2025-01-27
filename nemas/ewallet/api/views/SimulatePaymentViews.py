@@ -6,43 +6,33 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from ewallet.api.serializers import (
-    TopupVASerializer as modelVASerializer,
-    TopupQrisSerializer as modelqrisSerializer,
+    SimulatedPaymentVaSerializer as modelVASerializer,
+    SimulatedPaymentQrisSerializer as modelqrisSerializer,
 )
 
 
-@extend_schema(
-    tags=["Topup - Topup Transaction Create"],
-)
-class TopupTransactionView(viewsets.ModelViewSet):
+class SimulatePaymentView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
     @extend_schema(
         request=modelVASerializer,
-        responses={201: modelVASerializer},
+        responses={200: modelVASerializer},
     )
-    def generate_va(self, request):
-        serializer = modelVASerializer(data=request.data, context={"request": request})
+    def simulate_payment_qris(self, request, reference_id):
+        serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                serializer.context.get("response"), status=status.HTTP_201_CREATED
-            )
+            return Response({}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        request=modelqrisSerializer,
+        request=modelVASerializer,
         responses={200: modelVASerializer},
     )
-    def generate_qris(self, request):
-        serializer = modelqrisSerializer(
-            data=request.data, context={"request": request}
-        )
+    def simulate_payment_va(self, request, reference_id):
+        serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-
-            return Response(
-                serializer.context.get("response"), status=status.HTTP_201_CREATED
-            )
+            return Response({}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

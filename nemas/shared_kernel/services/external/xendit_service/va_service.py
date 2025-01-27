@@ -40,9 +40,10 @@ class VAPaymentService(XenditService):
         """
         try:
             response = requests.post(
-                self.base_url + f"callback_virtual_accounts/{reference_id}/simulate",
+                self.base_url
+                + f"callback_virtual_accounts/{reference_id}/simulate_payment",
                 headers=self.headers,
-                json=payload,
+                data=payload,
             )
 
             return response.json()

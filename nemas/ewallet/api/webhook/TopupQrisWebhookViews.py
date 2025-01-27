@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
@@ -9,39 +10,27 @@ from ewallet.api.serializers import (
     TopupVASerializer as modelVASerializer,
     TopupQrisSerializer as modelqrisSerializer,
 )
+from django.conf import settings
 
 
-@extend_schema(
-    tags=["Topup - Topup Transaction Create"],
-)
-class TopupTransactionView(viewsets.ModelViewSet):
+class TopupQrisWebhookView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-
-    @extend_schema(
-        request=modelVASerializer,
-        responses={201: modelVASerializer},
-    )
-    def generate_va(self, request):
-        serializer = modelVASerializer(data=request.data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.context.get("response"), status=status.HTTP_201_CREATED
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    WEBHOOK_TOKEN = settings.XENDIT.get("WEBHOOK_TOKEN")
 
     @extend_schema(
         request=modelqrisSerializer,
         responses={200: modelVASerializer},
     )
-    def generate_qris(self, request):
+    def VerifyQrisTopup(self, request):
+        token = request.headers.get("Authorization")
+        if token != f"Bearer {self.WEBHOOK_TOKEN}":
+            return JsonResponse({"error": "Unauthorized"}, status=401)
         serializer = modelqrisSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
             serializer.save()
-
             return Response(
                 serializer.context.get("response"), status=status.HTTP_201_CREATED
             )
