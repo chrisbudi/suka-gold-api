@@ -7,7 +7,7 @@ from rest_framework import status, viewsets, filters, pagination, response
 from core.domain import bank as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 from shared_kernel.services.s3_services import S3Service
 
 

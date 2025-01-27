@@ -16,8 +16,16 @@ class VAPaymentService(XenditService):
             response = requests.post(
                 self.base_url + "callback_virtual_accounts",
                 headers=self.headers,
-                json=payload,
+                data=payload,
             )
+            curl_command = f"curl -X POST {self.base_url + 'callback_virtual_accounts'} -H 'Content-Type: application/json' -H 'Authorization: {self.headers['Authorization']}' -d '{payload}'"
+            print(curl_command)
+
+            print(payload, self.headers, response.status_code, "payload")
+            if response.status_code not in [200, 201]:
+                print(response.json(), "failed response")
+                response.raise_for_status()
+                return None
 
             return response.json()
         except Exception as e:

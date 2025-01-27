@@ -10,6 +10,8 @@ class bank(models.Model):
     bank_logo_url = models.CharField(max_length=255, blank=True, null=True)
     bank_active = models.BooleanField(default=True)
 
+    bank_closed_va_code = models.CharField(max_length=50, blank=True, null=True)
+    bank_open_va_code = models.CharField(max_length=50, blank=True, null=True)
     bank_va_range_start = models.CharField(max_length=50, blank=True, null=True)
     bank_va_range_end = models.CharField(max_length=50, blank=True, null=True)
 
@@ -17,6 +19,9 @@ class bank(models.Model):
     create_user = models.CharField(max_length=255)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.CharField(max_length=255)
+
+    class Meta:
+        app_label = "core"
 
     def __str__(self):
         return f"bank id {self.bank_id} - bank name: {self.bank_name}"

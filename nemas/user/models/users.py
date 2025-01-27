@@ -195,8 +195,6 @@ class user_virtual_account(models.Model):
 
     va_number = models.CharField(max_length=50)
     bank = models.CharField(max_length=50)
-    owner_id = models.CharField(max_length=50)
-    expiration_date = models.DateTimeField()
     merchant_code = models.CharField(max_length=50)
 
     create_time = models.DateTimeField(auto_now_add=True)

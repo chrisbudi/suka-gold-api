@@ -5,7 +5,7 @@ Serializer for recipe api
 from rest_framework import serializers
 from django_filters import rest_framework as filters
 
-from core.domain import bank
+from core.domain import bank as Bank
 
 
 # region Bank
@@ -13,7 +13,7 @@ class BankSerializer(serializers.ModelSerializer):
     """Serializer for bank object"""
 
     class Meta:
-        model = bank
+        model = Bank
         fields = [
             "bank_id",
             "bank_name",
@@ -37,7 +37,7 @@ class BankSerializer(serializers.ModelSerializer):
 
 class BankFilter(filters.FilterSet):
     class Meta:
-        model = bank
+        model = Bank
 
         fields = {
             "bank_code": ["icontains"],

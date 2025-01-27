@@ -1,5 +1,3 @@
-import decimal
-import json
 from datetime import datetime, timedelta
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +6,6 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from shared_kernel.services.external.xendit_service import (
     VAPaymentService as vaService,
     QRISPaymentService as qrisService,
@@ -18,9 +15,7 @@ from ewallet.api.serializers import (
     TopupQrisSerializer as modelqrisSerializer,
     SimulatedPaymentSerializer as modelSimulatedPaymentSerializer,
 )
-import uuid
 from user.models import user_virtual_account as UserVA
-from core.domain import bank as Bank
 from ewallet.models import topup_transaction as TopupTransaction
 
 
@@ -36,42 +31,12 @@ class TopupTransactionView(viewsets.ModelViewSet):
         responses={201: modelVASerializer},
     )
     def generate_va(self, request):
-        serializer = modelVASerializer(data=request.data)
+        serializer = modelVASerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            # check if user has virtual accoount if not have create one
-            bank_code = serializer.validated_data["topup_payment_bank"]
-            user = request.user
-            userVa = UserVA.objects.filter(user=user, bank=bank_code).first()
-            bank = Bank.objects.get(bank_merchant_code=bank_code)
-            # create va if va is not avail
-            if not userVa:
-                service = vaService()
-                # Generate static VA
-                payload = {
-                    "external_id": "va_generated_user_" + user.id,
-                    "bank_code": bank_code,
-                    "name": user.name,
-                    "virtual_account_number": bank.generate_va(),
-                }
-                virtual_account = service.va_payment_generate(payload)
-                userVa = UserVA.objects.create(
-                    user=user,
-                    bank=bank_code,
-                    account_number=virtual_account["account_number"],
-                    owner_id=virtual_account["owner_id"],
-                    merchant_code=virtual_account["merchant_code"],
-                    expiration_date=virtual_account["expiration_date"],
-                )
-                userVa.save()
-            # Save to database
-
-            serializer.save(userVa=userVa)
-
-            data = {
-                "total_amount": serializer.validated_data["toup_total_amount"],
-                "user_virtual_account": userVa.va_number,
-            }
-            return Response(data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(
+                serializer.context.get("response"), status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
@@ -79,7 +44,7 @@ class TopupTransactionView(viewsets.ModelViewSet):
         responses={200: modelVASerializer},
     )
     def simulate_payment_va(self, request, reference_id):
-        serializer = modelVASerializer(data=request.data)
+        serializer = modelVASerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             user = request.user
             userVa = UserVA.objects.filter(user=user).first()

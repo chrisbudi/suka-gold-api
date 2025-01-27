@@ -2,8 +2,7 @@ from django.conf import settings
 
 from django.db import models
 from pytz import timezone
-from core.domain.gold import gold
-from core.domain.bank import bank
+from core.domain import bank
 from core.fields.uuidv7_field import UUIDv7Field
 
 
@@ -31,6 +30,8 @@ class topup_transaction(models.Model):
         null=True,
         blank=True,
     )
+
+    topup_payment_bank_name = models.CharField(max_length=255, null=True, blank=True)
     # id
     topup_payment_number = models.CharField(max_length=255)
 
