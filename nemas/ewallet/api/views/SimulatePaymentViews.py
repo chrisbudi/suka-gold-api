@@ -11,6 +11,9 @@ from ewallet.api.serializers import (
 )
 
 
+@extend_schema(
+    tags=["Topup - Topup Transaction Create"],
+)
 class SimulatePaymentView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
