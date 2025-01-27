@@ -4,3 +4,4 @@
 .idea
 .vscode
 .env
+nemas/api_errors.log
