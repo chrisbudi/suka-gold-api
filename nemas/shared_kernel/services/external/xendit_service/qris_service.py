@@ -36,12 +36,26 @@ class QRISPaymentService(XenditService):
         :return: Response from the API
         """
         try:
+            self.headers.pop("api-version", None)
+            print(
+                payload,
+                "payload",
+                self.headers,
+                "headers",
+                reference_id,
+                "reference_id",
+            )
+            print(self.base_url + f"qr_codes/{reference_id}/payments/simulate", "url")
             response = requests.post(
                 self.base_url + f"qr_codes/{reference_id}/payments/simulate",
                 headers=self.headers,
                 data=payload,
             )
 
+            if response.status_code != 200:
+                return response.json()
+
+            response.raise_for_status()
             return response.json()
         except Exception as e:
             raise Exception(f"Failed to simulate QRIS payment : {str(e)}")

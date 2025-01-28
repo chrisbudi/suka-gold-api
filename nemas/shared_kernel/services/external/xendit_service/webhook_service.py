@@ -3,9 +3,9 @@ from .xendit_services import XenditService
 
 
 # import xendit service class
-class QRISPaymentService(XenditService):
+class WebhookService(XenditService):
 
-    def qris_payment_generate(self, payload=None):
+    def payment(self, payload=None):
         """
         Generate QRIS payment using Xendit API.
 

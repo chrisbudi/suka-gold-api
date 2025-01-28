@@ -22,7 +22,7 @@ class SimulatePaymentView(viewsets.ModelViewSet):
         request=modelVASerializer,
         responses={200: modelVASerializer},
     )
-    def simulate_payment_qris(self, request, reference_id):
+    def simulate_payment_qris(self, request):
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -33,7 +33,7 @@ class SimulatePaymentView(viewsets.ModelViewSet):
         request=modelVASerializer,
         responses={200: modelVASerializer},
     )
-    def simulate_payment_va(self, request, reference_id):
+    def simulate_payment_va(self, request):
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
