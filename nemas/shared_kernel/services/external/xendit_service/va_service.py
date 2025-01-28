@@ -39,6 +39,7 @@ class VAPaymentService(XenditService):
         :return: Response from the API
         """
         try:
+            self.headers.pop("api-version", None)
             response = requests.post(
                 self.base_url
                 + f"callback_virtual_accounts/{reference_id}/simulate_payment",
