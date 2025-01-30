@@ -15,6 +15,7 @@ class GoldTransactionSerializer(serializers.ModelSerializer):
             "gold_transaction_id",
             "weight",
             "price",
+            # TODO: get data price per gram from price will be updated in the future
             "price_per_gram",
             "total_price",
             "purchase_date",
@@ -29,6 +30,8 @@ class GoldTransactionSerializer(serializers.ModelSerializer):
         validated_data["total_price"] = (
             validated_data["weight"] * validated_data["price"]
         )
+        # TODO: get data price per gram from price will be updated in the future
+        # validated_data["price_per_gram"] = validated_data["price"]
         validated_data["purchase_date"] = datetime.now()
         validated_data["user"] = self.context["request"].user
         return super().create(validated_data)

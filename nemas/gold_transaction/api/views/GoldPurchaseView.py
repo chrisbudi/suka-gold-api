@@ -33,7 +33,8 @@ class GoldPurchaseListCreateAPIView(viewsets.ModelViewSet):
         queryset = gold_transaction.objects.filter(user=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        return response.Response(paginated_queryset)
+        serializer = GoldTransactionSerializer(paginated_queryset, many=True)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         summary="Create Gold Purchase",
