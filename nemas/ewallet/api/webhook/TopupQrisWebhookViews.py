@@ -24,7 +24,7 @@ class TopupQrisWebhookView(viewsets.ModelViewSet):
     )
     def post(self, request, *args, **kwargs):
         # Verify API Key
-        WEBHOOK_TOKEN = settings.XENDIT.get("WEBHOOK_TOKEN")
+        WEBHOOK_TOKEN = settings.XENDIT.get("WEBHOOK_KEY")
         api_key = request.headers.get(
             "x-callback-token"
         )  # Adjust based on actual header
