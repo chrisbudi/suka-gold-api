@@ -1,3 +1,4 @@
+import email
 import os
 from django import template
 from django.core.mail import send_mail
@@ -19,22 +20,21 @@ def send_reset_password_email(
     template_path = os.path.join(
         settings.BASE_DIR, "app", "templates", "email", "user", template_file
     )
-    print(template_path, template_file, reset_link)
     with open(template_path, "r") as template_file:
         email_body = template_file.read()
 
     # Format the email body with the reset key
-    email_body = email_body.format(
-        user_name=user.name,
-        reset_link=reset_link,
+    email_body = email_body.replace("{user_name}", user.name).replace(
+        "{reset_link}", f'<a href="{reset_link}">{reset_link}</a>'
     )
 
     # Send the email
     send_mail(
         subject=f"{email_type} Reset Request",
-        message=email_body,
+        message="",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email] if user.email else [],
+        html_message=email_body,
     )
 
 
@@ -42,7 +42,9 @@ def send_reset_password_email(
 def send_reset_password_email_done(sender, user: user, email_type: str, **kwargs):
     # Load email template
     print(email_type, "email type")
-    template_file = "reset_pin_done.txt" if type == "PIN" else "reset_pin_done.txt"
+    template_file = (
+        "reset_pin_done.txt" if email_type == "PIN" else "reset_pin_done.txt"
+    )
 
     template_path = os.path.join(
         settings.BASE_DIR,
