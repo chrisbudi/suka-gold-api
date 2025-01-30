@@ -4,6 +4,7 @@ URL mapping for ewallet app
 
 from django.urls import path
 from .views import TopupTransactionView, SimulatePaymentViews
+from .webhook import TopupQrisWebhookViews
 
 app_name = "ewallet"
 
@@ -34,5 +35,10 @@ urlpatterns = [
             {"post": "simulate_payment_va"}
         ),
         name="simulate_payment_va",
+    ),
+    path(
+        "webhook/qris/",
+        TopupQrisWebhookViews.TopupQrisWebhookView.as_view({"post": "post"}),
+        name="webhook_qris",
     ),
 ]

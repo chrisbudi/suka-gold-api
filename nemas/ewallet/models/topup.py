@@ -4,6 +4,7 @@ from django.db import models
 from pytz import timezone
 from core.domain import bank
 from core.fields.uuidv7_field import UUIDv7Field
+from core import payment
 
 
 # Create your models here.
@@ -66,3 +67,43 @@ class topup_transaction(models.Model):
 
     def __str__(self):
         return f"TOPUP Transaction {self.topup_transaction_id} - Type:"
+
+
+class topup_va_webhook(models.Model):
+    payment_id = models.CharField(max_length=255, unique=True)
+    account_number = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    external_id = models.CharField(max_length=255)
+    bank_code = models.CharField(max_length=50)
+    transaction_time = models.DateTimeField(null=True)
+    raw_data = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.payment_id} - {self.amount}"
+
+
+class topup_qris_webhook(models.Model):
+    STATUS_CHOICES = (
+        ("PENDING", "PENDING"),
+        ("SUCCESS", "SUCCESS"),
+        ("FAILED", "FAILED"),
+    )
+
+    event_type = models.CharField(max_length=50)
+    payment_id = models.CharField(max_length=255, unique=True)
+    business_id = models.CharField(max_length=255)
+    currency = models.CharField(max_length=3)
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    qr_id = models.CharField(max_length=255)
+    reference_id = models.CharField(max_length=255)
+    channel_code = models.CharField(max_length=50)
+    expires_at = models.DateTimeField()
+    metadata = models.JSONField(default=dict)
+    payment_detail = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    raw_data = models.JSONField()
+
+    def __str__(self):
+        return f"{self.payment_id} - {self.amount} {self.currency}"
