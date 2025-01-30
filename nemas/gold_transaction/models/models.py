@@ -1,14 +1,41 @@
+from decimal import Decimal
 from django.conf import settings
 
 from django.db import models
-from core.domain.gold import gold
 from core.fields.uuidv7_field import UUIDv7Field
 
 
 # Create your models here.
 # buy, sell, buyback, sellback, transfer
 class gold_transaction(models.Model):
+    STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Completed", "Completed"),
+        ("Cancelled", "Cancelled"),
+    ]
+
     gold_transaction_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
+    weight = models.DecimalField(
+        max_digits=8,
+        decimal_places=4,
+    )
+    price = models.DecimalField(max_digits=16, decimal_places=2, default=Decimal(0))
+    price_per_gram = models.DecimalField(
+        max_digits=16, decimal_places=2, default=Decimal(0)
+    )
+    total_price = models.DecimalField(
+        max_digits=16, decimal_places=2, default=Decimal(0)
+    )
+    purchase_date = models.DateTimeField(auto_created=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    status = models.CharField(
+        max_length=50, choices=STATUS_CHOICES, default="Completed"
+    )
 
     def __str__(self):
         return f"Gold Transaction {self.gold_transaction_id} - Type:"

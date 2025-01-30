@@ -37,14 +37,6 @@ class QRISPaymentService(XenditService):
         """
         try:
             self.headers.pop("api-version", None)
-            print(
-                payload,
-                "payload",
-                self.headers,
-                "headers",
-                reference_id,
-                "reference_id",
-            )
             print(self.base_url + f"qr_codes/{reference_id}/payments/simulate", "url")
             response = requests.post(
                 self.base_url + f"qr_codes/{reference_id}/payments/simulate",

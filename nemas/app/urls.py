@@ -28,6 +28,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from user.api import urls as userUrl
 from core import urls as coreUrl
 from ewallet.api import urls as ewalletUrl
+from gold_transaction.api import urls as goldUrl
 
 authentication_classes = [JWTAuthentication]
 
@@ -66,6 +67,7 @@ urlpatterns = [
     path("api/users/", include(userUrl), name="user"),
     path("api/core/", include(coreUrl)),
     path("api/ewallet/", include(ewalletUrl)),
+    path("api/gold-transaction/", include(goldUrl)),
 ]
 
 # urlpatterns = [
