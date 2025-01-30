@@ -164,14 +164,13 @@ USE_I18N = True
 USE_TZ = True
 
 HTTPCACHE_ENABLED = False
-
 if USE_HTTPS:
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
         "handlers": {
             "file": {
-                "level": "ERROR",
+                "level": "INFO",
                 "class": "logging.FileHandler",
                 "filename": "api_errors.log",
             },
@@ -179,7 +178,7 @@ if USE_HTTPS:
         "loggers": {
             "django": {
                 "handlers": ["file"],
-                "level": "ERROR",
+                "level": "INFO",
                 "propagate": True,
             },
         },
