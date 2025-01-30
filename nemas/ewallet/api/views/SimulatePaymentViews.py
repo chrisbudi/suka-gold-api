@@ -23,10 +23,11 @@ class SimulatePaymentView(viewsets.ModelViewSet):
         responses={200: modelVASerializer},
     )
     def simulate_payment_qris(self, request):
+        print(request.data, "request.data")
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(

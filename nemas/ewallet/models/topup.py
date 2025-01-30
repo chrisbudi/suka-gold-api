@@ -4,7 +4,7 @@ from django.db import models
 from pytz import timezone
 from core.domain import bank
 from core.fields.uuidv7_field import UUIDv7Field
-from core import payment
+from user.models import user_props
 
 
 # Create your models here.
@@ -17,7 +17,6 @@ class topup_transaction(models.Model):
         on_delete=models.CASCADE,
     )
     create_date = models.DateTimeField(auto_now_add=True)
-
     topup_payment_method = models.CharField(max_length=255)
 
     topup_timestamp = models.DateTimeField(auto_now_add=True)
@@ -66,6 +65,17 @@ class topup_transaction(models.Model):
         app_label = "ewallet"
 
     def __str__(self):
+        return f"TOPUP Transaction {self.topup_transaction_id} - Type:"
+
+    def update_status(self, topup_status):
+        self.topup_status = topup_status
+        self.save()
+
+        print(self.topup_payment_method, "topup_payment_method")
+        user = user_props.objects.get(user=self.user)
+        print(user, "user")
+        user.update_balance(self.topup_amount)
+        print("update balance")
         return f"TOPUP Transaction {self.topup_transaction_id} - Type:"
 
 

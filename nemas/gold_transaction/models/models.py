@@ -3,6 +3,7 @@ from django.conf import settings
 
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
+from user.models.users import user_props
 
 
 # Create your models here.
@@ -39,6 +40,24 @@ class gold_transaction(models.Model):
 
     def __str__(self):
         return f"Gold Transaction {self.gold_transaction_id} - Type:"
+
+    def update_status(self, status: str):
+        self.status = status
+        self.save()
+
+    def save(self, *args, **kwargs):
+        super(gold_transaction, self).save(*args, **kwargs)
+        self.purchase_gold()
+
+    def validate_balance(self, amount: Decimal):
+        userProps = user_props.objects.get(user=self.user)
+        if userProps.wallet_amt < amount:
+            raise ValueError("Insufficient balance")
+
+    def purchase_gold(self):
+        userProps = user_props.objects.get(user=self.user)
+        userProps.update_balance(self.total_price * -1)
+        userProps.update_gold_amt(self.weight)
 
 
 class gold_transfer(models.Model):

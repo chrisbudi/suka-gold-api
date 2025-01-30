@@ -17,6 +17,8 @@ from core.fields.uuidv7_field import UUIDv7Field
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from decimal import Decimal
+
 
 # Create your models here.
 class user_manager(BaseUserManager):
@@ -30,7 +32,7 @@ class user_manager(BaseUserManager):
         phone_number=None,
         password=None,
         name=None,
-        **extra_fields
+        **extra_fields,
     ):
         """Create and return a new user"""
         if not email and not phone_number:
@@ -41,7 +43,7 @@ class user_manager(BaseUserManager):
             email=self.normalize_email(email),
             phone_number=phone_number,
             name=name,
-            **extra_fields
+            **extra_fields,
         )
         user.set_password(password)
         user.create_time = datetime.now()
@@ -76,7 +78,7 @@ class user_manager(BaseUserManager):
         phone_number=None,
         password=None,
         name=None,
-        **extra_fields
+        **extra_fields,
     ):
         """Create and return a new user"""
         user = self.create_user(
@@ -185,6 +187,22 @@ class user_props(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_user = models.CharField(max_length=255)
     update_time = models.DateTimeField(auto_now=True)
+
+    def update_balance(self, amount: Decimal):
+        print(f"amount: {amount}")
+        self.wallet_amt += Decimal(amount)
+        print(f"wallet_amt: {self.wallet_amt}")
+        self.save()
+
+    def update_gold_amt(self, weight: Decimal):
+        self.gold_wgt += Decimal(weight)
+        self.save()
+
+    def validate_balance(self, amount: Decimal):
+        userProps = user_props.objects.get(user=self.user)
+        if userProps.wallet_amt < amount:
+            return False
+        return True
 
 
 class user_virtual_account(models.Model):
