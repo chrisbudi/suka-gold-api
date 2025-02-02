@@ -8,7 +8,7 @@ from .SimulatePaymentSerializer import (
     SimulatedPaymentQrisSerializer,
 )
 
-from .TopupWebhookQrisSerializer import (
+from .WebhookTopupQrisSerializer import (
     PaymentDetailSerializer,
     TopupWebhookSerializer,
     QRISPaymentSerializer,

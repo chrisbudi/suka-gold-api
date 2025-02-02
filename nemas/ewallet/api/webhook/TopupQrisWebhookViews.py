@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from ewallet.models import topup_qris_webhook
-from ewallet.api.serializers.TopupWebhookQrisSerializer import TopupWebhookSerializer
+from ewallet.api.serializers.WebhookTopupQrisSerializer import (
+    TopupWebhookSerializer,
+)
 from django.views import View
 from django.utils.decorators import method_decorator
 from drf_spectacular.utils import extend_schema

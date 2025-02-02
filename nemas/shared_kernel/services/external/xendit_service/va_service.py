@@ -13,6 +13,7 @@ class VAPaymentService(XenditService):
         :return: Response from the API
         """
         try:
+            print(payload, "payload", self.headers)
             response = requests.post(
                 self.base_url + "callback_virtual_accounts",
                 headers=self.headers,
@@ -42,7 +43,7 @@ class VAPaymentService(XenditService):
             self.headers.pop("api-version", None)
             response = requests.post(
                 self.base_url
-                + f"callback_virtual_accounts/{reference_id}/simulate_payment",
+                + f"callback_virtual_accounts/external_id={reference_id}/simulate_payment",
                 headers=self.headers,
                 data=payload,
             )

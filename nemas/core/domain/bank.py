@@ -10,10 +10,13 @@ class bank(models.Model):
     bank_logo_url = models.CharField(max_length=255, blank=True, null=True)
     bank_active = models.BooleanField(default=True)
 
-    bank_closed_va_code = models.CharField(max_length=50, blank=True, null=True)
-    bank_open_va_code = models.CharField(max_length=50, blank=True, null=True)
-    bank_va_range_start = models.CharField(max_length=50, blank=True, null=True)
-    bank_va_range_end = models.CharField(max_length=50, blank=True, null=True)
+    bank_closed_va_code = models.CharField(max_length=20, blank=True, null=True)
+    bank_open_va_code = models.CharField(max_length=20, blank=True, null=True)
+
+    bank_create_code_va = models.CharField(max_length=20, blank=True, null=True)
+
+    bank_va_range_start = models.CharField(max_length=20, blank=True, null=True)
+    bank_va_range_end = models.CharField(max_length=20, blank=True, null=True)
 
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=255)
@@ -32,7 +35,7 @@ class bank(models.Model):
             start = int(self.bank_va_range_start)
             end = int(self.bank_va_range_end)
             if start <= end:
-                return str(random.randint(start, end))
+                return f"{random.randint(start, end):06d}"
             else:
                 raise ValueError("Invalid VA range: start is greater than end")
         else:

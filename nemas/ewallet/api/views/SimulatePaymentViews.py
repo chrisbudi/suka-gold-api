@@ -19,11 +19,10 @@ class SimulatePaymentView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     @extend_schema(
-        request=modelVASerializer,
+        request=modelqrisSerializer,
         responses={200: modelVASerializer},
     )
     def simulate_payment_qris(self, request):
-        print(request.data, "request.data")
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -35,7 +34,7 @@ class SimulatePaymentView(viewsets.ModelViewSet):
         responses={200: modelVASerializer},
     )
     def simulate_payment_va(self, request):
-        serializer = modelqrisSerializer(data=request.data)
+        serializer = modelVASerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({}, status=status.HTTP_200_OK)

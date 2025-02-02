@@ -63,12 +63,10 @@ class SimulatedPaymentVaSerializer(serializers.Serializer):
     def create(self, validated_data):
         amount = validated_data["amount"]
         reference_id = validated_data["reference_id"]
-        print(amount, "amount", reference_id, "reference_id")
-        print(validated_data, "validated_data")
         try:
             va_service = VAPaymentService()
             payload = {
-                "amount": amount,
+                "amount": float(amount),
             }
             payload_json = json.dumps(payload)
             response = va_service.va_payment_simulate(reference_id, payload_json)

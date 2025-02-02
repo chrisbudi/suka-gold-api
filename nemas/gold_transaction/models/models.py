@@ -49,11 +49,6 @@ class gold_transaction(models.Model):
         super(gold_transaction, self).save(*args, **kwargs)
         self.purchase_gold()
 
-    def validate_balance(self, amount: Decimal):
-        userProps = user_props.objects.get(user=self.user)
-        if userProps.wallet_amt < amount:
-            raise ValueError("Insufficient balance")
-
     def purchase_gold(self):
         userProps = user_props.objects.get(user=self.user)
         userProps.update_balance(self.total_price * -1)

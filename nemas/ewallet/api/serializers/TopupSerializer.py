@@ -30,6 +30,19 @@ class TopupVASerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Total amount must equal the sum of admin fees and top-up amount."
             )
+
+        # check if va is still in pending phased or not
+        user = self.context["request"].user
+        userVa = UserVa.objects.filter(user=user).first()
+        if (
+            userVa
+            and topup_transaction.objects.filter(
+                topup_payment_number=userVa.va_number, topup_status="PENDING"
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Please wait until your Va transaction is done."
+            )
         return data
 
     def create(self, validated_data, **kwargs):
@@ -51,7 +64,7 @@ class TopupVASerializer(serializers.ModelSerializer):
             "virtual_account_number": (
                 userVa.va_number.removeprefix(userVa.merchant_code)
                 if userVa
-                else coreBank.generate_va()
+                else str(coreBank.bank_create_code_va) + coreBank.generate_va()
             ),
             "is_closed": True,
             "is_single_use": True,
@@ -63,7 +76,6 @@ class TopupVASerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Failed to process VA payment.")
 
         if not userVa:
-            print("start userva", virtual_account.get("account_number"))
             userVa = UserVa.objects.create(
                 user=user,
                 bank=bank_code,
@@ -72,8 +84,6 @@ class TopupVASerializer(serializers.ModelSerializer):
                 ),
                 merchant_code=virtual_account.get("merchant_code"),
             )
-            print(userVa, "userVa")
-            userVa.save()
 
         validated_data["topup_payment_method"] = "VA"
         validated_data["topup_payment_channel_code"] = virtual_account.get(
@@ -94,6 +104,7 @@ class TopupVASerializer(serializers.ModelSerializer):
 
 
 class TopupQrisSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = topup_transaction
         fields = [
