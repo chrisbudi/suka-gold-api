@@ -1,7 +1,7 @@
 from os import read
 from attr import validate
 from rest_framework import serializers
-from ewallet.models import topup_transaction
+from wallet.models import topup_transaction
 from shared_kernel.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,

@@ -4,8 +4,8 @@ from venv import logger
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from ewallet.models import topup_qris_webhook
-from ewallet.api.serializers.WebhookTopupQrisSerializer import (
+from wallet.models import topup_qris_webhook
+from wallet.api.serializers.WebhookTopupQrisSerializer import (
     TopupWebhookSerializer,
 )
 from django.views import View

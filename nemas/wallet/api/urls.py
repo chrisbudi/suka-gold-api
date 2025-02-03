@@ -1,14 +1,14 @@
 """
-URL mapping for ewallet app
+URL mapping for wallet app
 """
 
 from django.urls import path
 from .views import TopupTransactionView, SimulatePaymentViews
 from .webhook import TopupQrisWebhookViews
 
-app_name = "ewallet"
+app_name = "wallet"
 
-ewallet_view_url = []
+wallet_view_url = []
 
 
 urlpatterns = [

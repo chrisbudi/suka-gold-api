@@ -6,7 +6,7 @@ from shared_kernel.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )
-from ewallet.models import topup_transaction
+from wallet.models import topup_transaction
 
 
 class SimulatedPaymentQrisSerializer(serializers.Serializer):

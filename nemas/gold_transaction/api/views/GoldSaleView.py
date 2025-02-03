@@ -5,42 +5,42 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
-from gold_transaction.models import gold_saving_buy
+from gold_transaction.models import gold_saving_sell
 from gold_transaction.api.serializers import (
-    GoldTransactionBuySerializer,
-    GoldTransactionBuyFilter,
+    GoldTransactionSellSerializer,
+    GoldTransactionSellFilter,
 )
 
 
 @extend_schema(
-    tags=["gold transaction - Gold Purchase"],
+    tags=["gold transaction - Gold Sale "],
 )
-class GoldPurchaseListCreateAPIView(viewsets.ModelViewSet):
-    queryset = gold_saving_buy.objects.all()  # Use the model class directly
-    serializer_class = GoldTransactionBuySerializer
+class GoldSaleListCreateAPIView(viewsets.ModelViewSet):
+    queryset = gold_saving_sell.objects.all()  # Use the model class directly
+    serializer_class = GoldTransactionSellSerializer
     authentication_classes = [JWTAuthentication]
-    filterset_class = GoldTransactionBuyFilter
+    filterset_class = GoldTransactionSellFilter
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     pagination_class = pagination.LimitOffsetPagination
     search_fields = ["transaction_date", "weight", "price_per_gram", "total_price"]
 
     @extend_schema(
-        summary="List Gold Purchases",
-        description="Retrieve a list of gold purchases for the authenticated user.",
-        responses={200: GoldTransactionBuySerializer},
+        summary="List Gold Sales",
+        description="Retrieve a list of gold Sales for the authenticated user.",
+        responses={200: GoldTransactionSellSerializer},
     )
     def list(self, request):
-        queryset = gold_saving_buy.objects.filter(user=request.user)
+        queryset = gold_saving_sell.objects.filter(user=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = GoldTransactionBuySerializer(paginated_queryset, many=True)
+        serializer = GoldTransactionSellSerializer(paginated_queryset, many=True)
         return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        summary="Create Gold Purchase",
-        description="Create a gold purchase for the authenticated user.",
-        request=GoldTransactionBuySerializer,
-        responses={201: GoldTransactionBuySerializer},
+        summary="Create Gold Sale",
+        description="Create a gold Sale for the authenticated user.",
+        request=GoldTransactionSellSerializer,
+        responses={201: GoldTransactionSellSerializer},
     )
     def perform_create(self, request):
         serializer = self.get_serializer(

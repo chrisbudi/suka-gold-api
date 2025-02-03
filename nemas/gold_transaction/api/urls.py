@@ -1,14 +1,14 @@
 """
-URL mapping for ewallet app
+URL mapping for wallet app
 """
 
 from django.urls import path
 from gold_transaction.api import views
 
-app_name = "ewallet"
+app_name = "wallet"
 
 
-ewallet_view_url = []
+wallet_view_url = []
 
 
 urlpatterns = [
@@ -21,6 +21,16 @@ urlpatterns = [
         "gold-purchases/create",
         views.GoldPurchaseListCreateAPIView.as_view({"post": "perform_create"}),
         name="gold-purchase-create",
+    ),
+    path(
+        "gold-sales/",
+        views.GoldSaleListCreateAPIView.as_view({"get": "list"}),
+        name="gold-sale-list",
+    ),
+    path(
+        "gold-sales/create",
+        views.GoldSaleListCreateAPIView.as_view({"post": "perform_create"}),
+        name="gold-sale-create",
     ),
     # path(
     #     "gold-purchases/<str:pk>/",

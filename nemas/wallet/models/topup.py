@@ -7,11 +7,8 @@ from core.fields.uuidv7_field import UUIDv7Field
 from user.models import user_props
 
 
-# Create your models here.
-# buy, sell, buyback, sellback, transfer
 class topup_transaction(models.Model):
     topup_transaction_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -60,9 +57,6 @@ class topup_transaction(models.Model):
             self.update_user = user.username
             self.update_user_id = user.id
         super().save(*args, **kwargs)
-
-    class Meta:
-        app_label = "ewallet"
 
     def __str__(self):
         return f"TOPUP Transaction {self.topup_transaction_id} - Type:"

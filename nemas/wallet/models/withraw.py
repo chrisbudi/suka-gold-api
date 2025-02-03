@@ -25,7 +25,7 @@ class withraw_transaction(models.Model):
     topup_status = models.CharField(max_length=255)
 
     class meta:
-        app_label = "ewallet"
+        app_label = "wallet"
 
     def __str__(self):
         return f"TOPUP Transaction {self.topup_transaction_id} - Type:"

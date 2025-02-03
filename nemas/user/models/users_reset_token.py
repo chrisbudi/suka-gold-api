@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.utils.timezone import now, timedelta
-from .users import user
+from django.conf import settings
 
 from user.signals import (
     email_user_reset_token_done,
@@ -11,11 +11,9 @@ from user.signals import (
 
 class user_reset_token(models.Model):
     user = models.ForeignKey(
-        user, on_delete=models.CASCADE, related_name="reset_tokens"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reset_tokens"
     )
-    token = models.UUIDField(
-        default=uuid.uuid4, primary_key=True, unique=True, editable=False
-    )
+    token = models.UUIDField(primary_key=True, unique=True, editable=False)
     TYPE_CHOICES = [
         ("reset_password", "Reset Password"),
         ("reset_pin", "Reset PIN"),

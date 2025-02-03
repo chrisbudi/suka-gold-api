@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ewallet.models import topup_qris_webhook
+from wallet.models import topup_qris_webhook
 from datetime import datetime
 
 

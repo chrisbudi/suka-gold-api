@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "core",
     "user",
-    "ewallet",
+    "wallet",
     "gold_transaction",
     "investment",
     "loan",
