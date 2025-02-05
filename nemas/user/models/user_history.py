@@ -38,27 +38,3 @@ class user_wallet_history(models.Model):
         return (
             f"{self.user} - {self.wallet_history_date} - {self.wallet_history_amount}"
         )
-
-
-class user_transfer_history(models.Model):
-    id = UUIDv7Field(primary_key=True, editable=False)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="transfer_user",
-    )
-    trf_user_from_name = models.CharField(max_length=255)
-    trf_history_date = models.DateTimeField(auto_now_add=True)
-    trf_history_amount = models.DecimalField(max_digits=8, decimal_places=4)
-    trf_user_to_id = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="transfer_from",
-    )
-    trf_user_to_name = models.CharField(max_length=255)
-    trf_ref_number = models.CharField(max_length=255)
-    trf_history_notes = models.CharField(max_length=255)
-    trf_type = models.CharField(max_length=1)
-
-    def __str__(self):
-        return f"{self.user} "

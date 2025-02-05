@@ -204,6 +204,12 @@ class user_props(models.Model):
             return False
         return True
 
+    def validate_weight(self, weight: Decimal):
+        userProps = user_props.objects.get(user=self.user)
+        if userProps.gold_wgt < weight:
+            return False
+        return True
+
 
 class user_virtual_account(models.Model):
     user = models.OneToOneField(

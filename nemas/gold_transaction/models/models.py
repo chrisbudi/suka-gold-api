@@ -49,12 +49,12 @@ class gold_saving_sell(models.Model):
 
     def save(self, *args, **kwargs):
         super(gold_saving_sell, self).save(*args, **kwargs)
-        self.purchase_gold()
+        self.sell_gold()
 
-    def purchase_gold(self):
+    def sell_gold(self):
         userProps = user_props.objects.get(user=self.user)
-        userProps.update_balance(self.total_price * -1)
-        userProps.update_gold_amt(self.weight)
+        userProps.update_balance(self.total_price)
+        userProps.update_gold_amt(self.weight * -1)
 
 
 # Create your models here.

@@ -43,7 +43,7 @@ class GoldSaleListCreateAPIView(viewsets.ModelViewSet):
         responses={201: GoldTransactionSellSerializer},
     )
     def perform_create(self, request):
-        serializer = self.get_serializer(
+        serializer = GoldTransactionSellSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
