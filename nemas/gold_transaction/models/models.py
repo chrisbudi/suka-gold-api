@@ -1,10 +1,8 @@
 from decimal import Decimal
-import decimal
 from django.conf import settings
 
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
-from user.models.users import user_props
 
 
 class gold_saving_sell(models.Model):
@@ -46,15 +44,6 @@ class gold_saving_sell(models.Model):
     def update_status(self, status: str):
         self.status = status
         self.save()
-
-    def save(self, *args, **kwargs):
-        super(gold_saving_sell, self).save(*args, **kwargs)
-        self.sell_gold()
-
-    def sell_gold(self):
-        userProps = user_props.objects.get(user=self.user)
-        userProps.update_balance(self.total_price)
-        userProps.update_gold_amt(self.weight * -1)
 
 
 # Create your models here.
@@ -100,15 +89,6 @@ class gold_saving_buy(models.Model):
         self.status = status
         self.save()
 
-    def save(self, *args, **kwargs):
-        super(gold_saving_buy, self).save(*args, **kwargs)
-        self.purchase_gold()
-
-    def purchase_gold(self):
-        userProps = user_props.objects.get(user=self.user)
-        userProps.update_balance(self.total_price * -1)
-        userProps.update_gold_amt(self.weight)
-
 
 class gold_transfer(models.Model):
     gold_transfer_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
@@ -138,10 +118,3 @@ class gold_buy(models.Model):
 
     def __str__(self):
         return f"Gold Buy {self.gold_buy_id} - Type"
-
-
-class user_gold_history(models.Model):
-    user_gold_hitory_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-
-    def __str__(self):
-        return f"User Gold History {self.user_gold_hitory_id} "

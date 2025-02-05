@@ -1,7 +1,6 @@
 from .models import (
     gold_transfer,
     gold_buy,
-    user_gold_history,
     gold_saving_sell,
     gold_saving_buy,
 )

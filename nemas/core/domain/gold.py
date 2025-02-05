@@ -72,6 +72,9 @@ class gold_price(models.Model):
     def __str__(self):
         return f"Gold Price {self.gold_price_id} - Base: {self.gold_price_base}"
 
+    def get_active_price(self):
+        return gold_price.objects.filter(gold_price_active=True).first()
+
 
 class gold_price_source(models.Model):
     gold_price_source_id = UUIDv7Field(primary_key=True, unique=True, editable=False)

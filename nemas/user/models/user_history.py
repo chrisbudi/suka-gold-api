@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from core.fields.uuidv7_field import UUIDv7Field
 from django.conf import settings
 
@@ -20,6 +19,17 @@ class user_gold_history(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.gold_purchase_date} - {self.gold_history_amount}"
+
+    def user_gold_history(self, user):
+        return self.objects.filter(user=user)
+
+    def user_gold_history_by_date(self, user, start_date, end_date):
+        return self.objects.filter(
+            user=user, gold_purchase_date__range=[start_date, end_date]
+        )
+
+    def user_gold_history_by_type(self, user, gold_history_type):
+        return self.objects.filter(user=user, gold_history_type=gold_history_type)
 
 
 class user_wallet_history(models.Model):

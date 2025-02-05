@@ -54,7 +54,11 @@ class TopupVASerializer(serializers.ModelSerializer):
         # create va if va is not avail
         service = VAPaymentService()
         # Generate static VA
-
+        print(userVa, "user va")
+        print(
+            f"{str(coreBank.bank_create_code_va)}{userVa.va_number.removeprefix(userVa.merchant_code)}",
+            "print code",
+        )
         payload = {
             "external_id": f"va_generated_user_{user.id}_{str(uuid4())}",
             "bank_code": bank_code,
@@ -62,13 +66,14 @@ class TopupVASerializer(serializers.ModelSerializer):
             "expected_amount": float(validated_data["topup_total_amount"]),
             "expiration_date": (datetime.now() + timedelta(minutes=30)).isoformat(),
             "virtual_account_number": (
-                userVa.va_number.removeprefix(userVa.merchant_code)
+                f"{str(coreBank.bank_create_code_va)}{userVa.va_number.removeprefix(userVa.merchant_code)}"
                 if userVa
                 else str(coreBank.bank_create_code_va) + coreBank.generate_va()
             ),
             "is_closed": True,
             "is_single_use": True,
         }
+
         payload_json = json.dumps(payload)
         virtual_account = service.va_payment_generate(payload_json)
         print(virtual_account, "virtual_account")

@@ -1,9 +1,5 @@
-from datetime import timezone
-from enum import verify
-from math import exp
 from django.conf import settings
 
-from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -11,13 +7,14 @@ from django.contrib.auth.models import (
 )
 
 from django.db import models, transaction
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.contrib.auth.models import PermissionsMixin
 from core.domain.address import city
 from core.fields.uuidv7_field import UUIDv7Field
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from decimal import Decimal
+from user.models.user_history import user_wallet_history, user_gold_history
 
 
 # Create your models here.
@@ -193,6 +190,14 @@ class user_props(models.Model):
         self.wallet_amt += Decimal(amount)
         print(f"wallet_amt: {self.wallet_amt}")
         self.save()
+
+        # insert history user amount
+        user_wallet_history.objects.create(
+            user=self.user,
+            wallet_history_amount=amount,
+            wallet_history_type="C",
+            wallet_history_notes="Topup",
+        )
 
     def update_gold_amt(self, weight: Decimal):
         self.gold_wgt += Decimal(weight)
