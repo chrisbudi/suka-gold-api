@@ -32,6 +32,16 @@ urlpatterns = [
         views.GoldSaleListCreateAPIView.as_view({"post": "perform_create"}),
         name="gold-sale-create",
     ),
+    path(
+        "gold-transfer/",
+        views.GoldTransferListCreateAPIView.as_view({"get": "list"}),
+        name="gold-sale-list",
+    ),
+    path(
+        "gold-transfer/create",
+        views.GoldTransferListCreateAPIView.as_view({"post": "perform_create"}),
+        name="gold-sale-create",
+    ),
     # path(
     #     "gold-purchases/<str:pk>/",
     #     views.GoldPurchaseRetrieveUpdateDestroyAPIView.as_view(),

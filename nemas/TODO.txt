@@ -1,10 +1,10 @@
 2025-02-02 -- 2025-02-08
 1. finishing payment VA --> done
-1. finishing gold sell --> done
-2. transfer gold member
-3. pengecekan verify member
-4. payment qris
-5. recheck payment va
-6. Fix webhook
+2. finishing gold sell --> done
+3. transfer gold member 
+4. pengecekan verify member
+5. payment qris --> done
+6. recheck payment va --> done
 7. install domain
 8. install ssl
+9. Fix webhook (adjustment balance for stock and wallet) --> waiting for domain and ssl

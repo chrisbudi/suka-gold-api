@@ -54,11 +54,6 @@ class TopupVASerializer(serializers.ModelSerializer):
         # create va if va is not avail
         service = VAPaymentService()
         # Generate static VA
-        print(userVa, "user va")
-        print(
-            f"{str(coreBank.bank_create_code_va)}{userVa.va_number.removeprefix(userVa.merchant_code)}",
-            "print code",
-        )
         payload = {
             "external_id": f"va_generated_user_{user.id}_{str(uuid4())}",
             "bank_code": bank_code,
