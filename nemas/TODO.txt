@@ -7,4 +7,4 @@
 6. recheck payment va --> done
 7. install domain
 8. install ssl
-9. Fix webhook (adjustment balance for stock and wallet) --> waiting for domain and ssl
+9. Fix webhook (adjustment balance for stock and wallet tentang upload ) --> waiting for domain and ssl
