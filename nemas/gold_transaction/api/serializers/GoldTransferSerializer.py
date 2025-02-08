@@ -1,24 +1,22 @@
+from operator import truediv
+from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from gold_transaction.models import gold_transfer
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from datetime import datetime, timedelta
-from user.models import user_props
-
-User = get_user_model()
+from user.models import user_props, user
 
 
 class GoldTransferSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = gold_transfer
         fields = [
             "gold_transfer_id",
-            "user_to",
+            "phone_number",
             "transfer_member_gold_weight",
             "transfer_ref_number",
             "transfer_member_notes",
-            "transfer_member_datetime",
         ]
         read_only_fields = ["gold_transfer_id"]
 
@@ -27,7 +25,7 @@ class GoldTransferSerializer(serializers.ModelSerializer):
 
         if not user_props.objects.get(
             user=self.context["request"].user
-        ).validate_weight(attrs["price"]):
+        ).validate_weight(attrs["transfer_member_gold_weight"]):
             raise serializers.ValidationError("Balance is not enough")
         return super().validate(attrs)
 
@@ -37,7 +35,13 @@ class GoldTransferSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Calculate total price before saving
         validated_data["transfer_member_datetime"] = datetime.now()
-        validated_data["user"] = self.context["request"].user
+        validated_data["user_from"] = self.context["request"].user
+
+        # from user phone number to user
+        user_to = user.objects.get(phone_number=validated_data["phone_number"])
+        validated_data["user_to"] = user_to
+
+        # print(validated_data, "validated data")
         return super().create(validated_data)
 
 

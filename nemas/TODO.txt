@@ -8,3 +8,13 @@
 7. install domain
 8. install ssl
 9. Fix webhook (adjustment balance for stock and wallet tentang upload ) --> waiting for domain and ssl
+
+
+2025-02-08 -- 2025-02-15
+1. implement bcrpt passwpord hash
+2. install domain
+3. install ssl
+4. fix webhook qris
+5. fix webhook VA
+6. development pembelian barang fisik
+7. pencairan barang fisik

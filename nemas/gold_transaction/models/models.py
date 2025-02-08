@@ -97,6 +97,7 @@ class gold_transfer(models.Model):
         on_delete=models.CASCADE,
         related_name="gold_transfers_from",
     )
+    phone_number = models.CharField(max_length=255, blank=False, null=False)
     user_from_name = models.CharField(max_length=255)
     user_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,

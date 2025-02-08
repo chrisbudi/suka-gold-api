@@ -10,8 +10,8 @@ from wallet.models import topup_transaction
 
 
 class SimulatedPaymentQrisSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=9, decimal_places=2)
-    reference_id = serializers.CharField(max_length=254)
+    amount = serializers.DecimalField(max_digits=16, decimal_places=2)
+    reference_id = serializers.CharField(max_length=255)
 
     def validate(self, data):
         amount = data.get("amount")
@@ -48,7 +48,7 @@ class SimulatedPaymentQrisSerializer(serializers.Serializer):
 
 
 class SimulatedPaymentVaSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=16, decimal_places=2)
     reference_id = serializers.CharField(max_length=255)
 
     def validate(self, data):

@@ -13,7 +13,9 @@ class user_reset_token(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reset_tokens"
     )
-    token = models.UUIDField(primary_key=True, unique=True, editable=False)
+    token = models.UUIDField(
+        primary_key=True, unique=True, editable=False, default=uuid.uuid4
+    )
     TYPE_CHOICES = [
         ("reset_password", "Reset Password"),
         ("reset_pin", "Reset PIN"),
