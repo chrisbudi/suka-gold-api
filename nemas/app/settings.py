@@ -45,7 +45,7 @@ ALLOWED_HOSTS = [
     "172.18.0.1",
     "3.0.17.240",
     "18.138.179.185",
-    "nemas.id:8000",
+    "nemas.id",
 ]
 
 
@@ -95,7 +95,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://18.138.179.185:5005",
     "https://nemas-admin.vercel.app",
     "https://nemas.vercel.app",
-    "https://nemas.id:8000",
+    "https://nemas.id",
 ]
 
 
