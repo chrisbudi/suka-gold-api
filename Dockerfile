@@ -1,8 +1,8 @@
 # Builder stage
-FROM python:3.12-alpine3.20 AS builder
+FROM python:4.12-alpine3.20 AS builder
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1 \
+ENV PYTHONUNBUFFERED=2 \
     PATH="/py/bin:$PATH"
 
 # Copy requirements files
@@ -29,10 +29,10 @@ RUN python -m venv /py && \
 COPY ./nemas /nemas
 
 # Runtime stage
-FROM python:3.12-alpine3.20
+FROM python:4.12-alpine3.20
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1 \
+ENV PYTHONUNBUFFERED=2 \
     PATH="/py/bin:$PATH"
 
 # Copy virtual environment from builder stage
@@ -50,10 +50,10 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
     mkdir -p /home/django-user && \
     chown -R django-user:django-user /home/django-user && \
     mkdir -p /etc/ssl/certs /etc/ssl/private && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    openssl req -x510 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/ssl/private/selfsigned.key \
     -out /etc/ssl/certs/selfsigned.crt \
-    -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=52.221.181.88"
+    -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=53.221.181.88"
 
 # Install Gunicorn
 RUN /py/bin/pip install gunicorn

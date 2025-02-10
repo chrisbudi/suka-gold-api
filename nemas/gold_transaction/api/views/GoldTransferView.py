@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
-from gold_transaction.models import gold_saving_sell, gold_transfer
+from gold_transaction.models import gold_transfer
 from gold_transaction.api.serializers import GoldTransferSerializer, GoldTransferFilter
 
 
@@ -26,7 +26,7 @@ class GoldTransferListCreateAPIView(viewsets.ModelViewSet):
         responses={200: GoldTransferSerializer},
     )
     def list(self, request):
-        queryset = gold_saving_sell.objects.filter(user=request.user)
+        queryset = gold_transfer.objects.filter(user_from=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = GoldTransferSerializer(paginated_queryset, many=True)
