@@ -54,11 +54,9 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
 # Copy Let's Encrypt certificates
 
 # Copy Let's Encrypt certificates if HTTPS is true
-RUN if [ "$USE_HTTPS" = "true" ]; then \
-    mkdir -p /etc/ssl/certs /etc/ssl/private && \
-    cp /etc/letsencrypt/live/nemas.id/fullchain.pem /etc/ssl/certs/fullchain.pem && \
-    cp /etc/letsencrypt/live/nemas.id/privkey.pem /etc/ssl/private/privkey.pem; \
-    fi
+# RUN  mkdir -p /etc/ssl/certs /etc/ssl/private && \
+# sudo cp /etc/letsencrypt/live/nemas.id/fullchain.pem /etc/ssl/certs/fullchain.pem && \
+# sudo cp /etc/letsencrypt/live/nemas.id/privkey.pem /etc/ssl/private/privkey.pem; 
 
 # Install Gunicorn
 RUN /py/bin/pip install gunicorn
@@ -74,6 +72,7 @@ RUN sed -i 's/user nginx;/user django-user;/g' /etc/nginx/nginx.conf && \
 
 # Expose the HTTPS port for Nginx
 EXPOSE 8000
+EXPOSE 443
 
 # Start Nginx and Gunicorn with HTTPS
-CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/fullchain.pem --keyfile=/etc/ssl/private/privkey.pem --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]
+CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/letsencrypt/live/nemas.id/fullchain.pem --keyfile=/etc/letsencrypt/live/nemas.id/privkey.pem  --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]

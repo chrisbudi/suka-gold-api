@@ -12,6 +12,7 @@ services:
       - "443:443"
     volumes:
       - ./nemas:/nemas # Mount the local directory to the container
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     env_file:
       - .env
     depends_on:
