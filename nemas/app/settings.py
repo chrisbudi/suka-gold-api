@@ -29,7 +29,7 @@ DEBUG = True
 # <editor-fold desc="Description">
 USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() == "true"
 if USE_HTTPS:
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 else:
@@ -37,6 +37,9 @@ else:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
 # </editor-fold>
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 ALLOWED_HOSTS = [
     "52.221.181.88",
