@@ -21,7 +21,7 @@ services:
     command: >
       sh -c "python manage.py wait_for_db &&
             if [ \"$USE_HTTPS\" = \"true\" ]; then
-              nginx && gunicorn --certfile=/etc/ssl/certs/fullchain.pem --keyfile=/etc/ssl/private/privkey.pem --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application;
+              nginx && gunicorn --certfile=/etc/letsencrypt/live/nemas.id/fullchain.pem--keyfile=/etc/letsencrypt/live/nemas.id/privkey.pem --bind 0.0.0.0 --cert-reqs=0 app.wsgi:application;
             else
               python manage.py runserver 0.0.0.0:8000;
             fi"
