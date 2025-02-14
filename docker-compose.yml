@@ -6,26 +6,28 @@ services:
       context: .
       args:
         - DEV=true
-    image: chbudi9/nemasapp # Build the app image and tag it
-    ports:
-      - "8000:8000"
-      - "443:443"
+    image: chbudi9/nemasapp
     volumes:
-      - ./nemas:/nemas # Mount the local directory to the container
+      - ./nemas:/nemas
       - /etc/letsencrypt:/etc/letsencrypt:ro
     env_file:
       - .env
     depends_on:
       - redis
-    environment:
-      - USE_HTTPS=${USE_HTTPS:-false}
     command: >
       sh -c "python manage.py wait_for_db &&
-            if [ \"$USE_HTTPS\" = \"true\" ]; then
-              nginx && gunicorn --certfile=/etc/letsencrypt/live/nemas.id/fullchain.pem --keyfile=/etc/letsencrypt/live/nemas.id/privkey.pem --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application;
-            else
-              python manage.py runserver 0.0.0.0:8000;
-            fi"
+            gunicorn --bind 0.0.0.0:8000 app.wsgi:application"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - app
 
   redis:
     image: redis:alpine
