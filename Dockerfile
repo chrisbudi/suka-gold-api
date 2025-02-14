@@ -49,11 +49,16 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
     adduser --disabled-password --home /home/django-user --gecos "" django-user && \
     mkdir -p /home/django-user && \
     chown -R django-user:django-user /home/django-user && \
+    mkdir -p /etc/ssl/certs /etc/ssl/private
+
+# Copy Let's Encrypt certificates
+
+# Copy Let's Encrypt certificates if HTTPS is true
+RUN if [ "$USE_HTTPS" = "true" ]; then \
     mkdir -p /etc/ssl/certs /etc/ssl/private && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/selfsigned.key \
-    -out /etc/ssl/certs/selfsigned.crt \
-    -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=52.221.181.88"
+    cp /etc/letsencrypt/live/nemas.id/fullchain.pem /etc/ssl/certs/fullchain.pem && \
+    cp /etc/letsencrypt/live/nemas.id/privkey.pem /etc/ssl/private/privkey.pem; \
+    fi
 
 # Install Gunicorn
 RUN /py/bin/pip install gunicorn
@@ -71,4 +76,4 @@ RUN sed -i 's/user nginx;/user django-user;/g' /etc/nginx/nginx.conf && \
 EXPOSE 8000
 
 # Start Nginx and Gunicorn with HTTPS
-CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/selfsigned.crt --keyfile=/etc/ssl/private/selfsigned.key --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]
+CMD ["sh", "-c", "nginx && gunicorn --certfile=/etc/ssl/certs/fullchain.pem --keyfile=/etc/ssl/private/privkey.pem --bind 0.0.0.0:8000 --cert-reqs=0 app.wsgi:application"]
