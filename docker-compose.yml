@@ -9,6 +9,7 @@ services:
     image: chbudi9/nemasapp # Build the app image and tag it
     ports:
       - "8000:8000"
+      - "443:443"
     volumes:
       - ./nemas:/nemas # Mount the local directory to the container
     env_file:
