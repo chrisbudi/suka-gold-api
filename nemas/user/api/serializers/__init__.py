@@ -5,7 +5,7 @@ from .user_serializers import (
     UserPinVerifySerializer,
 )
 
-from .user_prop_serializer import UserPropSerializer
+from .user_prop_serializer import UserPropSerializer, UserPropBankSerializer
 
 from .user_ktp_serializer import UserKtpSerializer, UploadSerializer
 

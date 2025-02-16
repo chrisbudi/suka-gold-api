@@ -43,15 +43,15 @@ urlpatterns = [
     path("create/", CreateUserView.as_view(), name="create"),
     path("create/super_user/", CreateSuperUserView.as_view(), name="create_super_user"),
     path("me/", ManageUserView.as_view(), name="me"),
-    # path(
-    #     "user_prop/create/",
-    #     CreateUserPropView.as_view(),
-    #     name="user_prop_create",
-    # ),
     path(
         "user/prop/",
-        UserPropView.as_view(),
+        UserPropView.as_view({"get": "get"}),
         name="user_prop_retrieve",
+    ),
+    path(
+        "user/prop/bank/",
+        UserPropView.as_view({"post": "bank_submit"}),
+        name="user_prop_bank_submit",
     ),
     path(
         "user/ktp/",

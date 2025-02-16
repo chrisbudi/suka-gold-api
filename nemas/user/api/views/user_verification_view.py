@@ -151,8 +151,6 @@ class UserKtpView(views.APIView):
             user = modelInfo.objects.get(user=request.user)
         except modelInfo.DoesNotExist:
             return response.Response({"detail": "User KTP not found."}, status=404)
-
-        user_ktp_data = dict(UserKtpSerializer(user).data)
         return response.Response(
             UserKtpSerializer(user).data,
             status=status.HTTP_200_OK,
@@ -198,12 +196,9 @@ class CreateComparePhotoANDKtp(viewsets.ModelViewSet):
             verihub = verihub_services.VerihubService()
             image = image_services
             try:
-                print(request.user.id, "user id")
-
                 strImageKtp = image_services.get_file_from_temp_tobase64(
                     request.user.id
                 )
-                # print(imageKtp.read(), "imageKtp")
                 strImagePhoto = image.image_to_base64(file, request.user.id)
                 payload = {
                     "image_1": strImageKtp,

@@ -55,8 +55,9 @@ class user_manager(BaseUserManager):
             loan_wgt=0,
             loan_amt=0,
             photo="",
-            bank="",
-            rek_number="",
+            bank_account_code="",
+            bank_account_number="",
+            bank_account_holder_name="",
             level="",
             address="",
             address_post_code="",
@@ -174,8 +175,9 @@ class user_props(models.Model):
     loan_wgt = models.DecimalField(max_digits=10, decimal_places=4)
     loan_amt = models.DecimalField(max_digits=12, decimal_places=2)
     photo = models.CharField(max_length=255)
-    bank = models.CharField(max_length=255)
-    rek_number = models.CharField(max_length=255)
+    bank_account_code = models.CharField(max_length=255)
+    bank_account_number = models.CharField(max_length=255)
+    bank_account_holder_name = models.CharField(max_length=255)
     level = models.CharField(max_length=255)
     level_id = models.IntegerField(blank=True, null=True)
     address = models.CharField(max_length=255)
