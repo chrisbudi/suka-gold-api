@@ -18,5 +18,6 @@
 5. fix webhook VA -->
 6. development pembelian barang fisik -->
 7. pencairan barang fisik -->
-8. pencairan saldo --> On progress
+8. pencairan saldo --> Done 
+8.1 ubah user bank dan user bank number --> On progress
 9. perhitungan emas dan saldo terakhir untung atau rugi

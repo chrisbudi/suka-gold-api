@@ -14,14 +14,18 @@ services:
       - .env
     depends_on:
       - redis
-    command: >
+    command: |
       sh -c "python manage.py wait_for_db &&
-            gunicorn --bind 0.0.0.0:8000 app.wsgi:application"
+            if [ \"$USE_HTTPS\" = \"true\" ]; then
+              gunicorn --bind 0.0.0.0:8000 app.wsgi:application
+            else
+              python manage.py runserver 0.0.0.0:8000
+            fi"
 
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "8000:80"
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
