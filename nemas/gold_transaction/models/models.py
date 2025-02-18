@@ -112,10 +112,3 @@ class gold_transfer(models.Model):
 
     def __str__(self):
         return f"Gold Transfer {self.gold_transfer_id} - Type:"
-
-
-class gold_buy(models.Model):
-    gold_buy_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-
-    def __str__(self):
-        return f"Gold Buy {self.gold_buy_id} - Type"

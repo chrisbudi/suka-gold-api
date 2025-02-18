@@ -24,9 +24,8 @@ class user_reset_token(models.Model):
         max_length=100, choices=TYPE_CHOICES, default="reset_password"
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(
-        default=now() + timedelta(hours=24)
-    )  # Token valid for 24 hour
+
+    expires_at = models.DateTimeField()
 
     def is_valid(self):
         return now() < self.expires_at
@@ -46,3 +45,8 @@ class user_reset_token(models.Model):
         email_user_reset_token_done.send(
             sender=self.__class__, user=self.user, email_type=email_type
         )
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = now() + timedelta(days=1)
+        super().save(*args, **kwargs)

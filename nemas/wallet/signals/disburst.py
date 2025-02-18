@@ -18,7 +18,6 @@ def handle_disburst(
     created,
     **kwargs
 ):
-    print(created, "created", "gold saving buy")
     if created:
         with transaction.atomic():
             # update user props

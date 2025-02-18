@@ -29,6 +29,7 @@ from user.api import urls as userUrl
 from core import urls as coreUrl
 from wallet.api import urls as walletUrl
 from gold_transaction.api import urls as goldUrl
+from order.api import urls as orderUrl
 
 authentication_classes = [JWTAuthentication]
 
@@ -64,10 +65,11 @@ urlpatterns = [
         name="user-swagger-ui",
     ),
     # api user
-    path("api/users/", include(userUrl), name="user"),
-    path("api/core/", include(coreUrl)),
-    path("api/wallet/", include(walletUrl)),
-    path("api/gold-transaction/", include(goldUrl)),
+    path("api/users/", include(userUrl, "user"), name="user"),
+    path("api/core/", include(coreUrl, "core")),
+    path("api/wallet/", include(walletUrl, "wallet")),
+    path("api/gold-transaction/", include(goldUrl, "gold-transaction")),
+    path("api/order/", include(orderUrl, "order")),
 ]
 
 # urlpatterns = [

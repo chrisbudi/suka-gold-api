@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "user",
     "wallet",
     "gold_transaction",
+    "order",
     "investment",
     "loan",
 ]
