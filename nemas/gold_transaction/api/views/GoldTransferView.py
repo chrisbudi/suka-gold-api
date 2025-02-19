@@ -13,6 +13,9 @@ from gold_transaction.api.serializers import GoldTransferSerializer, GoldTransfe
     tags=["gold transaction - Gold Transfer"],
 )
 class GoldTransferListCreateAPIView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
     queryset = gold_transfer.objects.all()  # Use the model class directly
     serializer_class = GoldTransferSerializer
     authentication_classes = [JWTAuthentication]
@@ -30,7 +33,7 @@ class GoldTransferListCreateAPIView(viewsets.ModelViewSet):
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = GoldTransferSerializer(paginated_queryset, many=True)
-        return response.Response(serializer.data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
     @extend_schema(
         summary="Create Gold Transfer",

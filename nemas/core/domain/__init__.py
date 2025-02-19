@@ -30,3 +30,7 @@ from .infrormations import (
 from .gold_promo import (
     gold_promo,
 )
+
+from .delivery import (
+    delivery_partner,
+)
