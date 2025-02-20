@@ -1,11 +1,11 @@
 """
-URL mapping for wallet app
+URL mapping for cart app
 """
 
 from django.urls import path
-from gold_transaction.api import views
+from order.api import views
 
-app_name = "wallet"
+app_name = "order"
 
 
 wallet_view_url = []
@@ -13,38 +13,13 @@ wallet_view_url = []
 
 urlpatterns = [
     path(
-        "gold-purchases/",
-        views.GoldPurchaseListCreateAPIView.as_view({"get": "list"}),
-        name="gold-purchase-list",
+        "cart/",
+        views.CartItemListAPIView.as_view({"get": "list"}),
+        name="cart-list",
     ),
     path(
-        "gold-purchases/create",
-        views.GoldPurchaseListCreateAPIView.as_view({"post": "perform_create"}),
-        name="gold-purchase-create",
+        "cart/add/",
+        views.CartItemListAPIView.as_view({"post": "perform_create"}),
+        name="cart-add",
     ),
-    path(
-        "gold-sales/",
-        views.GoldSaleListCreateAPIView.as_view({"get": "list"}),
-        name="gold-sale-list",
-    ),
-    path(
-        "gold-sales/create",
-        views.GoldSaleListCreateAPIView.as_view({"post": "perform_create"}),
-        name="gold-sale-create",
-    ),
-    path(
-        "gold-transfer/",
-        views.GoldTransferListCreateAPIView.as_view({"get": "list"}),
-        name="gold-sale-list",
-    ),
-    path(
-        "gold-transfer/create",
-        views.GoldTransferListCreateAPIView.as_view({"post": "perform_create"}),
-        name="gold-sale-create",
-    ),
-    # path(
-    #     "gold-purchases/<str:pk>/",
-    #     views.GoldPurchaseRetrieveUpdateDestroyAPIView.as_view(),
-    #     name="gold-purchase-detail",
-    # ),
 ]

@@ -1,3 +1,4 @@
+from requests import Response
 from rest_framework import viewsets, filters, pagination, status, response
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
@@ -5,42 +6,43 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
-from gold_transaction.models import gold_saving_buy
-from gold_transaction.api.serializers import (
-    GoldTransactionBuySerializer,
-    GoldTransactionBuyFilter,
-)
+from order.models import order_cart_detail
+from order.api.serializers import OrderCartSerializer, AddToCartSerializer
 
 
 @extend_schema(
-    tags=["gold transaction - Gold Purchase"],
+    tags=["Order Cart - Add to Cart"],
 )
-class GoldPurchaseListCreateAPIView(viewsets.ModelViewSet):
-    queryset = gold_saving_buy.objects.all()  # Use the model class directly
-    serializer_class = GoldTransactionBuySerializer
+class CartItemListAPIView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-    filterset_class = GoldTransactionBuyFilter
+
+    serializer_class = AddToCartSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    pagination_class = pagination.LimitOffsetPagination
+    pagination_class = (
+        pagination.LimitOffsetPagination
+    )  # Adjust pagination class as needed
     search_fields = ["transaction_date", "weight", "price_per_gram", "total_price"]
 
     @extend_schema(
-        summary="List Gold Purchases",
+        summary="List Cart",
         description="Retrieve a list of gold purchases for the authenticated user.",
-        responses={200: GoldTransactionBuySerializer},
+        responses={200: AddToCartSerializer},
     )
     def list(self, request):
-        queryset = gold_saving_buy.objects.filter(user=request.user)
+        queryset = order_cart_detail.objects.filter(user_id=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = GoldTransactionBuySerializer(paginated_queryset, many=True)
-        return response.Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = AddToCartSerializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
+
+        # return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        summary="Create Gold Purchase",
+        summary="Create Cart",
         description="Create a gold purchase for the authenticated user.",
-        request=GoldTransactionBuySerializer,
-        responses={201: GoldTransactionBuySerializer},
+        request=AddToCartSerializer,
+        responses={201: AddToCartSerializer},
     )
     def perform_create(self, request):
         serializer = self.get_serializer(
