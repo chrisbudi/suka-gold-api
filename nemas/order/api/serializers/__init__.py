@@ -3,3 +3,4 @@ from .OrderCartSerializer import (
     OrderCartFilter,
     AddToCartSerializer,
 )
+from .OrderShippingSerializer import OrderShippingSerializer

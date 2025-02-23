@@ -36,3 +36,16 @@ class SapxService:
             return response_data.get("data", [])
         except Exception as e:
             raise Exception(f"Failed to get data: {str(e)}")
+
+    def get_price(self, payload=None):
+        """ """
+        try:
+            response = requests.post(
+                self.base_url + "v2/master/shipment_cost",
+                headers=self.headers,
+                json=payload,
+            )
+            response_data = response.json()
+            return response_data
+        except Exception as e:
+            raise Exception(f"Failed to get price: {str(e)}")
