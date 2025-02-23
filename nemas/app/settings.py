@@ -367,6 +367,10 @@ XENDIT = {
     "API_VERSION": os.getenv("XENDIT_API_VERSION"),
 }
 
+SAPX = {
+    "API_URL": os.getenv("SAPX_API_URL"),
+    "API_KEY": os.getenv("SAPX_API_KEY"),
+}
 
 # Email configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

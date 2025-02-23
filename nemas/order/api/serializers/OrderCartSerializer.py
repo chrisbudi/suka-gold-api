@@ -2,8 +2,6 @@ from rest_framework import serializers
 from order.models import order_cart, order_cart_detail
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
-from datetime import datetime, timedelta
-from user.models import user_props
 from core.domain.gold import gold as GoldModel
 
 User = get_user_model()

@@ -33,4 +33,6 @@ from .gold_promo import (
 
 from .delivery import (
     delivery_partner,
+    delivery_partner_district,
+    delivery_shipment_content,
 )
