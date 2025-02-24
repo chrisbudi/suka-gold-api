@@ -22,3 +22,5 @@ from .user_pin_view import (
     UserPinView,
 )
 from .user_reset_token_view import RequestResetView, ResetView
+
+from .user_address_view import UserAddressView

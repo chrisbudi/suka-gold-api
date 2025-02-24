@@ -18,6 +18,7 @@ from .views import (
     ResetView,
     RequestResetView,
     CreateComparePhotoANDKtp,
+    UserAddressView,
 )
 
 
@@ -81,6 +82,16 @@ urlpatterns = [
         "user/pin/verify/",
         UserPinView.as_view({"post": "verify"}),
         name="user-pin-verify",
+    ),
+    path(
+        "user/address/",
+        UserAddressView.as_view({"get": "get"}),
+        name="user-address-get",
+    ),
+    path(
+        "user/address/create",
+        UserAddressView.as_view({"post": "address_submit"}),
+        name="user-address-create",
     ),
     # path(
     #     "user_ktp/",

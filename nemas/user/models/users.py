@@ -246,6 +246,31 @@ class user_virtual_account(models.Model):
         super().save(*args, **kwargs)
 
 
+class user_address(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    address = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    district = models.CharField(max_length=255)
+    subdistrict = models.CharField(max_length=255)
+    postal_code = models.CharField(max_length=255)
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=255)
+    update_time = models.DateTimeField(auto_now=True)
+    update_user = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        if user:
+            if not self.pk:
+                self.create_user = user.username
+            self.update_user = user.username
+        super().save(*args, **kwargs)
+
+
 class user_ktp(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

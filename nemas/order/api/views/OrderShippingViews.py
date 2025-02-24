@@ -44,26 +44,27 @@ class OrderShippingAPIView(viewsets.ModelViewSet):
 
         # return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        summary="getPrice",
+        description="Get Shipping Price",
+        request=OrderShippingSerializer,
+        responses={200: OrderShippingSerializer},
+    )
     def get_price(self, request):
         """get price from sapx"""
         try:
-            serializer = OrderShippingSerializer(data=request.data)
+            serializer = OrderShippingSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
-                sapx_service = SapxService()
-                payload = {
-                    "origin": "DEV",
-                    "destination": "DEV",
-                    "weight": 1,
-                    "customer_code": "DEV000",
-                    "packing_type_code": "ACH05",
-                    "volumetric": "1x1x1",
-                    "insurance_type_code": "INS02",
-                    "item_value": serializer.data.get("amount"),
-                }
-                payload_data = json.dumps(payload)
+                serializer.save()
+                return response.Response(
+                    serializer.context.get("response"), status.HTTP_200_OK
+                )
+            return response.Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
-            response: Response = sapx_service.get_price(payload_data)
-            return response
         except Exception as e:
             raise Exception(f"Failed to get price: {str(e)}")
 
