@@ -21,12 +21,14 @@ class UserAddressView(ViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     @extend_schema(
-        tags=["User - User Address update"],
+        tags=["User - User address"],
     )
     def get(self, request):
         # get then
         try:
             user_props = user_address.objects.get(user=request.user)
+            if user_props is None:
+                return Response({}, status=404)
             user_props_data = dict(UserAddressSerializer(user_props).data)
             return Response(
                 {
@@ -39,13 +41,17 @@ class UserAddressView(ViewSet):
             return Response({}, status=404)
 
     @extend_schema(
-        tags=["User - User add address"],
+        tags=["User - User address"],
         request=UserAddressSerializer,
     )
     def address_submit(self, request):
         serialize = UserAddressSerializer(data=request.data)
         if serialize.is_valid():
-            address = user_address.objects.get(user=request.user)
+            address, _ = user_address.objects.get_or_create(user=request.user)
+            print(address, "address")
+            if address is None:
+                address = user_address()
+                address.user = request.user
             address.address = serialize.data["address"]
             address.city = serialize.data["city"]
             address.district = serialize.data["district"]
