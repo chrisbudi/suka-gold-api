@@ -59,5 +59,4 @@ class UserAddressView(ViewSet):
             address.postal_code = serialize.data["postal_code"]
             address.save()
             return Response(serialize.data, status=200)
-
         return Response(serialize.errors, status=400)

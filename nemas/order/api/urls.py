@@ -22,4 +22,19 @@ urlpatterns = [
         views.CartItemListAPIView.as_view({"post": "perform_create"}),
         name="cart-add",
     ),
+    path(
+        "cart/update/<uuid:pk>/",
+        views.CartItemListAPIView.as_view({"put": "update"}),
+        name="cart-update",
+    ),
+    path(
+        "cart/delete/<uuid:pk>/",
+        views.CartItemListAPIView.as_view({"delete": "destroy"}),
+        name="cart-delete",
+    ),
+    path(
+        "shipping/service/",
+        views.CartItemListAPIView.as_view({"post": "perform_create"}),
+        name="cart-add",
+    ),
 ]

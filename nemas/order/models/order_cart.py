@@ -6,6 +6,7 @@ from core.fields.uuidv7_field import UUIDv7Field
 from core.domain import gold
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 
 
 class order_cart(models.Model):
@@ -14,11 +15,12 @@ class order_cart(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-    cart_status = models.CharField(max_length=50)
     total_weight = models.DecimalField(max_digits=10, decimal_places=4)
     total_price = models.DecimalField(max_digits=16, decimal_places=2)
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
+
+    session_key = models.CharField(max_length=40, null=True, blank=True)
 
     def __str__(self):
         return f"Gold Transaction {self.order_cart_id} - Type:"
@@ -42,11 +44,15 @@ class order_cart_detail(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+    quantity = models.PositiveIntegerField(
+        default=1, validators=[MinValueValidator(1)]  # Ensures quantity ≥ 1
+    )
+    selected = models.BooleanField(default=False)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
     price = models.DecimalField(max_digits=16, decimal_places=2)
+    total_price = models.DecimalField(max_digits=16, decimal_places=2, editable=False)
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
-    session_key = models.CharField(max_length=40, null=True, blank=True)
 
     class Meta:
         unique_together = ["cart_id", "gold_id"]

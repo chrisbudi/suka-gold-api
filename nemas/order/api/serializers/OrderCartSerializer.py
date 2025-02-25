@@ -7,33 +7,6 @@ from core.domain.gold import gold as GoldModel
 User = get_user_model()
 
 
-class OrderCartSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = order_cart
-        fields = [
-            "user_id",
-            "cart_status",
-            "total_weight",
-            "total_price",
-        ]
-        read_only_fields = ["order_cart_id"]
-
-    def validate(self, attrs):
-        # validate balance is enough
-
-        # if not user_props.objects.get(
-        #     user=self.context["request"].user
-        # ).validate_balance(attrs["price"]):
-        #     raise serializers.ValidationError("Balance is not enough")
-        return super().validate(attrs)
-
-    def get_user_email(self, obj):
-        return obj.user.email
-
-    def create(self, validated_data):
-        return super().create(validated_data)
-
-
 class OrderCartFilter(filters.FilterSet):
     class Meta:
         model = order_cart
@@ -49,13 +22,11 @@ class GoldSerializer(serializers.ModelSerializer):
         fields = "__all__"  # Serialize all fields of the gold model
 
 
-class AddToCartSerializer(serializers.ModelSerializer):
+class OrderCartDetailSerializer(serializers.ModelSerializer):
     gold = GoldSerializer(read_only=True)  # Nest gold details inside cart response
     gold_id = serializers.PrimaryKeyRelatedField(
         queryset=GoldModel.objects.all(), write_only=True
     )
-
-    # gold = goldSerializer  # Include goldSerializer in the fields
 
     class Meta:
         model = order_cart_detail
@@ -65,12 +36,31 @@ class AddToCartSerializer(serializers.ModelSerializer):
             "gold",
             "weight",
             "price",
+            "quantity",
+            "total_price",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["order_cart_detail_id", "created_at", "updated_at"]
+        read_only_fields = [
+            "order_cart_detail_id",
+            "created_at",
+            "updated_at",
+            "total_price",
+        ]
 
     def create(self, validated_data):
         validated_data["user_id"] = self.context["request"].user
-
+        validated_data["total_price"] = (
+            validated_data["price"] * validated_data["quantity"]
+        )
         return order_cart_detail.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.quantity = validated_data.get("quantity", instance.quantity)
+        instance.total_price = instance.price * instance.quantity
+        return super().update(instance, validated_data)
+
+    def validate_quantity(self, value):
+        if value < 1:
+            raise serializers.ValidationError("Quantity must be greater than 0")
+        return value

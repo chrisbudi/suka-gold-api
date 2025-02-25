@@ -5,7 +5,7 @@ import json
 
 
 class OrderShippingSerializer(serializers.Serializer):
-    list_of_cart_detail = serializers.CharField(max_length=50)
+    list_of_cart_detail_id = serializers.ListField(child=serializers.IntegerField())
 
     def validate(self, data):
 
@@ -13,7 +13,6 @@ class OrderShippingSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         sapx_service = SapxService()
-
         payload = {
             "origin": "DEV",
             "destination": "DEV",
