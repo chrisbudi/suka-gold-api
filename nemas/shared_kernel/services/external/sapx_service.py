@@ -40,11 +40,17 @@ class SapxService:
     def get_price(self, payload=None):
         """ """
         try:
+
             response = requests.post(
                 self.base_url + "v2/master/shipment_cost",
                 headers=self.headers,
-                json=payload,
+                data=payload,
             )
+
+            if response.status_code != 200:
+                print(response.json(), "response.json()")
+                return response.json()
+
             response_data = response.json()
             return response_data
         except Exception as e:

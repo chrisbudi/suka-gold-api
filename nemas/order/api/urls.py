@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     path(
         "shipping/service/",
-        views.CartItemListAPIView.as_view({"post": "perform_create"}),
-        name="cart-add",
+        views.OrderShippingAPIView.as_view({"post": "list_shipping_service"}),
+        name="shipping-service",
     ),
 ]

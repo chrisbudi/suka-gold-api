@@ -24,28 +24,36 @@ class OrderShippingAPIView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    pagination_class = (
-        pagination.LimitOffsetPagination
-    )  # Adjust pagination class as needed
+    pagination_class = pagination.LimitOffsetPagination
     search_fields = ["transaction_date", "weight", "price_per_gram", "total_price"]
 
     @extend_schema(
         summary="getPrice",
-        description="Get Shipping Price",
+        description="Get Shipping Serivce",
         request=OrderShippingSerializer,
         responses={200: OrderShippingSerializer},
     )
-    def list_service_price(self, request):
+    def list_shipping_service(self, request):
         """get price from sapx"""
         try:
-            serializer = OrderShippingSerializer(
-                data=request.data, context={"request": request}
-            )
+            serializer = OrderShippingSerializer(data=request.data)
+
             if serializer.is_valid():
-                serializer.save()
-                return response.Response(
-                    serializer.context.get("response"), status.HTTP_200_OK
-                )
+                sapx_service = SapxService()
+                payload = {
+                    "origin": "JK07",
+                    "destination": "JI28",
+                    "weight": serializer.data.get("weight"),
+                    "customer_code": "DEV000",
+                    "packing_type_code": "ACH06",
+                    "volumetric": "1x1x1",
+                    "insurance_type_code": "INS02",
+                    "item_value": serializer.data.get("amount"),
+                }
+                payload_data = json.dumps(payload)
+                data = sapx_service.get_price(payload_data)
+                # serializer.save()
+                return response.Response(data, status.HTTP_200_OK)
             return response.Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
