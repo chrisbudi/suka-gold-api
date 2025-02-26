@@ -1,5 +1,3 @@
-from django.shortcuts import get_object_or_404
-from requests import Response
 from rest_framework import viewsets, filters, pagination, status, response
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
@@ -8,7 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from order.models import order_cart_detail
-from order.api.serializers import OrderCartSerializer, OrderCartDetailSerializer
+from order.api.serializers import OrderCartDetailSerializer
 
 
 @extend_schema(

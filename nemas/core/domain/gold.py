@@ -2,6 +2,7 @@ from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 
 from decimal import Decimal as decimal
+import random
 
 # Gold Models
 
@@ -33,6 +34,12 @@ class gold(models.Model):
     create_user = models.CharField(max_length=255)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Gold {self.gold_id} - Brand: {self.brand}"
+
+    def generate_number(self):
+        return str(random.randint(100000, 999999))
 
 
 # # Gold Price Setting Model

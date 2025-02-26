@@ -37,4 +37,14 @@ urlpatterns = [
         views.OrderShippingAPIView.as_view({"post": "list_shipping_service"}),
         name="shipping-service",
     ),
+    path(
+        "order/create",
+        views.OrderGoldListCreateAPIView.as_view({"post": "perform_create"}),
+        name="order-create",
+    ),
+    path(
+        "order/list",
+        views.OrderGoldListCreateAPIView.as_view({"get": "list"}),
+        name="order-list",
+    ),
 ]

@@ -8,6 +8,8 @@ from user.signals import (
     email_user_reset_token,
 )
 
+from user.models import user_address
+
 
 class user_reset_token(models.Model):
     user = models.ForeignKey(

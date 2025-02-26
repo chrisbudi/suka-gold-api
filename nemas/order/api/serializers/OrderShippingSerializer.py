@@ -1,4 +1,3 @@
-from attr import validate
 from rest_framework import serializers
 from shared_kernel.services.external.sapx_service import SapxService
 import json
