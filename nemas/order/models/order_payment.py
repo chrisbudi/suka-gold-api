@@ -1,16 +1,12 @@
-from django.conf import settings
-
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
-from core.domain.address import postal_code
-from core.domain import gold, gold_price_config, gold_cert_price
 from order.models import order_gold
 
 
 class order_payment(models.Model):
     order_payment_bill_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-    order_gold_id = models.ForeignKey(
-        order_gold,
+    order_gold = models.ForeignKey(
+        "order_gold",
         on_delete=models.CASCADE,
     )
     order_payment_timestamp = models.DateTimeField(auto_created=True)
@@ -21,4 +17,4 @@ class order_payment(models.Model):
     order_payment_status = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"Gold Transaction {self.order_gold_id} - Type:"
+        return f"Gold Transaction {self.order_payment_bill_id} - Type:"

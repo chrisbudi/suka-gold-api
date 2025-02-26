@@ -4,6 +4,7 @@ from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 from core.domain.address import postal_code
 from core.domain import gold, gold_price_config, gold_cert_price
+from order.models import order_payment
 from user.models.users import user_address
 
 
@@ -21,8 +22,19 @@ class order_gold(models.Model):
     )
     order_phone_number = models.CharField(max_length=255)
     order_item_weight = models.DecimalField(max_digits=10, decimal_places=4)
+    order_payment_method = models.CharField(max_length=255)
+
     order_amount = models.DecimalField(max_digits=16, decimal_places=2)
+    order_admin_amount = models.DecimalField(max_digits=16, decimal_places=2)
+
     order_tracking_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    order_tracking_insurance = models.DecimalField(max_digits=10, decimal_places=2)
+    order_tracking_packing = models.DecimalField(max_digits=10, decimal_places=2)
+    order_tracking_insurance_admin = models.DecimalField(
+        max_digits=10, decimal_places=2
+    )
+    order_tracking_total = models.DecimalField(max_digits=10, decimal_places=2)
+
     order_promo_code = models.CharField(max_length=255)
     order_discount = models.DecimalField(max_digits=10, decimal_places=2)
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
