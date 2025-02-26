@@ -1,7 +1,7 @@
+from datetime import datetime
 from rest_framework import serializers
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
-from django_filters import rest_framework as filters
 from core.domain.gold import gold as GoldModel
 
 User = get_user_model()
@@ -23,6 +23,7 @@ class OrderGoldDetailSerializer(serializers.ModelSerializer):
             "order_cert_price",
             "order_detail_total_price",
         ]
+        read_only_fields = ["order_gold_detail_id", "order_gold_id"]
 
 
 class OrderGoldSerializer(serializers.ModelSerializer):
@@ -32,8 +33,6 @@ class OrderGoldSerializer(serializers.ModelSerializer):
         model = order_gold
         fields = [
             "order_gold_id",
-            "order_number",
-            "order_timestamp",
             "user",
             "order_user_address",
             "order_phone_number",
@@ -74,6 +73,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
         order_details_data = validated_data.pop("order_details")
         validated_data["user"] = self.context["request"].user
         validated_data["order_number"] = gold.generate_number()
+        validated_data["order_timestamp"] = datetime.now()
 
         order_gold_data = order_gold.objects.create(**validated_data)
 
