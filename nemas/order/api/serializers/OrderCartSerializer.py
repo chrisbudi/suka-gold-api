@@ -32,6 +32,7 @@ class OrderCartDetailSerializer(serializers.ModelSerializer):
         fields = [
             "order_cart_detail_id",
             "gold",
+            "gold_id",
             "weight",
             "price",
             "quantity",

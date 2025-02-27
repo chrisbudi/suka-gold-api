@@ -29,9 +29,12 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         responses={200: OrderCartDetailSerializer},
     )
     def list(self, request):
-        queryset = order_cart_detail.objects.select_related("gold").filter(
+        queryset = order_cart_detail.objects.filter(
             user_id=request.user
-        )
+        ).select_related(
+            "gold"
+        )  # Ensure 'gold' is a valid related field in the model
+
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         print(paginated_queryset, "paginated_queryset")
