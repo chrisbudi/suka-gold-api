@@ -16,7 +16,6 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    queryset = order_cart_detail.objects.all()
     serializer_class = OrderCartDetailSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     pagination_class = (
@@ -30,9 +29,12 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         responses={200: OrderCartDetailSerializer},
     )
     def list(self, request):
-        queryset = order_cart_detail.objects.filter(user_id=request.user)
+        queryset = order_cart_detail.objects.select_related("gold").filter(
+            user_id=request.user
+        )
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
+        print(paginated_queryset, "paginated_queryset")
         serializer = OrderCartDetailSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 

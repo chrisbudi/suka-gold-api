@@ -34,7 +34,7 @@ class order_cart_detail(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
-    gold_id = models.ForeignKey(
+    gold = models.ForeignKey(
         gold,
         on_delete=models.CASCADE,
     )

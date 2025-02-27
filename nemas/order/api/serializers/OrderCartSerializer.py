@@ -23,8 +23,7 @@ class GoldSerializer(serializers.ModelSerializer):
 
 
 class OrderCartDetailSerializer(serializers.ModelSerializer):
-    gold = GoldSerializer(read_only=True)  # Nest gold details inside cart response
-    gold_id = serializers.PrimaryKeyRelatedField(
+    gold = serializers.PrimaryKeyRelatedField(
         queryset=GoldModel.objects.all(), write_only=True
     )
 
@@ -32,7 +31,6 @@ class OrderCartDetailSerializer(serializers.ModelSerializer):
         model = order_cart_detail
         fields = [
             "order_cart_detail_id",
-            "gold_id",
             "gold",
             "weight",
             "price",

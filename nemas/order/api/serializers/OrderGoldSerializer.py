@@ -13,7 +13,7 @@ class OrderGoldDetailSerializer(serializers.ModelSerializer):
         fields = [
             "order_gold_detail_id",
             "order_gold_id",
-            "gold_id",
+            "gold",
             "gold_type",
             "gold_brand",
             "certificate_number",
