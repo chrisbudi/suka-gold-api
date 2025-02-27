@@ -1,3 +1,4 @@
+from pickle import TRUE
 from django.conf import settings
 
 from django.db import models
@@ -27,16 +28,27 @@ class order_gold(models.Model):
     order_amount = models.DecimalField(max_digits=16, decimal_places=2)
     order_admin_amount = models.DecimalField(max_digits=16, decimal_places=2)
 
-    order_tracking_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    order_tracking_insurance = models.DecimalField(max_digits=10, decimal_places=2)
-    order_tracking_packing = models.DecimalField(max_digits=10, decimal_places=2)
-    order_tracking_insurance_admin = models.DecimalField(
-        max_digits=10, decimal_places=2
-    )
-    order_tracking_total = models.DecimalField(max_digits=10, decimal_places=2)
+    order_pickup_address = models.CharField(max_length=255, null=True, blank=True)
+    order_pickup_customer_datetime = models.DateTimeField(null=True, blank=True)
 
-    order_promo_code = models.CharField(max_length=255)
-    order_discount = models.DecimalField(max_digits=10, decimal_places=2)
+    order_tracking_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
+    )
+    order_tracking_insurance = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
+    )
+    order_tracking_packing = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
+    )
+    order_tracking_insurance_admin = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
+    )
+    order_tracking_total = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
+    )
+
+    order_promo_code = models.CharField(max_length=255, null=True)
+    order_discount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
     tracking_status_id = models.CharField(max_length=255, null=True)
     tracking_status = models.CharField(max_length=255, null=True)

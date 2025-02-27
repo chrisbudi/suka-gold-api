@@ -35,6 +35,8 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "order_gold_id",
             "user",
             "order_user_address",
+            "order_pickup_customer_datetime",
+            "order_pickup_address",
             "order_phone_number",
             "order_item_weight",
             "order_amount",

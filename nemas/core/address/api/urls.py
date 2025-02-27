@@ -13,6 +13,7 @@ from .views import (
     district_view,
     sub_district_view,
     postal_code_view,
+    customer_pickup_address_view,
 )
 
 router = DefaultRouter()
@@ -64,10 +65,23 @@ postal_code_url = [
     path('<int:id>', postal_code_view.PostalCodeViewSet.as_view({'get': 'retrieve'}), name='get_postal_code')
 ]
 
+
+customer_pickup_address_url = [
+    path('', customer_pickup_address_view.CustomerPickupAddressViewSet.as_view({'get': 'list'}), name='list_customer_pickup_address'),
+    path('create', customer_pickup_address_view.CustomerPickupAddressViewSet.as_view({'post': 'create'}), name='post_customer_pickup_address'),
+    path('<int:id>', customer_pickup_address_view.CustomerPickupAddressViewSet.as_view({'patch': 'update'}), name='patch_customer_pickup_address'),
+    path('<int:id>', customer_pickup_address_view.CustomerPickupAddressViewSet.as_view({'delete': 'destroy'}), name='delete_customer_pickup_address'),
+    path('<int:id>', customer_pickup_address_view.CustomerPickupAddressViewSet.as_view({'get': 'retrieve'}), name='get_customer_pickup_address'),
+]
+
+
+
+
 urlpatterns = [
     path('province/', include(province_url)),
     path('city/', include(city_url)),
     path('district/', include(district_url)),
     path('sub_district/', include(subdistrict_url)),
     path('postal_code/', include(postal_code_url)),
+    path('customer_pickup/', include(customer_pickup_address_url)),
 ]

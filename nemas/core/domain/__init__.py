@@ -36,3 +36,8 @@ from .delivery import (
     delivery_partner_district,
     delivery_shipment_content,
 )
+
+
+from .customer_address_pickup import (
+    customer_address_pickup,
+)

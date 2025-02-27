@@ -12,6 +12,7 @@ from core.domain import (
     subdistrict,
     postal_code,
 )
+from core.domain import customer_address_pickup
 
 
 # region Province
@@ -123,6 +124,31 @@ class SubDistrictFilter(filters.FilterSet):
 
         fields = {
             "subdistrict_name": ["icontains"],
+        }
+
+
+# region sub District
+class CustomerPickupAddressSerializer(serializers.ModelSerializer):
+    """Serializer for city object"""
+
+    class Meta:
+        model = customer_address_pickup
+        fields = [
+            "customer_address_pickup_id",
+            "customer_address_pickup_address",
+            "customer_address_pickup_name",
+        ]
+        read_only_fields = [
+            "customer_address_pickup_id",
+        ]
+
+
+class CustomerPickupAddressFilter(filters.FilterSet):
+    class Meta:
+        model = customer_address_pickup
+
+        fields = {
+            "customer_address_pickup_name": ["icontains"],
         }
 
 

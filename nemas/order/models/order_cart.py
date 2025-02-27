@@ -55,7 +55,7 @@ class order_cart_detail(models.Model):
     updated_at = models.DateTimeField(auto_created=True)
 
     class Meta:
-        unique_together = ["cart_id", "gold_id"]
+        unique_together = ["cart_id", "gold"]
 
     def save(self, *args, **kwargs):
         if not self.created_at:
