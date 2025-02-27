@@ -42,15 +42,7 @@ class DisburstSerializer(serializers.ModelSerializer):
         # check if va is still in pending phased or not
         user = self.context["request"].user
         userVa = UserVa.objects.filter(user=user).first()
-        # if (
-        #     userVa
-        #     and disburst_transaction.objects.filter(
-        #         topup_payment_number=userVa.va_number, topup_status="PENDING"
-        #     ).exists()
-        # ):
-        #     raise serializers.ValidationError(
-        #         "Please wait until your Va transaction is done."
-        #     )
+
         return data
 
     def create(self, validated_data, **kwargs):

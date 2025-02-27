@@ -1,9 +1,9 @@
 from core.address.api.serializers import (
-    DistrictSerializer as customSerializer,
-    DistrictFilter as customFilter,
+    CustomerPickupAddressSerializer as customSerializer,
+    CustomerPickupAddressFilter as customFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response, permissions
-from core.domain import district as modelInfo
+from core.domain import customer_address_pickup as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter

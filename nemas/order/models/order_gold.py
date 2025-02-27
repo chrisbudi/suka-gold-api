@@ -24,6 +24,8 @@ class order_gold(models.Model):
     order_phone_number = models.CharField(max_length=255)
     order_item_weight = models.DecimalField(max_digits=10, decimal_places=4)
     order_payment_method = models.CharField(max_length=255)
+    order_payment_va_bank = models.CharField(max_length=255, null=True)
+    order_payment_va_number = models.CharField(max_length=255, null=True)
 
     order_amount = models.DecimalField(max_digits=16, decimal_places=2)
     order_admin_amount = models.DecimalField(max_digits=16, decimal_places=2)
@@ -55,8 +57,8 @@ class order_gold(models.Model):
     tracking_courier = models.CharField(max_length=255, null=True)
     tracking_number = models.CharField(max_length=255, null=True)
     tracking_last_note = models.CharField(max_length=255, null=True)
-    tracking_last_updated_datetime = models.DateTimeField(auto_created=True)
-    tracking_sla = models.DateTimeField(auto_created=True)
+    tracking_last_updated_datetime = models.DateTimeField(auto_created=True, null=True)
+    tracking_sla = models.DateTimeField(auto_created=True, null=True)
 
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"
@@ -64,7 +66,7 @@ class order_gold(models.Model):
 
 class order_gold_detail(models.Model):
     order_gold_detail_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-    order_gold_id = models.ForeignKey(
+    order_gold = models.ForeignKey(
         order_gold,
         on_delete=models.CASCADE,
     )
