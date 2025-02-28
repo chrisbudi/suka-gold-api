@@ -12,6 +12,54 @@ import json
 User = get_user_model()
 
 
+class OrderGoldListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = order_gold
+        fields = [
+            "order_gold_id",
+            "order_number",
+            "order_timestamp",
+            "user",
+            "order_user_address",
+            "order_phone_number",
+            "order_item_weight",
+            "order_payment_method",
+            "order_payment_va_bank",
+            "order_payment_va_number",
+            "order_amount",
+            "order_admin_amount",
+            "order_pickup_address",
+            "order_pickup_customer_datetime",
+            "order_tracking_amount",
+            "order_tracking_insurance",
+            "order_tracking_packing",
+            "order_tracking_insurance_admin",
+            "order_tracking_total",
+            "order_promo_code",
+            "order_discount",
+            "order_total_price",
+            "tracking_status_id",
+            "tracking_status",
+            "tracking_courier",
+            "tracking_number",
+            "tracking_last_note",
+            "tracking_last_updated_datetime",
+            "tracking_sla",
+        ]
+        read_only_fields = [
+            "order_gold_id",
+            "order_number",
+            "order_timestamp",
+            "tracking_status_id",
+            "tracking_status",
+            "tracking_courier",
+            "tracking_number",
+            "tracking_last_note",
+            "tracking_last_updated_datetime",
+            "tracking_sla",
+        ]
+
+
 class OrderGoldDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = order_gold_detail

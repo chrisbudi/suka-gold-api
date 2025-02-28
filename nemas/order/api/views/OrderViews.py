@@ -6,7 +6,10 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from gold_transaction.models import gold_saving_buy
-from order.api.serializers.OrderGoldSerializer import OrderGoldSerializer
+from order.api.serializers.OrderGoldSerializer import (
+    OrderGoldSerializer,
+    OrderGoldListSerializer,
+)
 from order.models import order_gold
 
 
@@ -28,13 +31,13 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
     @extend_schema(
         summary="List Order Gold",
         description="Retrieve a list of gold purchases for the authenticated user.",
-        responses={200: OrderGoldSerializer},
+        responses={200: OrderGoldListSerializer},
     )
     def list(self, request):
         queryset = order_gold.objects.filter(user=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = OrderGoldSerializer(paginated_queryset, many=True)
+        serializer = OrderGoldListSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
     @extend_schema(
