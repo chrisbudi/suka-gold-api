@@ -30,7 +30,7 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="List Order Gold",
-        description="Retrieve a list of gold purchases for the authenticated user.",
+        description="Retrieve a list of order gold purchases for the authenticated user.",
         responses={200: OrderGoldListSerializer},
     )
     def list(self, request):
@@ -42,7 +42,7 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Create Gold Purchase",
-        description="Create a gold purchase for the authenticated user.",
+        description="Create a order gold purchase for the authenticated user.",
         request=OrderGoldSerializer,
         responses={201: OrderGoldSerializer},
     )
