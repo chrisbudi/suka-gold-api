@@ -372,6 +372,12 @@ SAPX = {
     "API_KEY": os.getenv("SAPX_API_KEY"),
 }
 
+
+sendgrid = {
+    "SENDGRID_API_KEY": os.getenv("SENDGRID_API_KEY"),
+    "DEFAULT_FROM_EMAIL": os.getenv("DEFAULT_FROM_EMAIL"),
+}
+
 # Email configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"

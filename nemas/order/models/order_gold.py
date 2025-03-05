@@ -1,3 +1,4 @@
+from operator import truediv
 from pickle import TRUE
 from django.conf import settings
 
@@ -48,10 +49,12 @@ class order_gold(models.Model):
     order_tracking_total = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
-
+    order_gold_payment_ref = models.CharField(max_length=255, null=True)
+    order_gold_payment_status = models.CharField(max_length=255, null=True)
     order_promo_code = models.CharField(max_length=255, null=True)
     order_discount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
+
     tracking_status_id = models.CharField(max_length=255, null=True)
     tracking_status = models.CharField(max_length=255, null=True)
     tracking_courier = models.CharField(max_length=255, null=True)
@@ -62,6 +65,10 @@ class order_gold(models.Model):
 
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"
+
+    def update_status(self, status: str):
+        self.tracking_status = status
+        self.save()
 
 
 class order_gold_detail(models.Model):
