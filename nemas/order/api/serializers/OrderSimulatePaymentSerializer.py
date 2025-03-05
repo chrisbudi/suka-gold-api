@@ -45,6 +45,10 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
                 order_gold_payment_ref=reference_id
             )
             orderTransaction.update_status("SUCCESS")
+
+            mail = orderMailService()
+            mail.send_email(orderTransaction)
+
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))
@@ -77,9 +81,15 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             orderTransaction = order_gold.objects.get(topup_payment_ref=reference_id)
             orderTransaction.update_status("SUCCESS")
 
+            mail = orderMailService()
+            mail.send_email(orderTransaction)
+
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))
+
+
+class orderMailService:
 
     def send_email(self, order: order_gold):
 
@@ -96,13 +106,6 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
         order_detail = order_gold_detail.objects.select_related("gold").filter(
             order_gold=order
         )
-
-        # email_body = email_body.replace(
-        #     f"{{transaction_date}}", order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        # )
-        # email_body = email_body.replace(f"{{transaction_number}}", order.order_number)
-        # email_body = email_body.replace(f"{{transaction_account}}", order.user.id)
-        # email_body = email_body.replace(f"{{first_name}}", order.user.name)
 
         table_product_data = ""
         for detail in order_detail:
