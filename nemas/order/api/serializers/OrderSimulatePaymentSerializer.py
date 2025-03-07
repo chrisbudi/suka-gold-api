@@ -6,7 +6,7 @@ from shared_kernel.services.external.xendit_service import (
 )
 from user.models.users import user as User
 from order.models import order_gold, order_gold_detail
-from django.conf import settings
+from django.conf import Settings, settings
 import os
 from django.template.loader import render_to_string
 from sendgrid import SendGridAPIClient
@@ -101,11 +101,8 @@ class orderMailService:
         print("email type")
 
         template_file = "nemas-invoice.html"
-        template_path = os.path.join(
-            settings.BASE_DIR, "app", "templates", "invoice", template_file
-        )
-        with open(template_path, "r") as template_file:
-            email_body = template_file.read()
+        # with open(template_path, "r") as template_file:
+        #     email_body = template_file.read()
 
         # Format the email body with the reset key
         order_detail = order_gold_detail.objects.select_related("gold").filter(
@@ -135,9 +132,9 @@ class orderMailService:
 
         # print(email_html, "email_html")
         try:
-
+            print("try to send email")
             email_html = render_to_string(
-                template_path,
+                "invoice/nemas-invoice.html",
                 {
                     "transaction_date": order.order_timestamp.strftime(
                         "%Y-%m-%d %H:%M:%S"
@@ -149,17 +146,33 @@ class orderMailService:
                     "table_price": table_price_data,
                 },
             )
-            sendgrid = settings.sendgrid
+            print(email_html, "email_html")
+            sendGridEmail = settings.SENDGRID_EMAIL
+            print(sendGridEmail, "email setting")
+            # sendgrid_api_key = settings.SENDGRID_API_KEY
+            # default_from_email = settings.DEFAULT_FROM_EMAIL
 
             message = Mail(
-                from_email=sendgrid.DEFAULT_FROM_EMAIL,
+                from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
                 to_emails=[user.email],
                 subject="Nemas Invoice",
                 html_content=email_html,
             )
 
-            sg = SendGridAPIClient(sendgrid.SENDGRID_API_KEY)
+            print(user.email, sendGridEmail["DEFAULT_FROM_EMAIL"], "message")
+
+            sg = SendGridAPIClient(sendGridEmail["API_KEY"])
             response = sg.send(message)
+            print(
+                response.status_code,
+                response.body,
+                response.headers,
+                "response",
+            )
+            if response.status_code == 202:
+                print("Email sent successfully")
+            else:
+                print("Failed to send email")
             return response.status_code
         except Exception as e:
-            print(e)
+            print("Failed to render email template:", e)

@@ -89,7 +89,7 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
         request=OrderSimulatedPaymentQrisSerializer,
         responses={200: OrderSimulatedPaymentQrisSerializer},
     )
-    def simulate_qris_payment(self, request):
+    def simulate_qris_payment(self, request, pk: str):
         serializer = OrderGoldSerializer(
             data=request.data, context={"request": request}
         )

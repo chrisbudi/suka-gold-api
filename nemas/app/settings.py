@@ -114,7 +114,7 @@ ROOT_URLCONF = "app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "app/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -373,8 +373,8 @@ SAPX = {
 }
 
 
-sendgrid = {
-    "SENDGRID_API_KEY": os.getenv("SENDGRID_API_KEY"),
+SENDGRID_EMAIL = {
+    "API_KEY": os.getenv("SENDGRID_API_KEY"),
     "DEFAULT_FROM_EMAIL": os.getenv("DEFAULT_FROM_EMAIL"),
 }
 
