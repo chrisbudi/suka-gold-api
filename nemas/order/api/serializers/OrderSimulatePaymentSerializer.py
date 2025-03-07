@@ -4,6 +4,7 @@ from shared_kernel.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )
+from user.models.users import user as User
 from order.models import order_gold, order_gold_detail
 from django.conf import settings
 import os
@@ -70,6 +71,7 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
     def create(self, validated_data):
         amount = validated_data["amount"]
         reference_id = validated_data["reference_id"]
+        user: User = self.context["request"].user
         try:
             va_service = VAPaymentService()
             payload = {
@@ -84,7 +86,7 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             orderTransaction.update_status("SUCCESS")
             print(orderTransaction, "order transaction")
             mail = orderMailService()
-            mail.send_email(orderTransaction)
+            mail.send_email(orderTransaction, user=user)
 
             return response
         except Exception as e:
@@ -93,7 +95,7 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
 
 class orderMailService:
 
-    def send_email(self, order: order_gold):
+    def send_email(self, order: order_gold, user: User):
 
         print("email type")
 
@@ -108,7 +110,7 @@ class orderMailService:
         order_detail = order_gold_detail.objects.select_related("gold").filter(
             order_gold=order
         )
-
+        print(order_detail, "order_detail")
         table_product_data = ""
         for detail in order_detail:
             table_product_data += f"""
@@ -118,36 +120,43 @@ class orderMailService:
             <td>{detail.order_detail_total_price}</td>
             </tr>"""
 
-        email_body = email_body.replace(f"{{table_product}}", table_product_data)
+        # email_body = email_body.replace(f"{{table_product}}", table_product_data)
 
+        print(table_product_data, "product data")
         table_price_data = f"""
         <tr>
         <td colspan="2">Total</td>
         <td>{order.order_total_price}</td>
         </tr>
         """
+        print(table_price_data, "table_price_data")
+        print("successfully render to html")
 
-        email_html = render_to_string(
-            "invoice/nemas-invoice.html",
-            {
-                "transaction_date": order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-                "transaction_number": order.order_number,
-                "transaction_account": order.user.id,
-                "first_name": order.user.name,
-                "table_product": table_product_data,
-                "table_price": table_price_data,
-            },
-        )
-        sendgrid = settings.sendgrid
-
-        message = Mail(
-            from_email=sendgrid.DEFAULT_FROM_EMAIL,
-            to_emails=[order.user.email],
-            subject="Nemas Invoice",
-            html_content=email_html,
-        )
-
+        # print(email_html, "email_html")
         try:
+
+            email_html = render_to_string(
+                template_path,
+                {
+                    "transaction_date": order.order_timestamp.strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+                    "transaction_number": order.order_number,
+                    "transaction_account": order.user.id,
+                    "first_name": order.user.name,
+                    "table_product": table_product_data,
+                    "table_price": table_price_data,
+                },
+            )
+            sendgrid = settings.sendgrid
+
+            message = Mail(
+                from_email=sendgrid.DEFAULT_FROM_EMAIL,
+                to_emails=[user.email],
+                subject="Nemas Invoice",
+                html_content=email_html,
+            )
+
             sg = SendGridAPIClient(sendgrid.SENDGRID_API_KEY)
             response = sg.send(message)
             return response.status_code
