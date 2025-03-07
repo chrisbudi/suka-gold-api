@@ -38,6 +38,7 @@ class VAPaymentService(XenditService):
         :return: Response from the API
         """
         try:
+            print(payload, "payload", self.headers, self.base_url)
             self.headers.pop("api-version", None)
             response = requests.post(
                 self.base_url
@@ -45,6 +46,7 @@ class VAPaymentService(XenditService):
                 headers=self.headers,
                 data=payload,
             )
+            print(response.json(), "response")
             if response.status_code not in [200, 201]:
                 response.raise_for_status()
                 return None

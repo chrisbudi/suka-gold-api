@@ -69,11 +69,14 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
         request=OrderSimulatedPaymentVaSerializer,
         responses={200: OrderSimulatedPaymentVaSerializer},
     )
-    def simulate_va_payment(self, request):
-        serializer = OrderGoldSerializer(
+    def simulate_va_payment(self, request, pk: str):
+        print(request.data, "request.data", pk)
+
+        serializer = OrderSimulatedPaymentVaSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
+            print(serializer, "serializer")
             serializer.save()
             return response.Response(
                 serializer.context.get("response"), status=status.HTTP_201_CREATED

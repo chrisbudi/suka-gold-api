@@ -78,9 +78,11 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             payload_json = json.dumps(payload)
             response = va_service.va_payment_simulate(reference_id, payload_json)
 
-            orderTransaction = order_gold.objects.get(topup_payment_ref=reference_id)
+            orderTransaction = order_gold.objects.get(
+                order_gold_payment_ref=reference_id
+            )
             orderTransaction.update_status("SUCCESS")
-
+            print(orderTransaction, "order transaction")
             mail = orderMailService()
             mail.send_email(orderTransaction)
 

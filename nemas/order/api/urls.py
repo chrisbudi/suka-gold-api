@@ -48,12 +48,12 @@ urlpatterns = [
         name="order-list",
     ),
     path(
-        "order/simulate/va/<uuid:pk>",
+        "order/simulate/va/<str:pk>",
         views.OrderGoldListCreateAPIView.as_view({"post": "simulate_va_payment"}),
         name="order-va-payment",
     ),
     path(
-        "order/simulate/qris/<uuid:pk>",
+        "order/simulate/qris/<str:pk>",
         views.OrderGoldListCreateAPIView.as_view({"post": "simulate_qris_payment"}),
         name="order-qris-payment",
     ),

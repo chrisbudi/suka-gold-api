@@ -140,6 +140,11 @@ class OrderGoldSerializer(serializers.ModelSerializer):
         else:
             validated_data["order_payment_va_bank"] = None
             self.process_qris_payment(validated_data, user)
+
+        validated_data["order_gold_payment_ref"] = self.context["response"][
+            "reference_id"
+        ]
+
         order_gold_data = order_gold.objects.create(**validated_data)
 
         for order_detail_data in order_details_data:
@@ -171,6 +176,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "is_closed": True,
             "is_single_use": True,
         }
+
         service = va_service.VAPaymentService()
 
         payload_json = json.dumps(payload)
