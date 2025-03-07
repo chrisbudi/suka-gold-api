@@ -34,6 +34,7 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
         print(validated_data, "validated_data")
         amount = validated_data["amount"]
         reference_id = validated_data["reference_id"]
+        user = self.context["request"].user
         try:
             qris_service = QRISPaymentService()
             payload = {
@@ -48,7 +49,7 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
             orderTransaction.update_status("SUCCESS")
 
             mail = orderMailService()
-            mail.send_email(orderTransaction)
+            mail.send_email(orderTransaction, user=user)
 
             return response
         except Exception as e:
