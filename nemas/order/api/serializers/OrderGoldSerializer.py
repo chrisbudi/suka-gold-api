@@ -148,6 +148,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
                 order_gold=order_gold_data, **order_detail_data
             )
 
+        self.context["response"].order_gold_id = order_gold_data.order_gold_id
         return order_gold
 
     def process_va_payment(self, validated_data, user):
@@ -170,10 +171,11 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "is_closed": True,
             "is_single_use": True,
         }
-
         service = va_service.VAPaymentService()
 
         payload_json = json.dumps(payload)
+
+        print(payload_json, "payload_json")
         virtual_account = service.va_payment_generate(payload_json)
         if not virtual_account:
             raise serializers.ValidationError("Failed to process VA payment.")
