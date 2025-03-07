@@ -148,7 +148,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
                 order_gold=order_gold_data, **order_detail_data
             )
 
-        self.context["response"].order_gold_id = order_gold_data.order_gold_id
+        self.context["response"]["order_gold_id"] = order_gold_data.order_gold_id
         return order_gold
 
     def process_va_payment(self, validated_data, user):
@@ -184,6 +184,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "total_amount": validated_data["order_total_price"],
             "va_number": virtual_account.get("account_number"),
             "reference_id": virtual_account.get("external_id"),
+            "order_gold_id": "",
         }
 
     def process_qris_payment(self, validated_data, user):
@@ -210,4 +211,5 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "total_amount": validated_data["order_total_price"],
             "qr_string": qris.get("qr_string"),
             "reference_id": qris.get("reference_id"),
+            "order_gold_id": "",
         }
