@@ -6,6 +6,7 @@ from shared_kernel.services.external.xendit_service import (
 )
 from user.models.users import user as User
 from order.models import order_gold, order_gold_detail
+from order.models import order_cart_detail
 from django.conf import Settings, settings
 import os
 from django.template.loader import render_to_string
@@ -84,7 +85,11 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             orderTransaction = order_gold.objects.get(
                 order_gold_payment_ref=reference_id
             )
+            orderCart = order_cart_detail.objects.get(user=user)
+            orderCart.complete_cart()
             orderTransaction.update_status("SUCCESS")
+
+            # mail service
             print(orderTransaction, "order transaction")
             mail = orderMailService()
             mail.send_email(orderTransaction, user=user)

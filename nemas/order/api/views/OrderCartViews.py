@@ -26,7 +26,7 @@ class CartItemListAPIView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return order_cart_detail.objects.filter(
-            user_id=self.request.user
+            user_id=self.request.user, completed_cart=False
         ).select_related("gold")
 
     @extend_schema(
