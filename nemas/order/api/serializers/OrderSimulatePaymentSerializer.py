@@ -47,7 +47,7 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
             orderTransaction = order_gold.objects.get(
                 order_gold_payment_ref=reference_id
             )
-            orderCart = order_cart_detail.objects.get(user=user)
+            orderCart = order_cart_detail.objects.get(user_id=user)
             orderCart.complete_cart()
             orderTransaction.update_status("SUCCESS")
 
@@ -87,7 +87,7 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             orderTransaction = order_gold.objects.get(
                 order_gold_payment_ref=reference_id
             )
-            orderCart = order_cart_detail.objects.get(user=user)
+            orderCart = order_cart_detail.objects.get(user_id=user)
             orderCart.complete_cart()
             orderTransaction.update_status("SUCCESS")
 
