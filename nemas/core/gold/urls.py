@@ -207,7 +207,7 @@ urlpatterns = [
     path("", include(gold_urls)),
     path("price/", include(gold_price_urls)),
     path("cert/", include(cert_urls)),
-    path("cert_price/", include(gold_cert_price_url)),
+    path("cert_price_detail/", include(gold_cert_price_url)),
     path("price_config/", include(gold_price_config_urls)),
     path("gold_promo/", include(gold_promo_urls)),
 ]
