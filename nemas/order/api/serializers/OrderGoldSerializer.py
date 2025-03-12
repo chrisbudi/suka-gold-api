@@ -69,7 +69,6 @@ class OrderGoldDetailSerializer(serializers.ModelSerializer):
             "gold",
             "gold_type",
             "gold_brand",
-            "certificate_number",
             "order_weight",
             "order_price",
             "order_qty",

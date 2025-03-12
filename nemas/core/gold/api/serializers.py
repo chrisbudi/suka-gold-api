@@ -26,7 +26,6 @@ class GoldSerializer(serializers.ModelSerializer):
             "gold_weight",
             "type",
             "brand",
-            "certificate_number",
             "certificate_weight",
             "gold_image_1",
             "gold_image_2",

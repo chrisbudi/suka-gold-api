@@ -98,7 +98,7 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
             s3_service = S3Service()
             try:
                 file_extension = os.path.splitext(file.name)[1]
-                file_name = f"gold/{str(id)}/{serializer.validated_data["gold_image_code"]}{file_extension}"
+                file_name = f"gold/{str(id)}/{serializer.validated_data['gold_image_code']}{file_extension}"
                 file_url = s3_service.upload_file(
                     file_obj=file, file_name=file_name, content_type=file.content_type
                 )
