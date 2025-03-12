@@ -1,18 +1,18 @@
 from core.gold.api.serializers import (
-    GoldCertPriceSerializer as objectSerializer,
-    GoldCertPriceServiceFilter as objectFilter,
+    CertSerializer as objectSerializer,
+    CertFilterSerializer as objectFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response
-from core.domain import gold_cert_detail_price as modelInfo
+from core.domain import cert as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 @extend_schema(
-    tags=["gold - gold cert detail price"],
+    tags=["gold - cert"],
 )
-class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
+class CertViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = objectSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

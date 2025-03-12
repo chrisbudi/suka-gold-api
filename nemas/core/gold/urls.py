@@ -8,9 +8,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from .api.views import (
+    cert_view,
+    gold_cert_price_view,
     gold_view,
     gold_price_config_view,
-    gold_cert_price_view,
     gold_price_view,
     gold_promo_view,
 )
@@ -48,7 +49,7 @@ gold_urls = [
     ),
 ]
 
-gold_cert_price_urls = [
+gold_cert_price_url = [
     path(
         "",
         gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({"get": "list"}),
@@ -73,6 +74,34 @@ gold_cert_price_urls = [
         "<int:id>/",
         gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({"get": "retrieve"}),
         name="get_gold_cert_price_config",
+    ),
+]
+
+cert_urls = [
+    path(
+        "",
+        cert_view.CertViewSet.as_view({"get": "list"}),
+        name="list_cert",
+    ),
+    path(
+        "create",
+        cert_view.CertViewSet.as_view({"post": "create"}),
+        name="create_cert",
+    ),
+    path(
+        "<int:id>/",
+        cert_view.CertViewSet.as_view({"patch": "update"}),
+        name="patch_cert",
+    ),
+    path(
+        "<int:id>/",
+        cert_view.CertViewSet.as_view({"delete": "destroy"}),
+        name="delete_cert",
+    ),
+    path(
+        "<int:id>/",
+        cert_view.CertViewSet.as_view({"get": "retrieve"}),
+        name="get_cert",
     ),
 ]
 
@@ -177,7 +206,8 @@ gold_promo_urls = [
 urlpatterns = [
     path("", include(gold_urls)),
     path("price/", include(gold_price_urls)),
-    path("cert_price/", include(gold_cert_price_urls)),
+    path("cert/", include(cert_urls)),
+    path("cert_price/", include(gold_cert_price_url)),
     path("price_config/", include(gold_price_config_urls)),
     path("gold_promo/", include(gold_promo_urls)),
 ]

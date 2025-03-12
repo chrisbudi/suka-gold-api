@@ -5,7 +5,14 @@ Serializer for recipe api
 from rest_framework import serializers
 from django_filters import rest_framework as filters
 
-from core.domain import gold, gold_price_config, gold_price, gold_cert_price, gold_promo
+from core.domain import (
+    gold,
+    gold_price_config,
+    gold_price,
+    gold_promo,
+    gold_cert_detail_price,
+    cert,
+)
 
 
 # region Gold
@@ -145,17 +152,54 @@ class GoldPriceServiceFilter(filters.FilterSet):
 # endregion
 
 
+# region cert
+class CertSerializer(serializers.ModelSerializer):
+    """Serializer for gold object"""
+
+    class Meta:
+        model = cert
+        fields = [
+            "cert_id",
+            "cert_name",
+            "cert_code",
+            "gold_weight",
+            "cert_price",
+            "create_time",
+            "create_user",
+        ]
+        read_only_fields = [
+            "cert_id",
+        ]
+
+
+class CertFilterSerializer(filters.FilterSet):
+    class Meta:
+        model = cert
+
+        fields = {
+            "cert_name": ["icontains"],
+            "cert_code": ["icontains"],
+        }
+
+
+# endregion
+
+
 # region Cert Price Config
 class GoldCertPriceSerializer(serializers.ModelSerializer):
     """Serializer for gold object"""
 
     class Meta:
-        model = gold_cert_price
+        model = gold_cert_detail_price
         fields = [
-            "cert_code",
-            "cert_id",
+            "id",
+            "gold",
+            "gold_cert",
+            "gold_cert_code",
             "gold_weight",
-            "cert_price",
+            "include_stock",
+            "create_time",
+            "create_user",
         ]
         read_only_fields = [
             "cert_id",
@@ -164,10 +208,10 @@ class GoldCertPriceSerializer(serializers.ModelSerializer):
 
 class GoldCertPriceServiceFilter(filters.FilterSet):
     class Meta:
-        model = gold_cert_price
+        model = gold_cert_detail_price
 
         fields = {
-            "cert_code": ["icontains"],
+            "gold_cert_code": ["icontains"],
         }
 
 
