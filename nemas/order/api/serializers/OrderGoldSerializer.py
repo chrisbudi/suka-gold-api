@@ -140,6 +140,11 @@ class OrderGoldSerializer(serializers.ModelSerializer):
         else:
             validated_data["order_payment_va_bank"] = None
             self.process_qris_payment(validated_data, user)
+
+        validated_data["order_gold_payment_ref"] = self.context["response"][
+            "reference_id"
+        ]
+
         order_gold_data = order_gold.objects.create(**validated_data)
 
         for order_detail_data in order_details_data:
@@ -148,6 +153,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
                 order_gold=order_gold_data, **order_detail_data
             )
 
+        self.context["response"]["order_gold_id"] = order_gold_data.order_gold_id
         return order_gold
 
     def process_va_payment(self, validated_data, user):
@@ -174,6 +180,8 @@ class OrderGoldSerializer(serializers.ModelSerializer):
         service = va_service.VAPaymentService()
 
         payload_json = json.dumps(payload)
+
+        print(payload_json, "payload_json")
         virtual_account = service.va_payment_generate(payload_json)
         if not virtual_account:
             raise serializers.ValidationError("Failed to process VA payment.")
@@ -182,6 +190,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "total_amount": validated_data["order_total_price"],
             "va_number": virtual_account.get("account_number"),
             "reference_id": virtual_account.get("external_id"),
+            "order_gold_id": "",
         }
 
     def process_qris_payment(self, validated_data, user):
@@ -208,4 +217,5 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "total_amount": validated_data["order_total_price"],
             "qr_string": qris.get("qr_string"),
             "reference_id": qris.get("reference_id"),
+            "order_gold_id": "",
         }

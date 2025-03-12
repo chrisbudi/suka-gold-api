@@ -24,3 +24,5 @@ django-storages==1.14.4
 flower==2.0.1
 django-celery-beat==2.7.0
 django-celery-results==2.5.1
+django-sendgrid-v5==1.2.4
+sendgrid==6.11.0

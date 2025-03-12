@@ -114,7 +114,7 @@ ROOT_URLCONF = "app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "app/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -370,6 +370,12 @@ XENDIT = {
 SAPX = {
     "API_URL": os.getenv("SAPX_API_URL"),
     "API_KEY": os.getenv("SAPX_API_KEY"),
+}
+
+
+SENDGRID_EMAIL = {
+    "API_KEY": os.getenv("SENDGRID_API_KEY"),
+    "DEFAULT_FROM_EMAIL": os.getenv("DEFAULT_FROM_EMAIL"),
 }
 
 # Email configuration

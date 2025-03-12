@@ -21,7 +21,13 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
+
     search_fields = ["transaction_date", "weight", "price_per_gram", "total_price"]
+
+    def get_queryset(self):
+        return order_cart_detail.objects.filter(
+            user_id=self.request.user, completed_cart=False
+        ).select_related("gold")
 
     @extend_schema(
         summary="List Cart",
@@ -75,8 +81,10 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         tags=["Order Cart - Add to Cart"],
     )
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
+        queryset = order_cart_detail.objects.filter(
+            user_id=request.user, order_cart_detail_id=kwargs.get("pk")
+        )
+        queryset.delete()
         return response.Response(
-            {message: "data is removed"}, status=status.HTTP_204_NO_CONTENT
+            {"message": "data is removed"}, status=status.HTTP_204_NO_CONTENT
         )

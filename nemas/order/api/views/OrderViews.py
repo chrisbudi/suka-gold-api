@@ -10,6 +10,11 @@ from order.api.serializers.OrderGoldSerializer import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
 )
+from order.api.serializers.OrderSimulatePaymentSerializer import (
+    OrderSimulatedPaymentQrisSerializer,
+    OrderSimulatedPaymentVaSerializer,
+)
+
 from order.models import order_gold
 
 
@@ -30,7 +35,7 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="List Order Gold",
-        description="Retrieve a list of gold purchases for the authenticated user.",
+        description="Retrieve a list of order gold purchases for the authenticated user.",
         responses={200: OrderGoldListSerializer},
     )
     def list(self, request):
@@ -42,7 +47,7 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Create Gold Purchase",
-        description="Create a gold purchase for the authenticated user.",
+        description="Create a order gold purchase for the authenticated user.",
         request=OrderGoldSerializer,
         responses={201: OrderGoldSerializer},
     )
@@ -53,6 +58,43 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
 
+            return response.Response(
+                serializer.context.get("response"), status=status.HTTP_201_CREATED
+            )
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        summary="Simulate Payment VA",
+        description="Simulate a payment for a virtual account.",
+        request=OrderSimulatedPaymentVaSerializer,
+        responses={200: OrderSimulatedPaymentVaSerializer},
+    )
+    def simulate_va_payment(self, request, pk: str):
+        print(request.data, "request.data", pk)
+
+        serializer = OrderSimulatedPaymentVaSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            print(serializer, "serializer")
+            serializer.save()
+            return response.Response(
+                serializer.context.get("response"), status=status.HTTP_201_CREATED
+            )
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        summary="Simulate Payment QRIS",
+        description="Simulate a payment for a QRIS.",
+        request=OrderSimulatedPaymentQrisSerializer,
+        responses={200: OrderSimulatedPaymentQrisSerializer},
+    )
+    def simulate_qris_payment(self, request, pk: str):
+        serializer = OrderSimulatedPaymentQrisSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
             return response.Response(
                 serializer.context.get("response"), status=status.HTTP_201_CREATED
             )
