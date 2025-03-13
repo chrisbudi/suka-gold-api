@@ -7,19 +7,37 @@ from core.domain import city as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 @extend_schema(
     tags=["Address - City "],
 )
 class CityViewSet(viewsets.ModelViewSet):
+
     queryset = modelInfo.objects.all()
     serializer_class = customSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = customFilter
-    pagination_class = (
-        pagination.LimitOffsetPagination
-    )  # Adjust pagination class as needed
+    pagination_class = pagination.LimitOffsetPagination
+
+    def get_permissions(self):
+        print(self.action, "action permission")
+        if self.action == "list":
+            permission_classes = []
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    # def get_authenticators(self):
+    #     print(self.request.method, "action auth")
+
+    #     if self.request.method == "GET":
+    #         authentication_classes = []
+    #     else:
+    #         authentication_classes = [JWTAuthentication]
+    #     return [auth() for auth in authentication_classes]
 
     def list(self, request):
         # queryset join from province and city

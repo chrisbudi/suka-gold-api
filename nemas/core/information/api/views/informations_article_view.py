@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from shared_kernel.services.s3_services import S3Service
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
@@ -25,7 +26,14 @@ class InformationArticleViewSet(viewsets.ModelViewSet):
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
-    permission_classes = (permissions.AllowAny,)
+
+    def get_permissions(self):
+        print(self.action, "action permission")
+        if self.action == "list":
+            permission_classes = []
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
         queryset = modelInfo.objects.all()

@@ -7,6 +7,7 @@ from core.domain import subdistrict as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
@@ -20,6 +21,14 @@ class SubDistrictViewSet(viewsets.ModelViewSet):
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
+
+    def get_permissions(self):
+        print(self.action, "action permission")
+        if self.action == "list":
+            permission_classes = []
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
         limit = request.query_params.get("limit", 10)
