@@ -93,21 +93,21 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://localhost:5005",
-#     "http://localhost:3000",
-#     "https://52.221.181.88:5005",
-#     "https://172.18.0.1",
-#     "https://18.138.179.185:5005",
-#     "https://nemas-admin.vercel.app",
-#     "https://nemas.vercel.app",
-#     "https://nemas.id",
-#     "https://www.nemas.id",
-#     "",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "https://localhost:5005",
+    "http://localhost:3000",
+    "https://52.221.181.88:5005",
+    "https://172.18.0.1",
+    "https://18.138.179.185:5005",
+    "https://nemas-admin.vercel.app",
+    "https://nemas.vercel.app",
+    "https://nemas.id",
+    "https://www.nemas.id",
+    "",
+]
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = "app.urls"
 
