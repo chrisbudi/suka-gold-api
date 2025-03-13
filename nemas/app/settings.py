@@ -102,7 +102,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://nemas.vercel.app",
     "https://nemas.id",
     "https://www.nemas.id",
-    "",
 ]
 
 
