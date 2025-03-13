@@ -24,6 +24,7 @@ class gold_cert_detail_price(models.Model):
     gold_cert_code = models.CharField(max_length=50)
     gold_weight = models.IntegerField()
     include_stock = models.BooleanField(default=True)
+    fee_amt = models.DecimalField(max_digits=16, decimal_places=2)
     gold_cert_status = models.CharField(max_length=50, default="active")
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=255)

@@ -61,17 +61,17 @@ gold_cert_price_url = [
         name="create_gold_cert_price_config",
     ),
     path(
-        "<int:id>/",
+        "<str:id>/",
         gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({"patch": "update"}),
         name="patch_gold_cert_price_config",
     ),
     path(
-        "<int:id>/",
+        "<str:id>/",
         gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({"delete": "destroy"}),
         name="delete_gold_cert_price_config",
     ),
     path(
-        "<int:id>/",
+        "<str:id>/",
         gold_cert_price_view.GoldCertPriceServiceViewSet.as_view({"get": "retrieve"}),
         name="get_gold_cert_price_config",
     ),
