@@ -28,7 +28,7 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         print(self.action, "action permission")
-        if self.action in ["list", "get"]:
+        if self.action in ["list", "get", "list_show"]:
             permission_classes = []
         else:
             permission_classes = [IsAuthenticated]
