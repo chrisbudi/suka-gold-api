@@ -27,7 +27,7 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         print(self.action, "action permission")
-        if self.action == "list":
+        if self.action in ["list", "get"]:
             permission_classes = []
         else:
             permission_classes = [IsAuthenticated]
