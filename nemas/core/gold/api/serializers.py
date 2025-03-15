@@ -318,14 +318,14 @@ class GoldPromoSerializer(serializers.ModelSerializer):
         validated_data["upd_user"] = self.context["request"].user
         validated_data["create_time"] = datetime.now()
         validated_data["upd_time"] = datetime.now()
-        validated_data["create_user_mail"] = self.context["request"].user.email
-        validated_data["upd_user_mail"] = self.context["request"].user.email
+        validated_data["create_user_email"] = self.context["request"].user.email
+        validated_data["upd_user_email"] = self.context["request"].user.email
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         validated_data["upd_user"] = self.context["request"].user
         validated_data["upd_time"] = datetime.now()
-        validated_data["upd_user_mail"] = self.context["request"].user.email
+        validated_data["upd_user_email"] = self.context["request"].user.email
         return super().update(instance, validated_data)
 
 

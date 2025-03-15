@@ -20,10 +20,10 @@ class bank(models.Model):
 
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.UUIDField(null=True)
-    create_user_mail = models.CharField(max_length=255, null=True)
+    create_user_email = models.CharField(max_length=255, null=True)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
-    upd_user_mail = models.CharField(max_length=255, null=True)
+    upd_user_email = models.CharField(max_length=255, null=True)
 
     is_deleted = models.BooleanField(default=False)
 

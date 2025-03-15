@@ -17,10 +17,10 @@ class cert(models.Model):
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.UUIDField(null=True)
-    create_user_mail = models.CharField(max_length=255, null=True)
+    create_user_email = models.CharField(max_length=255, null=True)
     upd_user = models.UUIDField(null=True)
     upd_time = models.DateTimeField(auto_now=True)
-    upd_user_mail = models.CharField(max_length=255, null=True)
+    upd_user_email = models.CharField(max_length=255, null=True)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -41,11 +41,11 @@ class gold_cert_detail_price(models.Model):
     fee_amt = models.DecimalField(max_digits=16, decimal_places=2)
     gold_cert_status = models.CharField(max_length=50, default="active")
     create_time = models.DateTimeField(auto_now_add=True)
-    create_user_mail = models.CharField(max_length=255, null=True)
+    create_user_email = models.CharField(max_length=255, null=True)
     create_user = models.UUIDField(null=True)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
-    upd_user_mail = models.CharField(max_length=255, null=True)
+    upd_user_email = models.CharField(max_length=255, null=True)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -72,10 +72,10 @@ class gold(models.Model):
     gold_image_5 = models.CharField(max_length=255, default="")
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.UUIDField(null=True)
-    create_user_mail = models.CharField(max_length=255, null=True)
+    create_user_email = models.CharField(max_length=255, null=True)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
-    upd_user_mail = models.CharField(max_length=255, null=True)
+    upd_user_email = models.CharField(max_length=255, null=True)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
