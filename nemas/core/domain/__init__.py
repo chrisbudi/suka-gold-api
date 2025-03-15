@@ -20,7 +20,7 @@ from .gold import (
 from .gold_price_config import (
     gold_price_config,
 )
-from .infrormations import (
+from .information import (
     information_customer_service,
     information_educational,
     information_rating,

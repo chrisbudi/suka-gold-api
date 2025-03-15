@@ -7,6 +7,13 @@ class information_educational(models.Model):
     information_notes = models.TextField(blank=True, null=True)
     information_url = models.URLField(max_length=200, blank=True, null=True)
     information_background = models.TextField(blank=True, null=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
+
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
 
     def update_image_path(self, fileUrl):
         self.information_background = fileUrl
@@ -23,6 +30,14 @@ class information_faq(models.Model):
     information_question = models.TextField(blank=True, null=True)
     information_answer = models.TextField(blank=True, null=True)
 
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
+
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
+
     def __str__(self):
         return self.information_title
 
@@ -31,6 +46,14 @@ class information_customer_service(models.Model):
     information_customer_service_id = models.AutoField(primary_key=True)
     information_phone = models.CharField(max_length=20)
     information_name = models.CharField(max_length=255)
+
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
+
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.information_name
@@ -42,6 +65,14 @@ class information_rating(models.Model):
     rate = models.IntegerField()
     message = models.TextField(blank=True, null=True)
     publish = models.BooleanField(default=False)
+
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
+
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.information_rate_name
@@ -58,6 +89,14 @@ class information_article(models.Model):
     article_source = models.URLField(max_length=255, blank=True, null=True)
     article_link = models.URLField(max_length=255, blank=True, null=True)
     article_background = models.URLField(max_length=255, blank=True, null=True)
+
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
+
+    upd_time = models.DateTimeField(auto_now=True)
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.information_article_name
@@ -85,11 +124,15 @@ class information_promo(models.Model):
     merchant_cashback = models.CharField(
         max_length=255, blank=True, null=True
     )  # Optional
-    create_time = models.DateTimeField(auto_now_add=True)
-    create_user = models.CharField(max_length=255)
     show_banner = models.BooleanField(default=True)
+
+    create_time = models.DateTimeField(auto_now_add=True)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
+
     upd_time = models.DateTimeField(auto_now=True)
-    upd_user = models.CharField(max_length=255)
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.promo_name

@@ -19,12 +19,11 @@ class bank(models.Model):
     bank_va_range_end = models.CharField(max_length=20, blank=True, null=True)
 
     create_time = models.DateTimeField(auto_now_add=True)
-    create_user = models.CharField(max_length=255)
+    create_user = models.UUIDField(null=True)
+    create_user_mail = models.CharField(max_length=255, null=True)
     upd_time = models.DateTimeField(auto_now=True)
-    upd_user = models.CharField(max_length=255)
-
-    class Meta:
-        app_label = "core"
+    upd_user = models.UUIDField(null=True)
+    upd_user_mail = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return f"bank id {self.bank_id} - bank name: {self.bank_name}"
