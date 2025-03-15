@@ -25,13 +25,14 @@ class gold_price_config(models.Model):
     )  # base_price + 10 (additionalPrice) + 10 (additional2) + 10(additional3)
 
     gpc_active = models.BooleanField(default=True)
-    gpc_deleted = models.BooleanField(default=False)
+
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.UUIDField(null=True)
     create_user_email = models.CharField(max_length=255, null=True)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
     upd_user_email = models.CharField(max_length=255, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"GPC {self.gpc_id} - Weight: {self.gold_price_weight}"
@@ -49,6 +50,6 @@ class gold_price_config(models.Model):
         return eval(expression)
 
     def delete(self):
-        self.gpc_deleted = True
+        self.is_deleted = True
         self.save()
         return self

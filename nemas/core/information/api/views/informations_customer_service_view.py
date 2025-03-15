@@ -44,7 +44,9 @@ class InformationCustomerServiceViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -55,7 +57,9 @@ class InformationCustomerServiceViewSet(viewsets.ModelViewSet):
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = infoSerializer(info, data=request.data)
+        serializer = infoSerializer(
+            info, data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save()
             return response.Response(serializer.data)

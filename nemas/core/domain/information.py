@@ -15,6 +15,8 @@ class information_educational(models.Model):
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
 
+    is_deleted = models.BooleanField(default=False)
+
     def update_image_path(self, fileUrl):
         self.information_background = fileUrl
         self.save()
@@ -22,6 +24,11 @@ class information_educational(models.Model):
 
     def __str__(self):
         return self.information_name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+        return f"Information {self.information_name} has been deleted"
 
 
 class information_faq(models.Model):
@@ -41,6 +48,11 @@ class information_faq(models.Model):
     def __str__(self):
         return self.information_title
 
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+        return f"FAQ {self.information_title} has been deleted"
+
 
 class information_customer_service(models.Model):
     information_customer_service_id = models.AutoField(primary_key=True)
@@ -54,9 +66,15 @@ class information_customer_service(models.Model):
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.information_name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+        return f"Customer Service {self.information_name} has been deleted"
 
 
 class information_rating(models.Model):
@@ -73,9 +91,15 @@ class information_rating(models.Model):
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.information_rate_name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+        return f"Rating {self.information_rate_name} has been deleted"
 
 
 class information_article(models.Model):
@@ -98,8 +122,15 @@ class information_article(models.Model):
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
 
+    is_deleted = models.BooleanField(default=False)
+
     def __str__(self):
         return self.information_article_name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+        return f"Article {self.information_article_name} has been deleted"
 
 
 class information_promo(models.Model):
@@ -134,5 +165,12 @@ class information_promo(models.Model):
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
 
+    is_deleted = models.BooleanField(default=False)
+
     def __str__(self):
         return self.promo_name
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+        return f"Promo {self.promo_name} has been deleted"

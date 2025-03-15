@@ -1,4 +1,6 @@
+from operator import is_
 from django.db import models
+from requests import delete
 from core.fields.uuidv7_field import UUIDv7Field
 
 from decimal import Decimal as decimal
@@ -19,6 +21,14 @@ class cert(models.Model):
     upd_user = models.UUIDField(null=True)
     upd_time = models.DateTimeField(auto_now=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Cert {self.cert_id} - Name: {self.cert_name}"
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 class gold_cert_detail_price(models.Model):
@@ -36,6 +46,14 @@ class gold_cert_detail_price(models.Model):
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Gold Cert Detail Price {self.id} - Gold: {self.gold}"
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 class gold(models.Model):
@@ -58,12 +76,17 @@ class gold(models.Model):
     upd_time = models.DateTimeField(auto_now=True)
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Gold {self.gold_id} - Brand: {self.brand}"
 
     def generate_number(self):
         return str(random.randint(100000, 999999))
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 # Gold Price Model
@@ -83,11 +106,17 @@ class gold_price(models.Model):
     gold_price_active = models.BooleanField(default=True)
     timestamps = models.DateTimeField(auto_now_add=True)
 
+    is_deleted = models.BooleanField(default=False)
+
     def __str__(self):
         return f"Gold Price {self.gold_price_id} - Base: {self.gold_price_base}"
 
     def get_active_price(self):
         return gold_price.objects.filter(gold_price_active=True).first()
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 
 class gold_price_source(models.Model):
@@ -98,3 +127,11 @@ class gold_price_source(models.Model):
         max_digits=10, decimal_places=2
     )  # harga dasar emas dr api
     timestamps = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Gold Price Source {self.gold_price_source_id} - Base: {self.gold_price_base}"
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()

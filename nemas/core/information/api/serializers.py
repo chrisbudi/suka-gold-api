@@ -4,6 +4,7 @@ Serializer for recipe api
 
 from rest_framework import serializers
 from django_filters import rest_framework as filters
+from datetime import datetime
 
 from core.domain import (
     information_educational,
@@ -28,6 +29,23 @@ class InformationCustomerServiceSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "information_customer_service_id",
         ]
+
+    def create(self, validated_data):
+        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user_email"] = self.context["request"].user.email
+
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user_email"] = self.context["request"].user.email
+
+        validated_data["create_time"] = datetime.now()
+        validated_data["upd_time"] = datetime.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_time"] = datetime.now()
+        validated_data["upd_user_email"] = self.context["request"].user.email
+        return super().update(instance, validated_data)
 
 
 class InformationCustomerServiceFilter(filters.FilterSet):
@@ -58,6 +76,23 @@ class InformationEducationalSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "information_educational_id",
         ]
+
+    def create(self, validated_data):
+        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user_email"] = self.context["request"].user.email
+
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user_email"] = self.context["request"].user.email
+
+        validated_data["create_time"] = datetime.now()
+        validated_data["upd_time"] = datetime.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_time"] = datetime.now()
+        validated_data["upd_user_email"] = self.context["request"].user.email
+        return super().update(instance, validated_data)
 
 
 class EducationalUploadSerializer(serializers.Serializer):
@@ -111,6 +146,23 @@ class InformationPromoSerializer(serializers.ModelSerializer):
             "promo_id",
         ]
 
+    def create(self, validated_data):
+        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user_email"] = self.context["request"].user.email
+
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user_email"] = self.context["request"].user.email
+
+        validated_data["create_time"] = datetime.now()
+        validated_data["upd_time"] = datetime.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_time"] = datetime.now()
+        validated_data["upd_user_email"] = self.context["request"].user.email
+        return super().update(instance, validated_data)
+
 
 class PromoUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
@@ -151,6 +203,23 @@ class InformationRatingSerializer(serializers.ModelSerializer):
             "information_rate_id",
         ]
 
+    def create(self, validated_data):
+        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user_email"] = self.context["request"].user.email
+
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user_email"] = self.context["request"].user.email
+
+        validated_data["create_time"] = datetime.now()
+        validated_data["upd_time"] = datetime.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_time"] = datetime.now()
+        validated_data["upd_user_email"] = self.context["request"].user.email
+        return super().update(instance, validated_data)
+
 
 class InformationRatingFilter(filters.FilterSet):
     class Meta:
@@ -185,6 +254,23 @@ class InformationArticleSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "information_rate_id",
         ]
+
+    def create(self, validated_data):
+        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user_email"] = self.context["request"].user.email
+
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user_email"] = self.context["request"].user.email
+
+        validated_data["create_time"] = datetime.now()
+        validated_data["upd_time"] = datetime.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_time"] = datetime.now()
+        validated_data["upd_user_email"] = self.context["request"].user.email
+        return super().update(instance, validated_data)
 
 
 class InformationArticleFilter(filters.FilterSet):

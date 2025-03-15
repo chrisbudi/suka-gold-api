@@ -25,8 +25,14 @@ class bank(models.Model):
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
 
+    is_deleted = models.BooleanField(default=False)
+
     def __str__(self):
         return f"bank id {self.bank_id} - bank name: {self.bank_name}"
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
     def generate_va(self) -> str:
         # generate value from range bank_va_range_start and bank_va_range_end

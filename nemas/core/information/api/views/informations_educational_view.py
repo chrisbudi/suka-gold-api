@@ -1,4 +1,3 @@
-from rest_framework.decorators import api_view
 from core.information.api.serializers import (
     InformationEducationalSerializer as infoSerializer,
     InformationEducationalServiceFilter as educationFilter,
@@ -47,7 +46,7 @@ class InformationEducationViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
     def create(self, request):
-        serializer = infoSerializer(data=request.data)
+        serializer = infoSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -59,7 +58,9 @@ class InformationEducationViewSet(viewsets.ModelViewSet):
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = infoSerializer(info, data=request.data)
+        serializer = infoSerializer(
+            info, data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save()
             return response.Response(serializer.data)

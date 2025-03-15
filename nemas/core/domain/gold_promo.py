@@ -1,5 +1,6 @@
 # from taggit.managers import TaggableManager
 from django.db import models
+from requests import delete
 
 
 class gold_promo(models.Model):
@@ -30,5 +31,11 @@ class gold_promo(models.Model):
     upd_user = models.UUIDField(null=True)
     upd_user_mail = models.CharField(max_length=255, null=True)
 
+    is_deleted = models.BooleanField(default=False)
+
     def __str__(self):
         return f"GPC {self.gold_promo_id} - Weight: {self.gold_promo_description}"
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
