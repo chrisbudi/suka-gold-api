@@ -29,6 +29,9 @@ class user_manager(BaseUserManager):
         phone_number=None,
         password=None,
         name=None,
+        investment_purpose=None,
+        income_source=None,
+        referal_code=None,
         **extra_fields,
     ):
         """Create and return a new user"""
@@ -61,6 +64,9 @@ class user_manager(BaseUserManager):
             level="",
             address="",
             address_post_code="",
+            investment_purpose=investment_purpose,
+            income_source=income_source,
+            referal_code=referal_code,
             create_user="system",
             create_time=datetime.now(),
             update_user="system",
