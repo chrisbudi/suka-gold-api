@@ -18,9 +18,29 @@ from user.models import user
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
+    income_source = serializers.CharField(
+        required=False, allow_blank=True, max_length=255
+    )
+    investment_purpose = serializers.CharField(
+        required=False, allow_blank=True, max_length=255
+    )
+    referal_code = serializers.CharField(
+        required=False, allow_blank=True, max_length=255
+    )
+
     class Meta:
         model = get_user_model()
-        fields = ("id", "user_name", "email", "phone_number", "password", "name")
+        fields = (
+            "id",
+            "user_name",
+            "email",
+            "phone_number",
+            "password",
+            "name",
+            "income_source",
+            "investment_purpose",
+            "referal_code",
+        )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 
     def validate(self, attrs):
