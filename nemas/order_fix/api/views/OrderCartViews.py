@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
-from order.models import order_cart_detail
-from order_fix.api.serializers import OrderCartDetailSerializer
+from order.api.serializers.OrderCartSerializer import OrderCartDetailSerializer
+from order.models import order_cart_detail, order_cart
+from order_fix.api.serializers import OrderCartSerializer
 
 
 @extend_schema(
@@ -16,7 +17,6 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    serializer_class = OrderCartDetailSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     pagination_class = (
         pagination.LimitOffsetPagination
@@ -30,32 +30,41 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         ).select_related("gold")
 
     @extend_schema(
-        summary="List Cart",
-        description="Retrieve a list of gold purchases for the authenticated user.",
-        responses={200: OrderCartDetailSerializer},
+        summary="List Cart Detail",
+        description="Retreive all detail data that completed_cart false.",
+        responses={200: OrderCartSerializer.CartDetailSerializer},
     )
-    def list(self, request):
+    def list_cart_detail(self, request):
         queryset = order_cart_detail.objects.filter(
-            user_id=request.user
-        ).select_related(
-            "gold"
-        )  # Ensure 'gold' is a valid related field in the model
+            user_id=request.user, completed_cart=False, selected=True
+        ).select_related("gold")
 
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        print(paginated_queryset, "paginated_queryset")
-        serializer = OrderCartDetailSerializer(paginated_queryset, many=True)
+        serializer = OrderCartSerializer.CartDetailSerializer(
+            paginated_queryset, many=True
+        )
         return self.get_paginated_response(serializer.data)
 
-        # return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @extend_schema(
+        summary="Show Cart",
+        description="Show data cart detail",
+        responses={200: OrderCartSerializer.CartSerializer},
+    )
+    def show_cart(self, request):
+        queryset = order_cart.objects.filter(user_id=request.user, completed_cart=False)
+
+        filter_queryset = self.filter_queryset(queryset)
+        paginated_queryset = self.paginate_queryset(filter_queryset)
+        serializer = OrderCartSerializer.CartSerializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @extend_schema(
         summary="Add To Cart",
-        description="Create a gold purchase for the authenticated user.",
-        request=OrderCartDetailSerializer,
-        responses={201: OrderCartDetailSerializer},
+        description="Add a gold to cart for the authenticated user.",
+        responses={201: OrderCartSerializer.AddCartDetailSerializer},
     )
-    def create(self, request):
+    def add_cart(self, request):
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
@@ -63,21 +72,6 @@ class CartItemListAPIView(viewsets.ModelViewSet):
             serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @extend_schema(
-        summary="Update Cart Item",
-        description="Update a gold purchase for the authenticated user.",
-        request=OrderCartDetailSerializer,
-        responses={200: OrderCartDetailSerializer},
-    )
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", True)
-        instance = self.get_object()
-        data = {"quantity": request.data.get("quantity")}
-        serializer = self.get_serializer(instance, data=data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         summary="Delete Cart Item",

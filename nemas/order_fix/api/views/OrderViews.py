@@ -6,11 +6,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from gold_transaction.models import gold_saving_buy
-from order_fix.api.serializers.OrderGoldSerializer import (
+from order.api.serializers.OrderGoldSerializer import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
 )
-from order_fix.api.serializers.OrderSimulatePaymentSerializer import (
+from order.api.serializers.OrderSimulatePaymentSerializer import (
     OrderSimulatedPaymentQrisSerializer,
     OrderSimulatedPaymentVaSerializer,
 )
@@ -34,7 +34,6 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
     )  # Adjust pagination class as needed
 
     @extend_schema(
-        tags=["Order Fix - Order Gold List"],
         summary="List Order Gold",
         description="Retrieve a list of order gold purchases for the authenticated user.",
         responses={200: OrderGoldListSerializer},
@@ -47,7 +46,6 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
     @extend_schema(
-        tags=["Order Fix - Order Gold Create"],
         summary="Create Gold Purchase",
         description="Create a order gold purchase for the authenticated user.",
         request=OrderGoldSerializer,
@@ -66,7 +64,6 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=["Order Fix - Simulate Payment VA"],
         summary="Simulate Payment VA",
         description="Simulate a payment for a virtual account.",
         request=OrderSimulatedPaymentVaSerializer,
@@ -87,7 +84,6 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=["Order Fix - Simulate Payment QRIS"],
         summary="Simulate Payment QRIS",
         description="Simulate a payment for a QRIS.",
         request=OrderSimulatedPaymentQrisSerializer,

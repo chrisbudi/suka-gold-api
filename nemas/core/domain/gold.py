@@ -64,6 +64,7 @@ class gold(models.Model):
     certificate_weight = models.DecimalField(
         max_digits=10, decimal_places=4, default=decimal(0.00)
     )
+    certificate = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
     product_cost = models.DecimalField(max_digits=10, decimal_places=2)
     gold_image_1 = models.CharField(max_length=255, default="")
     gold_image_2 = models.CharField(max_length=255, default="")

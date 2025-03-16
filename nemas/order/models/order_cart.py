@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 from requests import delete
 from core.fields.uuidv7_field import UUIDv7Field
-from core.domain import gold
+from core.domain import gold, cert
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
@@ -51,7 +51,16 @@ class order_cart_detail(models.Model):
     quantity = models.PositiveIntegerField(
         default=1, validators=[MinValueValidator(1)]  # Ensures quantity ≥ 1
     )
-    selected = models.BooleanField(default=False)
+    cert = models.ForeignKey(
+        cert,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    cert_price = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True, blank=True
+    )
+    selected = models.BooleanField(default=True)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
     price = models.DecimalField(max_digits=16, decimal_places=2)
     total_price = models.DecimalField(max_digits=16, decimal_places=2, editable=False)
@@ -68,7 +77,6 @@ class order_cart_detail(models.Model):
         self.updated_at = timezone.now()
         if not self.user_id:
             self.user_id = get_user_model().objects.get(pk=self.user_id)
-
         super().save(*args, **kwargs)
 
     def complete_cart(self, *args, **kwargs):
