@@ -30,6 +30,7 @@ from core import urls as coreUrl
 from wallet.api import urls as walletUrl
 from gold_transaction.api import urls as goldUrl
 from order.api import urls as orderUrl
+from order_fix.api import urls as orderFixUrl
 
 authentication_classes = [JWTAuthentication]
 
@@ -69,7 +70,28 @@ urlpatterns = [
     path("api/core/", include(coreUrl, "core")),
     path("api/wallet/", include(walletUrl, "wallet")),
     path("api/gold-transaction/", include(goldUrl, "gold-transaction")),
+    path(
+        "api/schema/order/",
+        SpectacularAPIView.as_view(urlconf="order.api.urls"),
+        name="order-schema",
+    ),
+    path(
+        "api/schema/order/docs",
+        SpectacularSwaggerView.as_view(url_name="order-schema"),
+        name="order-swagger-ui",
+    ),
     path("api/order/", include(orderUrl, "order")),
+    path(
+        "api/schema/order/fix",
+        SpectacularAPIView.as_view(urlconf="order_fix.api.urls"),
+        name="order-fix-schema",
+    ),
+    path(
+        "api/schema/order/fix/docs",
+        SpectacularSwaggerView.as_view(url_name="order-fix-schema"),
+        name="order-fix-swagger-ui",
+    ),
+    path("api/orders/fix/", include(orderFixUrl, "order_fix")),
 ]
 
 # urlpatterns = [

@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "order",
     "investment",
     "loan",
+    "order_fix",
 ]
 
 MIDDLEWARE = [
