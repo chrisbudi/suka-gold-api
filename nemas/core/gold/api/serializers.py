@@ -4,6 +4,7 @@ Serializer for recipe api
 
 from datetime import datetime
 import uuid
+from humanize import activate
 from rest_framework import serializers
 from django_filters import rest_framework as filters
 from core.domain import (
@@ -112,6 +113,55 @@ class GoldSerializer(serializers.ModelSerializer):
         validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_time"] = datetime.now()
         return super().update(instance, validated_data)
+
+
+class GoldProductShowSerializer(serializers.ModelSerializer):
+    """Serializer for gold object"""
+
+    certificate = CertSerializer(read_only=True)
+    certificate_id = serializers.PrimaryKeyRelatedField(
+        queryset=cert.objects.all(), source="certificate", write_only=True
+    )
+    gold_price_original = serializers.SerializerMethodField()
+
+    activate_price = gold_price().get_active_price()
+
+    # def get_gold_price_original(self, obj):
+    #     return (
+    #         self.activate_price.gold_price_buy * obj.gold_weight
+    #         + obj.certificate.cert_price
+    #     )
+
+    gold_price_summary = serializers.SerializerMethodField()
+
+    def get_gold_price_summary(self, obj):
+        product_cost = obj.product_cost if obj.product_cost is not None else 0
+        return (
+            (self.activate_price.gold_price_buy + product_cost) * obj.gold_weight
+        ) + obj.certificate.cert_price
+
+    class Meta:
+        model = gold
+        fields = [
+            "gold_id",
+            "gold_weight",
+            "type",
+            "brand",
+            "certificate",
+            "certificate_id",
+            "certificate_weight",
+            "product_cost",
+            "gold_image_1",
+            "gold_image_2",
+            "gold_image_3",
+            "gold_image_4",
+            "gold_image_5",
+            "gold_price_summary",
+            # "gold_price_original",
+        ]
+        read_only_fields = [
+            "gold_id",
+        ]
 
 
 class GoldServiceFilter(filters.FilterSet):

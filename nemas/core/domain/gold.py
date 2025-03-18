@@ -114,7 +114,7 @@ class gold_price(models.Model):
         return f"Gold Price {self.gold_price_id} - Base: {self.gold_price_base}"
 
     def get_active_price(self):
-        return gold_price.objects.filter(gold_price_active=True).first()
+        return gold_price.objects.get(gold_price_active=True)
 
     def delete(self):
         self.is_deleted = True

@@ -2,6 +2,7 @@ from core.gold.api.serializers import (
     GoldSerializer as objectSerializer,
     GoldUploadSerializer as uploadSerializer,
     GoldServiceFilter as objectFilter,
+    GoldProductShowSerializer,
 )
 from rest_framework import status, viewsets, filters, pagination, response
 from core.domain import gold as modelInfo
@@ -27,17 +28,24 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         print(self.action, "action permission")
-        if self.action in ["list", "get"]:
+        if self.action in ["list", "list_product_show", "get"]:
             permission_classes = []
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+    @extend_schema(
+        responses=GoldProductShowSerializer(many=True),
+        tags=["gold"],
+    )
     def list_product_show(self, request):
         queryset = modelInfo.objects.all()
+        self.pagination_class = (
+            pagination.LimitOffsetPagination
+        )  # Ensure pagination is applied
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = objectSerializer(paginated_queryset, many=True)
+        serializer = GoldProductShowSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
     def list(self, request):

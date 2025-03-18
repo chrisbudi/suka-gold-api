@@ -43,6 +43,11 @@ gold_urls = [
         name="get_gold",
     ),
     path(
+        "list/product-show",
+        gold_view.GoldServiceViewSet.as_view({"get": "list_product_show"}),
+        name="list_product_show",
+    ),
+    path(
         "upload/<int:id>/",
         gold_view.GoldServiceViewSet.as_view({"post": "upload"}),
         name="upload_image_promo",
