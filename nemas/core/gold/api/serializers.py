@@ -122,15 +122,8 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
     certificate_id = serializers.PrimaryKeyRelatedField(
         queryset=cert.objects.all(), source="certificate", write_only=True
     )
-    gold_price_original = serializers.SerializerMethodField()
 
     activate_price = gold_price().get_active_price()
-
-    # def get_gold_price_original(self, obj):
-    #     return (
-    #         self.activate_price.gold_price_buy * obj.gold_weight
-    #         + obj.certificate.cert_price
-    #     )
 
     gold_price_summary = serializers.SerializerMethodField()
 
@@ -157,7 +150,6 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
             "gold_image_4",
             "gold_image_5",
             "gold_price_summary",
-            # "gold_price_original",
         ]
         read_only_fields = [
             "gold_id",
