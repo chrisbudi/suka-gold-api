@@ -15,7 +15,7 @@ urlpatterns = [
         name="list-cart-detail",
     ),
     path(
-        "cart/",
+        "cart/show",
         views.CartItemListAPIView.as_view({"get": "show_cart"}),
         name="show_cart",
     ),

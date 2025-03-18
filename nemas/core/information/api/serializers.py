@@ -31,10 +31,10 @@ class InformationCustomerServiceSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user"] = self.context["request"].user.id
         validated_data["create_user_email"] = self.context["request"].user.email
 
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_user_email"] = self.context["request"].user.email
 
         validated_data["create_time"] = datetime.now()
@@ -42,7 +42,7 @@ class InformationCustomerServiceSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_time"] = datetime.now()
         validated_data["upd_user_email"] = self.context["request"].user.email
         return super().update(instance, validated_data)
@@ -78,10 +78,10 @@ class InformationEducationalSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user"] = self.context["request"].user.id
         validated_data["create_user_email"] = self.context["request"].user.email
 
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_user_email"] = self.context["request"].user.email
 
         validated_data["create_time"] = datetime.now()
@@ -89,7 +89,7 @@ class InformationEducationalSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_time"] = datetime.now()
         validated_data["upd_user_email"] = self.context["request"].user.email
         return super().update(instance, validated_data)
@@ -147,10 +147,10 @@ class InformationPromoSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user"] = self.context["request"].user.id
         validated_data["create_user_email"] = self.context["request"].user.email
 
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_user_email"] = self.context["request"].user.email
 
         validated_data["create_time"] = datetime.now()
@@ -158,7 +158,7 @@ class InformationPromoSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_time"] = datetime.now()
         validated_data["upd_user_email"] = self.context["request"].user.email
         return super().update(instance, validated_data)
@@ -204,10 +204,10 @@ class InformationRatingSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user"] = self.context["request"].user.id
         validated_data["create_user_email"] = self.context["request"].user.email
 
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_user_email"] = self.context["request"].user.email
 
         validated_data["create_time"] = datetime.now()
@@ -215,7 +215,7 @@ class InformationRatingSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_time"] = datetime.now()
         validated_data["upd_user_email"] = self.context["request"].user.email
         return super().update(instance, validated_data)
@@ -256,10 +256,10 @@ class InformationArticleSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user
+        validated_data["create_user"] = self.context["request"].user.id
         validated_data["create_user_email"] = self.context["request"].user.email
 
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_user_email"] = self.context["request"].user.email
 
         validated_data["create_time"] = datetime.now()
@@ -267,7 +267,7 @@ class InformationArticleSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user
+        validated_data["upd_user"] = self.context["request"].user.id
         validated_data["upd_time"] = datetime.now()
         validated_data["upd_user_email"] = self.context["request"].user.email
         return super().update(instance, validated_data)

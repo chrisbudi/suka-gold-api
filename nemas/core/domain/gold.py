@@ -61,11 +61,12 @@ class gold(models.Model):
     gold_weight = models.IntegerField()
     type = models.CharField(max_length=50)  # bar-mintedbar
     brand = models.CharField(max_length=255)  # marva gold, antam
+    # TODO: Remove the certificate weight field
     certificate_weight = models.DecimalField(
-        max_digits=10, decimal_places=4, default=decimal(0.00)
+        max_digits=10, decimal_places=4, default=decimal(0.00), null=True
     )
     certificate = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
-    product_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    product_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     gold_image_1 = models.CharField(max_length=255, default="")
     gold_image_2 = models.CharField(max_length=255, default="")
     gold_image_3 = models.CharField(max_length=255, default="")

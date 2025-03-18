@@ -33,6 +33,13 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+    def list_product_show(self, request):
+        queryset = modelInfo.objects.all()
+        filter_queryset = self.filter_queryset(queryset)
+        paginated_queryset = self.paginate_queryset(filter_queryset)
+        serializer = objectSerializer(paginated_queryset, many=True)
+        return self.get_paginated_response(serializer.data)
+
     def list(self, request):
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
@@ -49,7 +56,7 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = objectSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            serializer.save(create_user=request.user)
+            serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(

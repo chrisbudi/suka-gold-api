@@ -18,9 +18,7 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    pagination_class = (
-        pagination.LimitOffsetPagination
-    )  # Adjust pagination class as needed
+    pagination_class = pagination.LimitOffsetPagination
 
     search_fields = ["transaction_date", "weight", "price_per_gram", "total_price"]
 
@@ -32,7 +30,7 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     @extend_schema(
         summary="List Cart Detail",
         description="Retreive all detail data that completed_cart false.",
-        responses={200: OrderCartSerializer.CartDetailSerializer},
+        request={200: OrderCartSerializer.CartDetailSerializer},
     )
     def list_cart_detail(self, request):
         queryset = order_cart_detail.objects.filter(
@@ -41,28 +39,32 @@ class CartItemListAPIView(viewsets.ModelViewSet):
 
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = OrderCartSerializer.CartDetailSerializer(
-            paginated_queryset, many=True
-        )
-        return self.get_paginated_response(serializer.data)
+        if paginated_queryset is not None:
+            serializer = OrderCartSerializer.CartDetailSerializer(
+                paginated_queryset, many=True
+            )
+            return self.get_paginated_response(serializer.data)
+        else:
+            serializer = OrderCartSerializer.CartDetailSerializer(
+                filter_queryset, many=True
+            )
+            return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         summary="Show Cart",
         description="Show data cart detail",
-        responses={200: OrderCartSerializer.CartSerializer},
+        request={200: OrderCartSerializer.CartSerializer},
     )
     def show_cart(self, request):
         queryset = order_cart.objects.filter(user_id=request.user, completed_cart=False)
 
-        filter_queryset = self.filter_queryset(queryset)
-        paginated_queryset = self.paginate_queryset(filter_queryset)
-        serializer = OrderCartSerializer.CartSerializer(paginated_queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+        serializer = OrderCartSerializer.CartSerializer(queryset, many=True)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         summary="Add To Cart",
         description="Add a gold to cart for the authenticated user.",
-        responses={201: OrderCartSerializer.AddCartDetailSerializer},
+        request={201: OrderCartSerializer.AddCartDetailSerializer},
     )
     def add_cart(self, request):
         serializer = self.get_serializer(
@@ -76,7 +78,7 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     @extend_schema(
         summary="Delete Cart Item",
         description="Delete a gold purchase for the authenticated user.",
-        responses={204: None},
+        request={204: None},
     )
     def destroy(self, request, *args, **kwargs):
         queryset = order_cart_detail.objects.filter(
