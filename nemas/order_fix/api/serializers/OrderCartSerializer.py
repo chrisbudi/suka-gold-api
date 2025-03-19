@@ -80,10 +80,14 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         order_cart_detail_model.quantity = validated_data["quantity"]
 
         order_cart_detail_model.total_price = (
-            order_cart_detail_model.price
-            + (order_cart_detail_model.cert_price or 0)
-            + (order_cart_detail_model.product_cost or 0)
-        ) * order_cart_detail_model.quantity
+            (
+                order_cart_detail_model.price
+                + (order_cart_detail_model.cert_price or 0)
+                + (order_cart_detail_model.product_cost or 0)
+            )
+            * order_cart_detail_model.quantity
+            * order_cart_detail_model.weight
+        )
 
         order_cart_detail_model.save()
         return order_cart_detail_model
