@@ -1,8 +1,12 @@
+from datetime import datetime
+import uuid
 from rest_framework import serializers
 from order.models import order_cart, order_cart_detail
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from core.domain.gold import gold as GoldModel, gold_price
+
+from decimal import Decimal
 
 User = get_user_model()
 
@@ -14,45 +18,71 @@ class GoldSerializer(serializers.ModelSerializer):
 
 
 class AddCartDetailSerializer(serializers.ModelSerializer):
+    # gold = serializers.PrimaryKeyRelatedField(
+    #     queryset=GoldModel.objects.all(), write_only=True
+    # )
+    gold_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = order_cart_detail
         fields = [
-            "gold",
+            "gold_id",
             "quantity",
         ]
 
     def create(self, validated_data):
         goldModel = GoldModel.objects.select_related("certificate").get(
-            gold_id=validated_data["gold"].id
+            gold_id=validated_data["gold_id"]
         )
-        if goldModel is None:
-            raise serializers.ValidationError("Gold not found")
         goldPriceModel = gold_price().get_active_price()
-        if goldPriceModel is None:
-            raise serializers.ValidationError("Gold price not found")
-
         order_cart_detail_model = order_cart_detail.objects.filter(
             gold=goldModel, user_id=self.context["request"].user
         ).first()
-
+        if goldModel is None:
+            raise serializers.ValidationError("Gold not found")
+        if goldPriceModel is None:
+            raise serializers.ValidationError("Gold price not found")
         if not order_cart_detail_model:
+            print("create new data")
             validated_data.update(
                 {
-                    "certificate": goldModel.certificate,
+                    "cert": goldModel.certificate,
                     "cert_price": (
                         goldModel.certificate.cert_price if goldModel.certificate else 0
                     ),
-                    "user_id": self.context["request"].user,
+                    "product_cost": goldModel.product_cost,
+                    "gold": goldModel,
+                    "user": self.context["request"].user,
                     "price": goldPriceModel.gold_price_buy,
                     "weight": goldModel.gold_weight,
-                    "total_price": validated_data["price"] * validated_data["quantity"],
+                    "total_price": (
+                        goldPriceModel.gold_price_buy
+                        + (goldModel.product_cost or 0)
+                        + (
+                            goldModel.certificate.cert_price
+                            if goldModel.certificate
+                            else 0
+                        )
+                    )
+                    * validated_data["quantity"],
                 }
             )
             return order_cart_detail.objects.create(**validated_data)
 
-        order_cart_detail_model.quantity += validated_data["quantity"]
+        print("update data")
+        order_cart_detail_model.price = goldPriceModel.gold_price_buy
+        order_cart_detail_model.product_cost = goldModel.product_cost
+        order_cart_detail_model.weight = goldModel.gold_weight
+        order_cart_detail_model.cert_price = (
+            goldModel.certificate.cert_price if goldModel.certificate else Decimal("0")
+        )
+
+        order_cart_detail_model.quantity = validated_data["quantity"]
+
         order_cart_detail_model.total_price = (
-            order_cart_detail_model.price + (order_cart_detail_model.cert_price or 0)
+            order_cart_detail_model.price
+            + (order_cart_detail_model.cert_price or 0)
+            + (order_cart_detail_model.product_cost or 0)
         ) * order_cart_detail_model.quantity
 
         order_cart_detail_model.save()
@@ -63,27 +93,45 @@ class ProcessCartSerializer(serializers.Serializer):
     # logic for processing the submited cart
 
     def create(self, validated_data):
-        validated_data["user_id"] = self.context["request"].user
+        validated_data["user"] = self.context["request"].user
         order_cart_detail_model = order_cart_detail.objects.filter(
-            user_id=validated_data["user_id"]
+            user=validated_data["user"]
         )
         if not order_cart_detail_model:
             raise serializers.ValidationError("Cart is empty")
-        order_cart_instance = order_cart.objects.create(
-            user_id=validated_data["user_id"],
-            total_price=sum(
-                [
-                    (item.total_price + (item.cert_price or 0))
-                    for item in order_cart_detail_model
-                ]
-            ),
-            total_weight=sum([item.weight for item in order_cart_detail_model]),
+
+        order_cart_instance, created = order_cart.objects.get_or_create(
+            user=validated_data["user"],
+            completed_cart=False,
+            defaults={
+                "created_at": datetime.now(),
+                "updated_at": datetime.now(),
+                "total_weight": 0,
+                "total_price": 0,
+            },
         )
+
+        order_cart_instance.total_weight = Decimal(
+            sum([item.weight for item in order_cart_detail_model])
+        )
+        order_cart_instance.total_price = Decimal(
+            sum([item.total_price for item in order_cart_detail_model])
+        )
+        if order_cart_instance is None:
+            order_cart_instance.created_at = datetime.now()
+            order_cart_instance.updated_at = datetime.now()
+            order_cart_instance.session_key = str(uuid.uuid4())
+            order_cart_instance.save()
+        else:
+            order_cart_instance.updated_at = datetime.now()
+            order_cart_instance.save()
+
         for item in order_cart_detail_model:
             item.cart_id = order_cart_instance
             item.save()
 
-        return order_cart_instance
+        print(CartSerializer(order_cart_instance), "order_cart_instance")
+        return CartSerializer(order_cart_instance)
 
 
 class CartDetailSerializer(serializers.ModelSerializer):

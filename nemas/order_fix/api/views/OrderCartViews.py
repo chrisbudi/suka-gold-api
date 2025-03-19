@@ -5,9 +5,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
-from order.api.serializers.OrderCartSerializer import OrderCartDetailSerializer
 from order.models import order_cart_detail, order_cart
 from order_fix.api.serializers import OrderCartSerializer
+from order_fix.api.serializers.OrderCartSerializer import (
+    AddCartDetailSerializer,
+    CartDetailSerializer,
+    CartSerializer,
+    ProcessCartSerializer,
+)
 
 
 @extend_schema(
@@ -16,6 +21,7 @@ from order_fix.api.serializers import OrderCartSerializer
 class CartItemListAPIView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    serializer_class = CartDetailSerializer
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     pagination_class = pagination.LimitOffsetPagination
@@ -30,7 +36,7 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     @extend_schema(
         summary="List Cart Detail",
         description="Retreive all detail data that completed_cart false.",
-        request={200: OrderCartSerializer.CartDetailSerializer},
+        request={200: CartDetailSerializer},
     )
     def list_cart_detail(self, request):
         queryset = order_cart_detail.objects.filter(
@@ -40,14 +46,10 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         if paginated_queryset is not None:
-            serializer = OrderCartSerializer.CartDetailSerializer(
-                paginated_queryset, many=True
-            )
+            serializer = CartDetailSerializer(paginated_queryset, many=True)
             return self.get_paginated_response(serializer.data)
         else:
-            serializer = OrderCartSerializer.CartDetailSerializer(
-                filter_queryset, many=True
-            )
+            serializer = CartDetailSerializer(filter_queryset, many=True)
             return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -64,15 +66,34 @@ class CartItemListAPIView(viewsets.ModelViewSet):
     @extend_schema(
         summary="Add To Cart",
         description="Add a gold to cart for the authenticated user.",
-        request={201: OrderCartSerializer.AddCartDetailSerializer},
+        request=AddCartDetailSerializer,
+        responses={201: CartDetailSerializer, 400: "Bad Request"},
     )
     def add_cart(self, request):
-        serializer = self.get_serializer(
+        serializer = AddCartDetailSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            serializer.save()
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+            instance = serializer.save(user=request.user)
+            updated_serializer = CartDetailSerializer(instance)
+            return response.Response(
+                updated_serializer.data, status=status.HTTP_201_CREATED
+            )
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        summary="Submit Cart",
+        description="Submit Cart.",
+        request=ProcessCartSerializer,
+        responses={201: CartSerializer, 400: "Bad Request"},
+    )
+    def process_cart(self, request):
+        serializer = ProcessCartSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            instance = serializer.save(user=request.user)
+            return response.Response(instance.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(

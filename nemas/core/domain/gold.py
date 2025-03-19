@@ -58,7 +58,7 @@ class gold_cert_detail_price(models.Model):
 
 class gold(models.Model):
     gold_id = models.AutoField(primary_key=True)
-    gold_weight = models.IntegerField()
+    gold_weight = models.DecimalField(max_digits=10, decimal_places=4)
     type = models.CharField(max_length=50)  # bar-mintedbar
     brand = models.CharField(max_length=255)  # marva gold, antam
     # TODO: Remove the certificate weight field

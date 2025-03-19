@@ -12,7 +12,7 @@ from django.core.validators import MinValueValidator
 
 class order_cart(models.Model):
     order_cart_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
@@ -42,7 +42,7 @@ class order_cart_detail(models.Model):
         gold,
         on_delete=models.CASCADE,
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
@@ -60,6 +60,10 @@ class order_cart_detail(models.Model):
     cert_price = models.DecimalField(
         max_digits=16, decimal_places=2, null=True, blank=True
     )
+    product_cost = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True, blank=True
+    )
+
     selected = models.BooleanField(default=True)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
     price = models.DecimalField(max_digits=16, decimal_places=2)

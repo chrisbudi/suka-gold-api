@@ -25,6 +25,11 @@ urlpatterns = [
         name="cart-add",
     ),
     path(
+        "cart/process/",
+        views.CartItemListAPIView.as_view({"post": "process_cart"}),
+        name="cart-add",
+    ),
+    path(
         "cart/delete/<uuid:pk>/",
         views.CartItemListAPIView.as_view({"delete": "destroy"}),
         name="cart-delete",
