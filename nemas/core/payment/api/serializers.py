@@ -6,6 +6,34 @@ from rest_framework import serializers
 from django_filters import rest_framework as filters
 
 from core.domain import bank as Bank
+from core.domain.payment import payment_method
+
+
+# region Payment Method
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    """Serializer for bank object"""
+
+    class Meta:
+        model = payment_method
+        fields = [
+            "payment_method_id",
+            "payment_method_name",
+            "payment_method_description",
+            "is_active",
+        ]
+        read_only_fields = []
+
+
+class PaymentMethodFilter(filters.FilterSet):
+    class Meta:
+        model = payment_method
+
+        fields = {
+            "payment_method_name": ["icontains"],
+        }
+
+
+# endregion
 
 
 # region Bank

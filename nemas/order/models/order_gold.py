@@ -7,6 +7,7 @@ from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 from core.domain.address import postal_code
 from core.domain import gold, gold_price_config, cert, delivery_partner
+from core.domain.delivery import delivery_partner_service
 from order.models.order_cart import order_cart_detail
 from order.models import order_payment
 from user.models.users import user_address
@@ -29,6 +30,7 @@ class order_gold(models.Model):
         on_delete=models.CASCADE,
         null=True,
     )
+
     order_phone_number = models.CharField(max_length=255)
     order_item_weight = models.DecimalField(max_digits=10, decimal_places=4)
     order_payment_method = models.CharField(max_length=255)
@@ -70,6 +72,9 @@ class order_gold(models.Model):
         delivery_partner, on_delete=models.CASCADE, null=True
     )
 
+    tracking_courier_service = models.ForeignKey(
+        delivery_partner_service, on_delete=models.CASCADE, null=True
+    )
     tracking_number = models.CharField(max_length=255, null=True)
     tracking_last_note = models.CharField(max_length=255, null=True)
     tracking_last_updated_datetime = models.DateTimeField(auto_created=True, null=True)

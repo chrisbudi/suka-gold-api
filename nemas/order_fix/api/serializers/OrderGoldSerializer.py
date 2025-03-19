@@ -28,9 +28,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             "order_payment_method",
             "order_payment_va_bank",
             "order_delivery_method",
-            "order_delivery_courier",
             "order_delivery_service",
-            "order_",
+            "tracking_courier",
         ]
 
     def create(self, validated_data):

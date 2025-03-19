@@ -1,1 +1,2 @@
 from .bank_view import BankServiceViewSet
+from .payment_method_view import PaymentMethodViewViewSet
