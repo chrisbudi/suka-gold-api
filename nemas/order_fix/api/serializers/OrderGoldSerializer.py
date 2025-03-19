@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+from attr import field
 from rest_framework import serializers
+from order.models import order_cart
 from shared_kernel.services.external.xendit_service import va_service, qris_service
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
@@ -10,6 +12,39 @@ from uuid import uuid4
 import json
 
 User = get_user_model()
+
+
+class SubmitOrderGoldSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = order_gold
+        # cart --> item
+        # courier --> delivery
+        # payment_method --> payment
+        # user_address --> address
+        # promo --> promo
+        fields = [
+            "order_cart",
+            "order_user_address",
+            "order_payment_method",
+            "order_payment_va_bank",
+            "order_delivery_method",
+            "order_delivery_courier",
+            "order_delivery_service",
+            "order_",
+        ]
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        gold = GoldModel()
+        order_cart_id = validated_data.get("order_cart")
+        order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
+        # insert into order_gold from order_cart_models
+        validated_data["user"] = user
+        validated_data["order_number"] = gold.generate_number()
+        validated_data["order_timestamp"] = datetime.now()
+        # validated_data["order_user_address"] = order_cart_models.order_user_address
+        # validated_data["order_phone_number"] = order_cart_models.order_phone_number
+        return super().create(validated_data)
 
 
 class OrderGoldListSerializer(serializers.Serializer):

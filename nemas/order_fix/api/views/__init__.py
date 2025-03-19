@@ -1,3 +1,3 @@
 from .OrderCartViews import CartItemListAPIView
 from .OrderShippingViews import OrderShippingAPIView
-from .OrderViews import OrderGoldListCreateAPIView
+from .OrderGoldViews import OrderGoldListCreateAPIView

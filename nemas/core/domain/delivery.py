@@ -1,13 +1,22 @@
-from pickle import TRUE
-from typing import Any
 from django.db import models
-from requests import delete
 
 
 class delivery_partner(models.Model):
     delivery_partner_id = models.AutoField(primary_key=True)
     delivery_partner_name = models.CharField(max_length=50, unique=True)
     delivery_partner_description = models.CharField(max_length=50, unique=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+
+
+class delivery_partner_service(models.Model):
+    delivery_partner_service_id = models.AutoField(primary_key=True)
+    delivery_partner_service_name = models.CharField(max_length=50, unique=True)
+    delivery_partner_service_code = models.CharField(max_length=50, unique=True)
+    delivery_partner_service_description = models.CharField(max_length=50, unique=True)
     is_deleted = models.BooleanField(default=False)
 
     def delete(self):

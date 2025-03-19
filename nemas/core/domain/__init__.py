@@ -34,6 +34,7 @@ from .gold_promo import (
 
 from .delivery import (
     delivery_partner,
+    delivery_partner_service,
     delivery_partner_district,
     delivery_shipment_content,
 )
@@ -41,4 +42,17 @@ from .delivery import (
 
 from .customer_address_pickup import (
     customer_address_pickup,
+)
+
+from .payment import (
+    payment_method,
+    # payment_method_config,
+    # payment_method_config_detail,
+    # payment_method_config_detail_bank,
+    # payment_method_config_detail_payment,
+    # payment_method_config_detail_promo,
+    # payment_method_config_detail_shipping,
+    # payment_method_config_detail_voucher,
+    # payment_method_config_detail_wallet,
+    # payment_method_config_detail_wallet_promo,
 )

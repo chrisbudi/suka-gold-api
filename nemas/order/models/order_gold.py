@@ -1,3 +1,4 @@
+from itertools import product
 from operator import truediv
 from pickle import TRUE
 from django.conf import settings
@@ -5,7 +6,8 @@ from django.conf import settings
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 from core.domain.address import postal_code
-from core.domain import gold, gold_price_config, cert
+from core.domain import gold, gold_price_config, cert, delivery_partner
+from order.models.order_cart import order_cart_detail
 from order.models import order_payment
 from user.models.users import user_address
 
@@ -21,6 +23,11 @@ class order_gold(models.Model):
     order_user_address = models.ForeignKey(
         user_address,
         on_delete=models.CASCADE,
+    )
+    order_cart = models.ForeignKey(
+        "order_cart",
+        on_delete=models.CASCADE,
+        null=True,
     )
     order_phone_number = models.CharField(max_length=255)
     order_item_weight = models.DecimalField(max_digits=10, decimal_places=4)
@@ -52,12 +59,17 @@ class order_gold(models.Model):
     order_gold_payment_ref = models.CharField(max_length=255, null=True)
     order_gold_payment_status = models.CharField(max_length=255, null=True)
     order_promo_code = models.CharField(max_length=255, null=True)
+
     order_discount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
 
     tracking_status_id = models.CharField(max_length=255, null=True)
     tracking_status = models.CharField(max_length=255, null=True)
-    tracking_courier = models.CharField(max_length=255, null=True)
+
+    tracking_courier = models.ForeignKey(
+        delivery_partner, on_delete=models.CASCADE, null=True
+    )
+
     tracking_number = models.CharField(max_length=255, null=True)
     tracking_last_note = models.CharField(max_length=255, null=True)
     tracking_last_updated_datetime = models.DateTimeField(auto_created=True, null=True)
@@ -81,12 +93,19 @@ class order_gold_detail(models.Model):
         gold,
         on_delete=models.CASCADE,
     )
+    order_cart_detail = models.ForeignKey(
+        order_cart_detail,
+        on_delete=models.CASCADE,
+        null=True,
+    )
     gold_type = models.CharField(max_length=255, null=True)
     gold_brand = models.CharField(max_length=255)
-    gold_price_id = models.ForeignKey(
+    gold_price = models.ForeignKey(
         gold_price_config, on_delete=models.CASCADE, null=True
     )
-    cert_price_id = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
+    cert = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
+    cert_price = models.DecimalField(max_digits=10, decimal_places=2)
+    product_cost = models.DecimalField(max_digits=10, decimal_places=2)
     order_weight = models.DecimalField(max_digits=10, decimal_places=4)
     order_qty = models.IntegerField()
     order_price = models.DecimalField(max_digits=16, decimal_places=2)
