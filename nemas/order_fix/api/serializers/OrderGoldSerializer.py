@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
-from attr import field
 from rest_framework import serializers
+from shared_kernel.services.external.sapx_service import SapxService
+from order.models.order_cart import order_cart_detail
 from order.models import order_cart
 from shared_kernel.services.external.xendit_service import va_service, qris_service
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
-from core.domain.gold import gold as GoldModel
+from core.domain.gold import cert, gold as GoldModel
 from user.models.users import user_virtual_account as UserVa
 from core.domain import bank as core_bank
 from uuid import uuid4
@@ -15,6 +16,9 @@ User = get_user_model()
 
 
 class SubmitOrderGoldSerializer(serializers.ModelSerializer):
+    shipping_weight = serializers.DecimalField(max_digits=10, decimal_places=4)
+    shipping_amount = serializers.DecimalField(max_digits=16, decimal_places=2)
+
     class Meta:
         model = order_gold
         # cart --> item
@@ -29,15 +33,82 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             "order_payment_va_bank",
             "tracking_courier_service",
             "tracking_courier",
+            "shipping_weight",
+            "shipping_amount",
         ]
 
     def create(self, validated_data):
         user = self.context["request"].user
-        gold = GoldModel()
+        user_address = user.user_address.filter(is_default=True).first()
+
         order_cart_id = validated_data.get("order_cart")
         order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
+
+        order_cart_details_model = order_cart_detail.objects.filter(
+            cart_id=order_cart_id
+        )
+        if user_address is None:
+            raise serializers.ValidationError("User address not found")
+
+        if not order_cart_models and not order_cart_details_model:
+            raise serializers.ValidationError("Order cart not found")
+
+        # shipping region
+        sapx_service = SapxService()
+        payload = {
+            "origin": "JK07",
+            "destination": "JI28",
+            "weight": validated_data.get("shipping_weight"),
+            "customer_code": "DEV000",
+            "packing_type_code": "ACH06",
+            "volumetric": "1x1x1",
+            "insurance_type_code": "INS02",
+            "item_value": validated_data.get("shipping_amount"),
+        }
+        payload_data = json.dumps(payload)
+        data = sapx_service.get_price(payload_data)
+
+        # Insert data from order_cart into order_gold
+        validated_data["order_timestamp"] = datetime.now()
+        validated_data["order_user_address"] = user_address
         validated_data["user"] = user
-        validated_data["order_number"] = gold.generate_number()
+        validated_data["order_phone_number"] = user.phone_number
+        validated_data["order_item_weight"] = order_cart_models.total_weight
+        validated_data["order_amount"] = order_cart_models.total_price
+        validated_data["order_admin_amount"] = 0
+        validated_data["order_pickup_address"] = None
+        validated_data["order_pickup_customer_datetime"] = None
+        validated_data["order_tracking_amount"] = validated_data.get("shipping_amount")
+        validated_data["order_tracking_insurance"] = data.get("insurance")
+        validated_data["order_tracking_packing"] = data.get("packing")
+        validated_data["order_tracking_insurance_admin"] = data.get("insurance")
+        validated_data["order_tracking_total"] = data.get("total")
+        validated_data["order_promo_code"] = None
+        validated_data["order_discount"] = 0
+        validated_data["order_total_price"] = data.get("total")
+        validated_data["tracking_status_id"] = "0"
+
+        order_gold_instance = order_gold.objects.create(**validated_data)
+
+        # create order_gold
+        for cart_detail in order_cart_details_model:
+            detailGold = GoldModel.objects.get(gold_id=cart_detail.gold.gold_id)
+            order_gold_detail.objects.create(
+                order_gold=order_gold_instance,
+                gold=detailGold,
+                gold_type=detailGold.type,
+                gold_brand=detailGold.brand,
+                order_weight=detailGold.gold_weight,
+                order_price=cart_detail.price,
+                order_qty=cart_detail.quantity,
+                cert=cart_detail.cert,
+                cert_price=cart_detail.cert_price,
+                product_cost=cart_detail.product_cost,
+                order_detail_total_price=cart_detail.total_price,
+            )
+
+        validated_data["user"] = user
+        validated_data["order_number"] = order_gold_instance.order_number
         validated_data["order_timestamp"] = datetime.now()
         return super().create(validated_data)
 

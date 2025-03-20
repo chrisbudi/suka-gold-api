@@ -1,3 +1,4 @@
+from attr import validate
 from django.conf import settings
 
 from django.db import models
@@ -89,9 +90,16 @@ class order_gold(models.Model):
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"
 
+    def create(self, validated_data):
+        validated_data["order_number"] = self.generate_number()
+        return order_gold.objects.create(**validated_data)
+
     def update_status(self, status: str):
         self.tracking_status = status
         self.save()
+
+    def generate_number(self):
+        return UUIDv7Field()
 
 
 class order_gold_detail(models.Model):

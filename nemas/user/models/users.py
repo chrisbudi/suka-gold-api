@@ -266,6 +266,8 @@ class user_address(models.Model):
     district = models.CharField(max_length=255)
     subdistrict = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=255)
+    is_default = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=255)
     update_time = models.DateTimeField(auto_now=True)
@@ -278,6 +280,14 @@ class user_address(models.Model):
                 self.create_user = user.username
             self.update_user = user.username
         super().save(*args, **kwargs)
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+
+    def set_default(self):
+        self.is_default = True
+        self.save()
 
 
 class user_ktp(models.Model):
