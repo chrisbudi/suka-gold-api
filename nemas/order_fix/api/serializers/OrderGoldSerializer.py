@@ -27,8 +27,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             "order_user_address",
             "order_payment_method",
             "order_payment_va_bank",
-            "order_delivery_method",
-            "order_delivery_service",
+            "tracking_courier_service",
             "tracking_courier",
         ]
 
@@ -37,12 +36,9 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         gold = GoldModel()
         order_cart_id = validated_data.get("order_cart")
         order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
-        # insert into order_gold from order_cart_models
         validated_data["user"] = user
         validated_data["order_number"] = gold.generate_number()
         validated_data["order_timestamp"] = datetime.now()
-        # validated_data["order_user_address"] = order_cart_models.order_user_address
-        # validated_data["order_phone_number"] = order_cart_models.order_phone_number
         return super().create(validated_data)
 
 

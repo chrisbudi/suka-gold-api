@@ -6,11 +6,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from gold_transaction.models import gold_saving_buy
-from order.api.serializers.OrderGoldSerializer import (
+from order_fix.api.serializers.OrderGoldSerializer import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
+    SubmitOrderGoldSerializer,
 )
-from order.api.serializers.OrderSimulatePaymentSerializer import (
+from order_fix.api.serializers.OrderSimulatePaymentSerializer import (
     OrderSimulatedPaymentQrisSerializer,
     OrderSimulatedPaymentVaSerializer,
 )
@@ -21,7 +22,7 @@ from order.models import order_gold
 @extend_schema(
     tags=["Order Fix - Order Gold"],
 )
-class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
+class OrderGoldAPIView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
@@ -48,11 +49,11 @@ class OrderGoldListCreateAPIView(viewsets.ModelViewSet):
     @extend_schema(
         summary="Create Gold Purchase",
         description="Create a order gold purchase for the authenticated user.",
-        request=OrderGoldSerializer,
+        request=SubmitOrderGoldSerializer,
         responses={201: OrderGoldSerializer},
     )
     def perform_create(self, request):
-        serializer = self.get_serializer(
+        serializer = SubmitOrderGoldSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():

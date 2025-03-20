@@ -74,4 +74,5 @@ bank_urls = [
 
 urlpatterns = [
     path("bank/", include(bank_urls)),
+    path("method/", include(pay_urls)),
 ]

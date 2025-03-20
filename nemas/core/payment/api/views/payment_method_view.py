@@ -3,7 +3,7 @@ from core.payment.api.serializers import (
     PaymentMethodFilter as objectFilter,
 )
 from rest_framework import status, viewsets, filters, pagination, response
-from core.domain import bank as modelInfo
+from core.domain import payment_method as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
-    tags=["payment - bank"],
+    tags=["payment - method - view"],
 )
 class PaymentMethodViewViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
@@ -25,7 +25,7 @@ class PaymentMethodViewViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         print(self.action, "action permission")
-        if self.action == "list":
+        if self.action in ["list", "get"]:
             permission_classes = []
         else:
             permission_classes = [IsAuthenticated]
