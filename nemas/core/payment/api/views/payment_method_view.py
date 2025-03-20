@@ -45,9 +45,9 @@ class PaymentMethodViewViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
     def create(self, request):
-        serializer = objectSerializer(data=request.data)
+        serializer = objectSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            serializer.save(create_user=request.user)
+            serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(

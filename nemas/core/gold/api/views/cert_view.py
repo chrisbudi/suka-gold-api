@@ -44,7 +44,7 @@ class CertViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
     def create(self, request):
-        serializer = objectSerializer(data=request.data)
+        serializer = objectSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save(create_user=request.user)
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -56,7 +56,9 @@ class CertViewSet(viewsets.ModelViewSet):
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = objectSerializer(info, data=request.data)
+        serializer = objectSerializer(
+            info, data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save(create_user=request.user)
             return response.Response(serializer.data)
