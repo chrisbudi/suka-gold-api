@@ -2,22 +2,24 @@ from datetime import datetime, timedelta
 from rest_framework import serializers
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
-from order.models import order_cart
+from order.models import order_cart, order_payment
 from shared_kernel.services.external.xendit_service import va_service, qris_service
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
-from core.domain.gold import cert, gold as GoldModel
+from core.domain.gold import gold as GoldModel
 from user.models.users import user_virtual_account as UserVa
 from core.domain import bank as core_bank
 from uuid import uuid4
 import json
+from shared_kernel.services.external.xendit_service import (
+    QRISPaymentService,
+    VAPaymentService,
+)
 
 User = get_user_model()
 
 
 class SubmitOrderGoldSerializer(serializers.ModelSerializer):
-    shipping_weight = serializers.DecimalField(max_digits=10, decimal_places=4)
-    shipping_amount = serializers.DecimalField(max_digits=16, decimal_places=2)
 
     class Meta:
         model = order_gold
@@ -31,10 +33,9 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             "order_user_address",
             "order_payment_method",
             "order_payment_va_bank",
+            "order_payment_va_number",
             "tracking_courier_service",
             "tracking_courier",
-            "shipping_weight",
-            "shipping_amount",
         ]
 
     def create(self, validated_data):
@@ -53,41 +54,48 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         if not order_cart_models and not order_cart_details_model:
             raise serializers.ValidationError("Order cart not found")
 
+        shipping_weight = order_cart_models.total_weight
+        shipping_amount = order_cart_models.total_price
+
         # shipping region
         sapx_service = SapxService()
         payload = {
             "origin": "JK07",
             "destination": "JI28",
-            "weight": validated_data.get("shipping_weight"),
+            "weight": shipping_weight,
             "customer_code": "DEV000",
             "packing_type_code": "ACH06",
             "volumetric": "1x1x1",
             "insurance_type_code": "INS02",
-            "item_value": validated_data.get("shipping_amount"),
+            "item_value": shipping_amount,
         }
         payload_data = json.dumps(payload)
+
         data = sapx_service.get_price(payload_data)
-
+        print(data, "data shipping")
         # Insert data from order_cart into order_gold
-        validated_data["order_timestamp"] = datetime.now()
-        validated_data["order_user_address"] = user_address
-        validated_data["user"] = user
-        validated_data["order_phone_number"] = user.phone_number
-        validated_data["order_item_weight"] = order_cart_models.total_weight
-        validated_data["order_amount"] = order_cart_models.total_price
-        validated_data["order_admin_amount"] = 0
-        validated_data["order_pickup_address"] = None
-        validated_data["order_pickup_customer_datetime"] = None
-        validated_data["order_tracking_amount"] = validated_data.get("shipping_amount")
-        validated_data["order_tracking_insurance"] = data.get("insurance")
-        validated_data["order_tracking_packing"] = data.get("packing")
-        validated_data["order_tracking_insurance_admin"] = data.get("insurance")
-        validated_data["order_tracking_total"] = data.get("total")
-        validated_data["order_promo_code"] = None
-        validated_data["order_discount"] = 0
-        validated_data["order_total_price"] = data.get("total")
-        validated_data["tracking_status_id"] = "0"
-
+        validated_data.update(
+            {
+                "order_timestamp": datetime.now(),
+                "order_user_address": user_address,
+                "user": user,
+                "order_phone_number": user.phone_number,
+                "order_item_weight": order_cart_models.total_weight,
+                "order_amount": order_cart_models.total_price,
+                "order_admin_amount": 0,
+                "order_pickup_address": None,
+                "order_pickup_customer_datetime": None,
+                "order_tracking_amount": validated_data.get("shipping_amount"),
+                "order_tracking_insurance": data.get("insurance"),
+                "order_tracking_packing": data.get("packing"),
+                "order_tracking_insurance_admin": data.get("insurance"),
+                "order_tracking_total": data.get("total"),
+                "order_promo_code": None,
+                "order_discount": 0,
+                "order_total_price": data.get("total"),
+                "tracking_status_id": "0",
+            }
+        )
         order_gold_instance = order_gold.objects.create(**validated_data)
 
         # create order_gold
@@ -107,10 +115,29 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 order_detail_total_price=cart_detail.total_price,
             )
 
-        validated_data["user"] = user
-        validated_data["order_number"] = order_gold_instance.order_number
-        validated_data["order_timestamp"] = datetime.now()
-        return super().create(validated_data)
+        payment_service = QRISPaymentService()
+        payload = payment_service.generate_payload(
+            float(validated_data["topup_total_amount"]),
+            f"qris_generated_user_{user.id}_{str(uuid4())}",
+        )
+        payload_json = json.dumps(payload)
+        qris = payment_service.qris_payment_generate(payload_json)
+        if not qris:
+            raise serializers.ValidationError("Failed to process QRIS payment.")
+        print(qris, "qris")
+
+        order_payment.objects.create(
+            order_gold_payment_ref="",
+            order_gold_payment_status="PENDING",
+            order_gold_payment_method=validated_data.get("order_payment_method"),
+            order_gold_payment_va_bank=validated_data.get("order_payment_va_bank"),
+            order_gold_payment_va_number=validated_data.get("order_payment_va_number"),
+            order_gold_payment_total=validated_data.get("order_total_price"),
+        )
+
+        return order_gold_instance
+
+        # return super().create(validated_data)
 
 
 class OrderGoldListSerializer(serializers.Serializer):

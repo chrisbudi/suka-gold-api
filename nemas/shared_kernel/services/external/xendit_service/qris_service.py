@@ -1,9 +1,29 @@
 import requests
 from .xendit_services import XenditService
+from uuid import uuid4
+from datetime import datetime, timedelta
 
 
 # import xendit service class
 class QRISPaymentService(XenditService):
+
+    def __init__(self):
+        super().__init__()
+
+    def generate_payload(self, amount: float, external_id: str):
+        payload = {
+            "reference_id": f"qris_generated_user_{external_id}_{str(uuid4())}",
+            "type": "DYNAMIC",
+            "currency": "IDR",
+            "amount": float(amount),
+            "expired_at": (datetime.now() + timedelta(hours=2)).strftime(
+                "%Y-%m-%dT%H:%M:%S"
+            ),
+            "channel_code": "ID_DANA",
+            "is_closed": True,
+        }
+
+        return payload
 
     def qris_payment_generate(self, payload=None):
         """

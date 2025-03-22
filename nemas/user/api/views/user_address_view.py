@@ -26,15 +26,12 @@ class UserAddressView(ViewSet):
     def get(self, request):
         # get then
         try:
-            user_props = user_address.objects.get(user=request.user)
+            user_props = user_address.objects.filter(user=request.user)
             if user_props is None:
                 return Response({}, status=404)
-            user_props_data = dict(UserAddressSerializer(user_props).data)
+            user_props_data = UserAddressSerializer(user_props, many=True)
             return Response(
-                {
-                    "user_id": user_props.user.id,
-                    **user_props_data,
-                },
+                user_props_data.data,
                 status=200,
             )
         except user_address.DoesNotExist:

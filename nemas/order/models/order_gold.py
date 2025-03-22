@@ -40,8 +40,8 @@ class order_gold(models.Model):
         payment_method, on_delete=models.CASCADE, null=True
     )
 
-    order_payment_va_bank = models.CharField(max_length=255, null=True)
-    order_payment_va_number = models.CharField(max_length=255, null=True)
+    order_payment_va_bank = models.CharField(max_length=30, null=True)
+    order_payment_va_number = models.CharField(max_length=50, null=True)
 
     order_amount = models.DecimalField(max_digits=16, decimal_places=2)
     order_admin_amount = models.DecimalField(max_digits=16, decimal_places=2)
