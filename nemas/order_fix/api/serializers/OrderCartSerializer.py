@@ -164,7 +164,11 @@ class CartDetailSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    order_cart_detail = CartDetailSerializer(many=True, write_only=True)
+    order_cart_detail = serializers.SerializerMethodField()
+
+    def get_order_cart_detail(self, obj):
+        details = order_cart_detail.objects.filter(cart_id=obj.order_cart_id)
+        return CartDetailSerializer(details, many=True).data
 
     class Meta:
         model = order_cart
@@ -178,6 +182,7 @@ class CartSerializer(serializers.ModelSerializer):
             "session_key",
             "order_cart_detail",
         ]
+        depth = 1  # Load related order cart detail with nested serialization
         read_only_fields = [
             "order_cart_id",
             "total_weight",

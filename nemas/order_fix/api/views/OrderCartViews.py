@@ -58,9 +58,11 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         request={200: OrderCartSerializer.CartSerializer},
     )
     def show_cart(self, request):
-        queryset = order_cart.objects.filter(user_id=request.user, completed_cart=False)
+        queryset = order_cart.objects.filter(
+            user_id=request.user, completed_cart=False
+        ).first()
 
-        serializer = OrderCartSerializer.CartSerializer(queryset, many=True)
+        serializer = OrderCartSerializer.CartSerializer(queryset)
         return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
