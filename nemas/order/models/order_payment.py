@@ -17,10 +17,10 @@ class order_payment(models.Model):
         payment_method,
         on_delete=models.CASCADE,
     )
+    order_payment_method_name = models.CharField(max_length=50, null=True)
     order_payment_va_bank = models.CharField(max_length=30, null=True)
     order_payment_va_number = models.CharField(max_length=50, null=True)
-    order_payment_external_id = models.CharField(max_length=255)
-    order_payment_number = models.CharField(max_length=255)
+    order_payment_number = models.CharField(max_length=2000)
     order_payment_ref = models.CharField(max_length=255)
     order_payment_status = models.CharField(max_length=255)
 

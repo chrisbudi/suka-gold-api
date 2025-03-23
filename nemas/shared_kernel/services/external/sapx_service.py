@@ -63,16 +63,11 @@ class SapxService:
                 headers=self.headers,
                 data=payload,
             )
-            print(
-                f"curl -X POST {self.base_url + 'v2/master/shipment_cost'} "
-                f"-H 'Content-Type: application/json' "
-                f"-H 'API_Key: {self.headers['API_Key']}' "
-                f"-d '{payload}'"
-            )
             if response.status_code != 200:
-                print(response.json(), "response.json()")
-                return response.json()
-
+                return {
+                    "status": "failed",
+                    "message": response.json(),
+                }
             response_data = response.json()
             return response_data
         except Exception as e:

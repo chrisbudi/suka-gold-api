@@ -32,14 +32,14 @@ class order_gold(models.Model):
         on_delete=models.CASCADE,
         null=True,
     )
-
+    order_status = models.CharField(max_length=255)
     order_phone_number = models.CharField(max_length=255)
     order_item_weight = models.DecimalField(max_digits=10, decimal_places=4)
 
     order_payment_method = models.ForeignKey(
         payment_method, on_delete=models.CASCADE, null=True
     )
-
+    order_payment_method_name = models.CharField(max_length=255, null=True)
     order_payment_va_bank = models.CharField(max_length=30, null=True)
     order_payment_va_number = models.CharField(max_length=50, null=True)
 
@@ -81,6 +81,7 @@ class order_gold(models.Model):
     tracking_courier_service = models.ForeignKey(
         delivery_partner_service, on_delete=models.CASCADE, null=True
     )
+    tracking_courier_service_code = models.CharField(max_length=50, null=True)
     tracking_number = models.CharField(max_length=255, null=True)
     tracking_last_note = models.CharField(max_length=255, null=True)
     tracking_last_updated_datetime = models.DateTimeField(auto_created=True, null=True)
@@ -124,8 +125,7 @@ class order_gold_detail(models.Model):
     cert = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
     product_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    order_weight = models.DecimalField(max_digits=10, decimal_places=4)
-    order_qty = models.IntegerField()
+    weight = models.DecimalField(max_digits=10, decimal_places=4)
+    qty = models.IntegerField()
     order_price = models.DecimalField(max_digits=16, decimal_places=2)
-    order_cert_price = models.DecimalField(max_digits=10, decimal_places=2)
     order_detail_total_price = models.DecimalField(max_digits=16, decimal_places=2)
