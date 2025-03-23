@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import uuid
 from rest_framework import serializers
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
@@ -7,9 +8,9 @@ from shared_kernel.services.external.xendit_service import va_service, qris_serv
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
 from core.domain.gold import gold as GoldModel
-from user.models.users import user_virtual_account as UserVa
+from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
-from uuid import uuid4
+from uuid import UUID, uuid4
 import json
 from shared_kernel.services.external.xendit_service import (
     QRISPaymentService,
@@ -20,6 +21,14 @@ User = get_user_model()
 
 
 class SubmitOrderGoldSerializer(serializers.ModelSerializer):
+    order_cart_id = serializers.UUIDField()
+    order_user_address_id = serializers.IntegerField()
+    order_payment_method_id = serializers.IntegerField()
+    order_payment_va_bank = serializers.CharField()
+    order_payment_va_number = serializers.CharField()
+    tracking_courier_service_id = serializers.IntegerField()
+    tracking_courier_service_name = serializers.CharField()
+    tracking_courier_id = serializers.IntegerField()
 
     class Meta:
         model = order_gold
@@ -29,26 +38,31 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         # user_address --> address
         # promo --> promo
         fields = [
-            "order_cart",
-            "order_user_address",
-            "order_payment_method",
+            "order_cart_id",
+            "order_user_address_id",
+            "order_payment_method_id",
             "order_payment_va_bank",
             "order_payment_va_number",
-            "tracking_courier_service",
-            "tracking_courier",
+            "tracking_courier_service_id",
+            "tracking_courier_service_name",
+            "tracking_courier_id",
         ]
 
     def create(self, validated_data):
         user = self.context["request"].user
-        user_address = user.user_address.filter(is_default=True).first()
+        user_address_id = validated_data.get("order_user_address_id")
+        user_address_model = user_address.objects.filter(id=user_address_id).first()
 
-        order_cart_id = validated_data.get("order_cart")
+        order_cart_id = validated_data.get("order_cart_id")
+
         order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
 
+        print(order_cart_models, "order_cart_models")
         order_cart_details_model = order_cart_detail.objects.filter(
             cart_id=order_cart_id
         )
-        if user_address is None:
+
+        if user_address_model is None:
             raise serializers.ValidationError("User address not found")
 
         if not order_cart_models and not order_cart_details_model:
@@ -59,25 +73,36 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         # shipping region
         sapx_service = SapxService()
-        payload = {
-            "origin": "JK07",
-            "destination": "JI28",
-            "weight": shipping_weight,
-            "customer_code": "DEV000",
-            "packing_type_code": "ACH06",
-            "volumetric": "1x1x1",
-            "insurance_type_code": "INS02",
-            "item_value": shipping_amount,
-        }
+        payload = sapx_service.generate_payload(
+            shipping_weight,
+            shipping_amount,
+            "",
+            "",
+        )
         payload_data = json.dumps(payload)
 
-        data = sapx_service.get_price(payload_data)
-        print(data, "data shipping")
+        shipping_data = sapx_service.get_price(payload_data)
+        print(shipping_data, "data shipping")
+        if not shipping_data:
+            raise serializers.ValidationError("Failed to process shipping")
+
+        tracking_service_name = validated_data.get("tracking_courier_service_name")
+        # mapping shipping data
+        services = filter(
+            lambda s: s.get("service_type_code") == tracking_service_name, shipping_data
+        )
+        service = next(services, {})
+        insurance = service.get("insurance")
+        insurance_admin = service.get("insurance_admin")
+        packing = service.get("packing")
+        cost = service.get("cost")
+        shipping_total = service.get("total")
+
         # Insert data from order_cart into order_gold
         validated_data.update(
             {
                 "order_timestamp": datetime.now(),
-                "order_user_address": user_address,
+                "order_user_address": user_address_model,
                 "user": user,
                 "order_phone_number": user.phone_number,
                 "order_item_weight": order_cart_models.total_weight,
@@ -85,14 +110,16 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 "order_admin_amount": 0,
                 "order_pickup_address": None,
                 "order_pickup_customer_datetime": None,
-                "order_tracking_amount": validated_data.get("shipping_amount"),
-                "order_tracking_insurance": data.get("insurance"),
-                "order_tracking_packing": data.get("packing"),
-                "order_tracking_insurance_admin": data.get("insurance"),
-                "order_tracking_total": data.get("total"),
+                "order_tracking_amount": cost,
+                "order_tracking_insurance": insurance,
+                "order_tracking_packing": packing,
+                "order_tracking_insurance_admin": insurance_admin,
+                "order_tracking_total": shipping_total,
                 "order_promo_code": None,
                 "order_discount": 0,
-                "order_total_price": data.get("total"),
+                "order_total_price": (
+                    order_cart_models.total_price + (shipping_total or 0)
+                ),
                 "tracking_status_id": "0",
             }
         )
@@ -125,6 +152,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         if not qris:
             raise serializers.ValidationError("Failed to process QRIS payment.")
         print(qris, "qris")
+
+        # generate payment payload
 
         order_payment.objects.create(
             order_gold_payment_ref="",

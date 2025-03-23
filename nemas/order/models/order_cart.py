@@ -23,8 +23,8 @@ class order_cart(models.Model):
     completed_cart = models.BooleanField(default=False)
     session_key = models.CharField(max_length=40, null=True, blank=True)
 
-    def __str__(self):
-        return f"Gold Transaction {self.order_cart_id} - Type:"
+    def __uuid__(self):
+        return self.order_cart_id
 
     def remove_cart(self):
         self.completed_cart = True

@@ -256,6 +256,7 @@ class user_virtual_account(models.Model):
 
 
 class user_address(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
