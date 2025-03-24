@@ -222,10 +222,10 @@ class OrderGoldDetailSerializer(serializers.ModelSerializer):
             "gold",
             "gold_type",
             "gold_brand",
-            "order_weight",
+            "weight",
             "order_price",
-            "order_qty",
-            "order_cert_price",
+            "qty",
+            "cert_price",
             "order_detail_total_price",
         ]
         read_only_fields = ["order_gold_detail_id", "order_gold_id"]
