@@ -64,12 +64,14 @@ class order_gold(models.Model):
     order_tracking_total = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
+
     order_gold_payment_ref = models.CharField(max_length=255, null=True)
     order_gold_payment_status = models.CharField(max_length=255, null=True)
     order_promo_code = models.CharField(max_length=255, null=True)
 
     order_discount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
+    order_rounded_total_price = models.DecimalField(max_digits=16, decimal_places=0)
 
     tracking_status_id = models.CharField(max_length=255, null=True)
     tracking_status = models.CharField(max_length=255, null=True)

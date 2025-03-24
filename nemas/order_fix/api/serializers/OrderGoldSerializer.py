@@ -136,6 +136,12 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_total_price": (
                         order_cart_models.total_price + (shipping_total or 0)
                     ),
+                    "order_rounded_total_price": (
+                        (order_cart_models.total_price + (shipping_total or 0))
+                        // 100
+                        * 100
+                        + 100
+                    ),
                     "tracking_courier_id": validated_data.get("tracking_courier_id"),
                     "tracking_courier_service_id": validated_data.get(
                         "tracking_courier_service_id"
