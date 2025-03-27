@@ -51,6 +51,14 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             "tracking_courier_id",
         ]
 
+    def validate(self, data):
+        # if payment qris then max payment in 10.000.000
+        if data.get("order_payment_method_name") == "QRIS":
+            order_cart_id = data.get("order_cart_id")
+            order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
+            if order_cart_models.total_price > 10000000:
+                raise serializers.ValidationError("Payment QRIS max 10.000.000")
+
     def create(self, validated_data):
         user = self.context["request"].user
         user_address_id = validated_data.get("order_user_address_id")
@@ -169,49 +177,113 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     order_detail_total_price=cart_detail.total_price,
                 )
 
-            payment_service = QRISPaymentService()
-            payload = payment_service.generate_payload(
-                float(order_amount),
-                f"qris_generated_user_{user.id}_{str(uuid4())}",
-            )
-            payload_json = json.dumps(payload)
-            qris = payment_service.qris_payment_generate(payload_json)
-            if not qris:
-                raise serializers.ValidationError("Failed to process QRIS payment.")
-
-            if qris.get("errors") or qris.get("status") == "failed":
-                error_message = qris.get("errors", "Failed to process QRIS payment.")
-                self.context["response"] = {"message": error_message}
-                return serializers.ValidationError(error_message)
-
-            print(qris, "qris")
-
-            # generate payment payload
-            order_payment.objects.create(
-                order_payment_ref=qris.get("reference_id"),
-                order_payment_status="PENDING",
-                order_payment_method_id=validated_data.get("order_payment_method_id"),
-                order_payment_va_bank=validated_data.get("order_payment_va_bank"),
-                order_payment_va_number=validated_data.get("order_payment_va_number"),
-                order_payment_amount=order_amount,
-                order_payment_admin_amount=0,
-                order_payment_number=qris.get("qr_string"),
-                order_payment_method_name=validated_data.get(
-                    "order_payment_method_name"
-                ),
-                order_gold=order_gold_instance,
-                order_payment_timestamp=datetime.now(),
-            )
-
-        self.context["response"] = {
-            "total_amount": order_amount,
-            "qr_string": qris.get("qr_string"),
-            "reference_id": qris.get("reference_id"),
-            "order_gold_id": order_gold_instance.order_gold_id,
-        }
+            # if qris
+            if validated_data.get("order_payment_method_name") == "QRIS":
+                pay_ref = self.process_qris_payment_method(
+                    validated_data, order_amount, user, order_gold_instance
+                )
+            else:
+                pay_ref = self.process_va_payment_method(
+                    validated_data, order_amount, user, order_gold_instance
+                )
 
         return order_gold_instance
 
+    def process_va_payment_method(
+        self, validated_data, order_amount, user, order_gold_instance
+    ):
+        payment_service = VAPaymentService()
+
+        payload = payment_service.generate_payload(
+            float(order_amount),
+            f"qris_generated_user_{user.id}_{str(uuid4())}",
+            validated_data.get("order_payment_va_bank"),
+            user,
+            validated_data.get("order_payment_va_number"),
+        )
+        payload_json = json.dumps(payload)
+
+        vaPaymentMethod = payment_service.va_payment_generate(payload_json)
+        if not vaPaymentMethod:
+            raise serializers.ValidationError(
+                "Failed to process vaPaymentMethod payment."
+            )
+
+        if vaPaymentMethod.get("errors") or vaPaymentMethod.get("status") == "failed":
+            error_message = vaPaymentMethod.get(
+                "errors", "Failed to process vaPaymentMethod payment."
+            )
+            self.context["response"] = {"message": error_message}
+            return serializers.ValidationError(error_message)
+
+        print(vaPaymentMethod, "vaPaymentMethod")
+
+        # generate payment payload
+        order_payment.objects.create(
+            order_payment_ref=vaPaymentMethod.get("reference_id"),
+            order_payment_status="PENDING",
+            order_payment_method_id=validated_data.get("order_payment_method_id"),
+            order_payment_va_bank=validated_data.get("order_payment_va_bank"),
+            order_payment_va_number=validated_data.get("order_payment_va_number"),
+            order_payment_amount=order_amount,
+            order_payment_admin_amount=0,
+            order_payment_number=vaPaymentMethod.get("qr_string"),
+            order_payment_method_name=validated_data.get("order_payment_method_name"),
+            order_gold=order_gold_instance,
+            order_payment_timestamp=datetime.now(),
+        )
+
+        self.context["response"] = {
+            "total_amount": order_amount,
+            "qr_string": pay_ref.get("qr_string"),
+            "reference_id": pay_ref.get("reference_id"),
+            "order_gold_id": order_gold_instance.order_gold_id,
+        }
+        return vaPaymentMethod
+
+    def process_qris_payment_method(
+        self, validated_data, order_amount, user, order_gold_instance
+    ):
+        payment_service = QRISPaymentService()
+
+        payload = payment_service.generate_payload(
+            float(order_amount),
+            f"qris_generated_user_{user.id}_{str(uuid4())}",
+        )
+        payload_json = json.dumps(payload)
+
+        qris = payment_service.qris_payment_generate(payload_json)
+        if not qris:
+            raise serializers.ValidationError("Failed to process QRIS payment.")
+
+        if qris.get("errors") or qris.get("status") == "failed":
+            error_message = qris.get("errors", "Failed to process QRIS payment.")
+            self.context["response"] = {"message": error_message}
+            return serializers.ValidationError(error_message)
+
+        print(qris, "qris")
+
+        # generate payment payload
+        order_payment.objects.create(
+            order_payment_ref=qris.get("reference_id"),
+            order_payment_status="PENDING",
+            order_payment_method_id=validated_data.get("order_payment_method_id"),
+            order_payment_va_bank=validated_data.get("order_payment_va_bank"),
+            order_payment_va_number=validated_data.get("order_payment_va_number"),
+            order_payment_amount=order_amount,
+            order_payment_admin_amount=0,
+            order_payment_number=qris.get("qr_string"),
+            order_payment_method_name=validated_data.get("order_payment_method_name"),
+            order_gold=order_gold_instance,
+            order_payment_timestamp=datetime.now(),
+        )
+        self.context["response"] = {
+            "total_amount": order_amount,
+            "qr_string": pay_ref.get("qr_string"),
+            "reference_id": pay_ref.get("reference_id"),
+            "order_gold_id": order_gold_instance.order_gold_id,
+        }
+        return qris
         # return super().create(validated_data)
 
 

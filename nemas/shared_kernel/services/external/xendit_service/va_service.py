@@ -1,8 +1,26 @@
 import requests
 from .xendit_services import XenditService
+from datetime import datetime, timedelta
+from uuid import uuid4
 
 
 class VAPaymentService(XenditService):
+
+    def generate_payload(
+        self, amount: float, external_id: str, bank_code: str, user, va_number: str
+    ):
+        payload = {
+            "external_id": f"va_generated_invoice_user_{external_id}_{str(uuid4())}",
+            "bank_code": bank_code,
+            "name": user.name,
+            "expected_amount": float(amount),
+            "expiration_date": (datetime.now() + timedelta(minutes=30)).isoformat(),
+            "virtual_account_number": va_number,
+            "is_closed": True,
+            "is_single_use": True,
+        }
+
+        return payload
 
     # virtual account payment generate
     def va_payment_generate(self, payload=None):

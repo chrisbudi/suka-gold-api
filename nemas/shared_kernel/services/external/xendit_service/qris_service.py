@@ -41,7 +41,6 @@ class QRISPaymentService(XenditService):
 
             # check if response is not 200
             if response.status_code != 200:
-                print(response.json(), "response")
                 return response.json()
 
             response.raise_for_status()
