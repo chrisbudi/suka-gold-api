@@ -61,8 +61,8 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                     + (order_cart_detail_model.cert_price or 0)
                     + (order_cart_detail_model.product_cost or 0)
                 )
-                * order_cart_detail_model.quantity
                 * order_cart_detail_model.weight
+                * order_cart_detail_model.quantity
             )
 
             order_cart_detail_model.save()
@@ -81,11 +81,14 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "price": goldPriceModel.gold_price_buy,
                 "weight": goldModel.gold_weight,
                 "total_price": (
-                    goldPriceModel.gold_price_buy
+                    (goldPriceModel.gold_price_buy)
                     + (goldModel.product_cost or 0)
                     + (goldModel.certificate.cert_price if goldModel.certificate else 0)
                 )
-                * validated_data["quantity"],
+                * validated_data["quantity"]
+                * goldModel.gold_weight,
+                "completed_cart": False,
+                
             }
         )
         return order_cart_detail.objects.create(**validated_data)
