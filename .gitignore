@@ -6,3 +6,5 @@
 .env
 nginx.conf
 .nemasenv
+.DS_Store
+.DS_Store
