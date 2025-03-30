@@ -55,14 +55,19 @@ class order_gold(models.Model):
     order_tracking_insurance = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
+
     order_tracking_packing = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
     order_tracking_insurance_admin = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
-    order_tracking_total = models.DecimalField(
+    order_tracking_total_amount = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
+    )
+
+    order_tracking_total_amount_rounded = models.DecimalField(
+        max_digits=10, decimal_places=0, null=True
     )
 
     order_gold_payment_ref = models.CharField(max_length=255, null=True)

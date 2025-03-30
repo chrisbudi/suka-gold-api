@@ -69,17 +69,11 @@ urlpatterns = [
     path("api/core/", include(coreUrl, "core")),
     path("api/wallet/", include(walletUrl, "wallet")),
     path("api/gold-transaction/", include(goldUrl, "gold-transaction")),
-    # path(
-    #     "api/schema/order/",
-    #     SpectacularAPIView.as_view(urlconf="order.api.urls"),
-    #     name="order-schema",
-    # ),
     path(
         "api/schema/order/docs",
         SpectacularSwaggerView.as_view(url_name="order-schema"),
         name="order-swagger-ui",
     ),
-    # path("api/order/", include(orderUrl, "order")),
     path(
         "api/schema/order/fix",
         SpectacularAPIView.as_view(urlconf="order_fix.api.urls"),

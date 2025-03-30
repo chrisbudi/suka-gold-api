@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from decimal import Decimal
 import uuid
 from rest_framework import serializers
 from shared_kernel.services.external.sapx_service import SapxService
@@ -45,7 +46,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             "order_payment_method_id",
             "order_payment_method_name",
             "order_payment_va_bank",
-            "order_payment_va_number",
             "tracking_courier_service_id",
             "tracking_courier_service_code",
             "tracking_courier_id",
@@ -112,7 +112,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         insurance_admin = service.get("insurance_admin")
         packing = service.get("packing")
         cost = service.get("cost")
-        shipping_total = service.get("total")
+        shipping_total = Decimal(service.get("total") or 0)
+        shipping_total_rounded = shipping_total // 100 * 100 + 100
 
         # Insert data from order_cart into order_gold
 
@@ -138,17 +139,12 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_tracking_insurance": insurance,
                     "order_tracking_packing": packing,
                     "order_tracking_insurance_admin": insurance_admin,
-                    "order_tracking_total": shipping_total,
+                    "order_tracking_total_amount": shipping_total,
+                    "order_tracking_total_amount_rounded": shipping_total_rounded,
                     "order_promo_code": None,
                     "order_discount": 0,
                     "order_total_price": (
-                        order_cart_models.total_price + (shipping_total or 0)
-                    ),
-                    "order_rounded_total_price": (
-                        (order_cart_models.total_price + (shipping_total or 0))
-                        // 100
-                        * 100
-                        + 100
+                        order_cart_models.total_price + shipping_total_rounded
                     ),
                     "tracking_courier_id": validated_data.get("tracking_courier_id"),
                     "tracking_courier_service_id": validated_data.get(
@@ -235,8 +231,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         self.context["response"] = {
             "total_amount": order_amount,
-            "qr_string": pay_ref.get("qr_string"),
-            "reference_id": pay_ref.get("reference_id"),
+            "qr_string": vaPaymentMethod.get("qr_string"),
+            "reference_id": vaPaymentMethod.get("reference_id"),
             "order_gold_id": order_gold_instance.order_gold_id,
         }
         return vaPaymentMethod
@@ -279,8 +275,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         )
         self.context["response"] = {
             "total_amount": order_amount,
-            "qr_string": pay_ref.get("qr_string"),
-            "reference_id": pay_ref.get("reference_id"),
+            "qr_string": qris.get("qr_string"),
+            "reference_id": qris.get("reference_id"),
             "order_gold_id": order_gold_instance.order_gold_id,
         }
         return qris

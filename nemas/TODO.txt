@@ -43,3 +43,14 @@ Priority
 
 
 
+
+
+Add total price rounded in product show --> done
+Add stock information for product show
+Check VA payment
+check order cart (add payment still failed)
+
+— ask
+Tanya mas Ivan apabila order harga 100.000
+1 merit kemudian get latest price  harga 101.000
+Yang di get yang mana
