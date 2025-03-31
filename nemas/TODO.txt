@@ -22,6 +22,7 @@
 8.1 ubah user bank dan user bank number --> Done
 9. perhitungan emas dan saldo terakhir untung atau rugi
 
+30-03
 1. ----
 Add total price rounded in product show --> done
 Add stock information for product show

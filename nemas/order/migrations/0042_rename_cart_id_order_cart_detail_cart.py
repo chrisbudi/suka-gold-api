@@ -6,13 +6,5 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0041_order_gold_order_tracking_total_amount_rounded'),
-    ]
-
-    operations = [
-        migrations.RenameField(
-            model_name='order_cart_detail',
-            old_name='cart_id',
-            new_name='cart',
-        ),
+        ("order", "0041_order_gold_order_tracking_total_amount_rounded"),
     ]
