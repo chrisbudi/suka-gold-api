@@ -15,6 +15,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from decimal import Decimal
 from user.models.user_history import user_wallet_history, user_gold_history
+from core.domain.bank import bank
 
 
 # Create your models here.
@@ -234,7 +235,12 @@ class user_virtual_account(models.Model):
     )
 
     va_number = models.CharField(max_length=50)
-    bank = models.CharField(max_length=50)
+    bank = models.ForeignKey(
+        bank,
+        on_delete=models.CASCADE,
+        null=True,
+    )
+    bank_name = models.CharField(max_length=50)
     merchant_code = models.CharField(max_length=50)
 
     create_time = models.DateTimeField(auto_now_add=True)

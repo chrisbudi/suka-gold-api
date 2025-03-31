@@ -1,4 +1,5 @@
 from operator import is_
+from re import I
 from django.db import models
 from requests import delete
 from core.fields.uuidv7_field import UUIDv7Field
@@ -113,8 +114,15 @@ class gold_price(models.Model):
     def __str__(self):
         return f"Gold Price {self.gold_price_id} - Base: {self.gold_price_base}"
 
+    @property
+    def gold_price_buy_round(self):
+        # Compute rounded value for gold price buy
+        return self.gold_price_buy // 100 * 100 + 100
+
     def get_active_price(self):
-        return gold_price.objects.get(gold_price_active=True)
+        # Example usage of the computed property
+        gold_price_model = gold_price.objects.get(gold_price_active=True)
+        return gold_price_model
 
     def delete(self):
         self.is_deleted = True

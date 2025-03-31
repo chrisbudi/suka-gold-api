@@ -51,27 +51,24 @@ class TopupVASerializer(serializers.ModelSerializer):
         validated_data["user"] = user
         userVa = UserVa.objects.filter(user=user).first()
         coreBank = bank.objects.get(bank_merchant_code=bank_code)
+        virtual_account_number = (
+            f"{coreBank.bank_create_code_va}{userVa.va_number[len(userVa.merchant_code):]}"
+            if userVa
+            else f"{coreBank.bank_create_code_va}{coreBank.generate_va()}"
+        )
         # create va if va is not avail
         service = VAPaymentService()
         # Generate static VA
-        payload = {
-            "external_id": f"va_generated_user_{user.id}_{str(uuid4())}",
-            "bank_code": bank_code,
-            "name": user.name,
-            "expected_amount": float(validated_data["topup_total_amount"]),
-            "expiration_date": (datetime.now() + timedelta(minutes=30)).isoformat(),
-            "virtual_account_number": (
-                f"{str(coreBank.bank_create_code_va)}{userVa.va_number.removeprefix(userVa.merchant_code)}"
-                if userVa
-                else str(coreBank.bank_create_code_va) + coreBank.generate_va()
-            ),
-            "is_closed": True,
-            "is_single_use": True,
-        }
+        payload = service.generate_payload(
+            float(validated_data["topup_total_amount"]),
+            f"va_generated_user_{user.id}_{str(uuid4())}",
+            bank_code,
+            user,
+            virtual_account_number,
+        )
 
         payload_json = json.dumps(payload)
         virtual_account = service.va_payment_generate(payload_json)
-        print(virtual_account, "virtual_account")
         if not virtual_account:
             raise serializers.ValidationError("Failed to process VA payment.")
 
@@ -120,6 +117,12 @@ class TopupQrisSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Total amount must equal the sum of admin fees and top-up amount."
             )
+        # validate amount is not more than 10 m
+        if data["topup_total_amount"] > 10000000:
+            raise serializers.ValidationError(
+                "Total amount must be less than 10 million."
+            )
+
         return data
 
     def create(self, validated_data, **kwargs):
@@ -129,17 +132,11 @@ class TopupQrisSerializer(serializers.ModelSerializer):
         qris = validated_data["topup_payment_method"]
         service = QRISPaymentService()
         # Generate static VA
-        payload = {
-            "reference_id": f"qris_generated_user_{user.id}_{str(uuid4())}",
-            "type": "DYNAMIC",
-            "currency": "IDR",
-            "amount": float(validated_data["topup_total_amount"]),
-            "expired_at": (datetime.now() + timedelta(hours=2)).strftime(
-                "%Y-%m-%dT%H:%M:%S"
-            ),
-            "channel_code": "ID_DANA",
-            "is_closed": True,
-        }
+
+        payload = service.generate_payload(
+            validated_data["topup_total_amount"],
+            f"qris_generated_user_{user.id}_{str(uuid4())}",
+        )
         payload_json = json.dumps(payload)
         qris = service.qris_payment_generate(payload_json)
         if not qris:

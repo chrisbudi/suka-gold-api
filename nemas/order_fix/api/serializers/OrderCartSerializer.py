@@ -34,6 +34,7 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         goldModel = GoldModel.objects.select_related("certificate").get(
             gold_id=validated_data["gold_id"]
         )
+        certificateModel = goldModel.certificate
         goldPriceModel = gold_price().get_active_price()
         order_cart_detail_model = order_cart_detail.objects.filter(
             gold=goldModel, user_id=self.context["request"].user, completed_cart=False
@@ -43,14 +44,13 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         if goldPriceModel is None:
             raise serializers.ValidationError("Gold price not found")
         # if order cart detail model any then update the endity
+
         if order_cart_detail_model:
-            order_cart_detail_model.price = goldPriceModel.gold_price_buy
+            order_cart_detail_model.price = goldPriceModel.gold_price_buy_round
             order_cart_detail_model.product_cost = goldModel.product_cost
             order_cart_detail_model.weight = goldModel.gold_weight
             order_cart_detail_model.cert_price = (
-                goldModel.certificate.cert_price
-                if goldModel.certificate
-                else Decimal("0")
+                certificateModel.cert_price if certificateModel else Decimal("0")
             )
 
             order_cart_detail_model.quantity = validated_data["quantity"]
@@ -72,74 +72,27 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         validated_data.update(
             {
                 "cert": goldModel.certificate,
-                "cert_price": (
-                    goldModel.certificate.cert_price if goldModel.certificate else 0
-                ),
+                "cert_price": (certificateModel.cert_price if certificateModel else 0),
                 "product_cost": goldModel.product_cost,
                 "gold": goldModel,
                 "user": self.context["request"].user,
-                "price": goldPriceModel.gold_price_buy,
+                "price": goldPriceModel.gold_price_buy_round,
                 "weight": goldModel.gold_weight,
                 "total_price": (
-                    (goldPriceModel.gold_price_buy)
-                    + (goldModel.product_cost or 0)
+                    (
+                        ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
+                        // 100
+                        * 100
+                        + 100
+                    )
                     + (goldModel.certificate.cert_price if goldModel.certificate else 0)
+                    + (goldModel.product_cost or 0)
                 )
-                * validated_data["quantity"]
-                * goldModel.gold_weight,
+                * validated_data["quantity"],
                 "completed_cart": False,
-                
             }
         )
         return order_cart_detail.objects.create(**validated_data)
-
-        # if not order_cart_detail_model:
-        #     validated_data.update(
-        #         {
-        #             "cert": goldModel.certificate,
-        #             "cert_price": (
-        #                 goldModel.certificate.cert_price if goldModel.certificate else 0
-        #             ),
-        #             "product_cost": goldModel.product_cost,
-        #             "gold": goldModel,
-        #             "user": self.context["request"].user,
-        #             "price": goldPriceModel.gold_price_buy,
-        #             "weight": goldModel.gold_weight,
-        #             "total_price": (
-        #                 goldPriceModel.gold_price_buy
-        #                 + (goldModel.product_cost or 0)
-        #                 + (
-        #                     goldModel.certificate.cert_price
-        #                     if goldModel.certificate
-        #                     else 0
-        #                 )
-        #             )
-        #             * validated_data["quantity"],
-        #         }
-        #     )
-        #     return order_cart_detail.objects.create(**validated_data)
-
-        # order_cart_detail_model.price = goldPriceModel.gold_price_buy
-        # order_cart_detail_model.product_cost = goldModel.product_cost
-        # order_cart_detail_model.weight = goldModel.gold_weight
-        # order_cart_detail_model.cert_price = (
-        #     goldModel.certificate.cert_price if goldModel.certificate else Decimal("0")
-        # )
-
-        # order_cart_detail_model.quantity = validated_data["quantity"]
-
-        # order_cart_detail_model.total_price = (
-        #     (
-        #         order_cart_detail_model.price
-        #         + (order_cart_detail_model.cert_price or 0)
-        #         + (order_cart_detail_model.product_cost or 0)
-        #     )
-        #     * order_cart_detail_model.quantity
-        #     * order_cart_detail_model.weight
-        # )
-
-        # order_cart_detail_model.save()
-        # return order_cart_detail_model
 
 
 class ProcessCartSerializer(serializers.Serializer):
@@ -180,7 +133,8 @@ class ProcessCartSerializer(serializers.Serializer):
             order_cart_instance.save()
 
         for item in order_cart_detail_model:
-            item.cart_id = order_cart_instance
+            item.cart = order_cart_instance
+
             item.save()
 
         print(CartSerializer(order_cart_instance), "order_cart_instance")

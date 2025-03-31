@@ -28,7 +28,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
     order_payment_method_id = serializers.IntegerField()
     order_payment_method_name = serializers.CharField()
     order_payment_va_bank = serializers.CharField(allow_null=True, required=False)
-    order_payment_va_number = serializers.CharField(allow_null=True, required=False)
     tracking_courier_service_id = serializers.IntegerField()
     tracking_courier_service_code = serializers.CharField()
     tracking_courier_id = serializers.IntegerField()
@@ -64,6 +63,15 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         user_address_id = validated_data.get("order_user_address_id")
         user_address_model = user_address.objects.filter(id=user_address_id).first()
 
+        userVa = UserVa.objects.filter(user=user).first()
+        coreBank = core_bank.objects.get(
+            bank_merchant_code=validated_data.get("order_payment_va_bank")
+        )
+        virtual_account_number = (
+            f"{coreBank.bank_create_code_va}{userVa.va_number[len(userVa.merchant_code):]}"
+            if userVa
+            else f"{coreBank.bank_create_code_va}{coreBank.generate_va()}"
+        )
         order_cart_id = validated_data.get("order_cart_id")
 
         order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
@@ -330,7 +338,7 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "order_tracking_insurance",
             "order_tracking_packing",
             "order_tracking_insurance_admin",
-            "order_tracking_total",
+            "order_tracking_total_amount",
             "order_details",
             "tracking_status_id",
             "tracking_status",

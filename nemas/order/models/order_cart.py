@@ -1,4 +1,5 @@
 from operator import truediv
+from click import edit
 from django.conf import settings
 
 from django.db import models
@@ -32,7 +33,7 @@ class order_cart(models.Model):
 
 class order_cart_detail(models.Model):
     order_cart_detail_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-    cart_id = models.ForeignKey(
+    cart = models.ForeignKey(
         order_cart,
         null=True,
         blank=True,
@@ -68,6 +69,9 @@ class order_cart_detail(models.Model):
     weight = models.DecimalField(max_digits=10, decimal_places=4)
     price = models.DecimalField(max_digits=16, decimal_places=2)
     total_price = models.DecimalField(max_digits=16, decimal_places=2, editable=False)
+    total_price_round = models.DecimalField(
+        max_digits=16, decimal_places=0, editable=False
+    )
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
     completed_cart = models.BooleanField(default=False)

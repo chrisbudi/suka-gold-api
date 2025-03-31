@@ -22,33 +22,13 @@
 8.1 ubah user bank dan user bank number --> Done
 9. perhitungan emas dan saldo terakhir untung atau rugi
 
-2025-02-16-2025-02-20
-Priority
-[
-    1. api/core/payment/bank/ search param query belum jalan
-    2. api/gold-transaction/gold-purchases/ tambahkan sort berdasarkan created date saja dan search berdasarkan total_price
-    3. api/gold-transaction/gold-sales/ tambahkan sort berdasarkan created date saja dan search berdasarkan total_price
-    4. api/gold-transaction/gold-transfer/ tambahkan sort berdasarkan created date saja dan search berdasarkan total_price atau nomor hp transfer
-    5. verify nomor hp transfer emas nanti mendapatkan nama user kalau memang member nemas
-    6. api/core/information/educational di sort berdasarkan information_educational_id
-    7. /api/core/information/article/ di sort berdasarkan created date
-]
-
-1. development pembelian barang fisik -->
-2. pencairan barang fisik -->
-3. implement bcrpt passwpord hash --> 
-4. fix webhook qris --> 
-5. fix webhook VA -->
-6. perhitungan emas dan saldo terakhir untung atau rugi. perhitungan emas dan saldo terakhir untung atau rugi
-
-
-
-
-
+1. ----
 Add total price rounded in product show --> done
 Add stock information for product show
 Check VA payment
 check order cart (add payment still failed)
+remove order va number
+refactoring code for topup va and topup qris
 
 — ask
 Tanya mas Ivan apabila order harga 100.000
