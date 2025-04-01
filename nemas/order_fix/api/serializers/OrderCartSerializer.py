@@ -54,8 +54,12 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
             )
 
             order_cart_detail_model.quantity = validated_data["quantity"]
-
             order_cart_detail_model.total_price = (
+                ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
+                + (goldModel.certificate.cert_price if goldModel.certificate else 0)
+                + (goldModel.product_cost or 0)
+            )
+            order_cart_detail_model.total_price_round = (
                 (
                     ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
                     // 100
@@ -80,6 +84,11 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "price": goldPriceModel.gold_price_buy_round,
                 "weight": goldModel.gold_weight,
                 "total_price": (
+                    ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
+                    + (goldModel.certificate.cert_price if goldModel.certificate else 0)
+                    + (goldModel.product_cost or 0)
+                ),
+                "total_price_round": (
                     (
                         ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
                         // 100

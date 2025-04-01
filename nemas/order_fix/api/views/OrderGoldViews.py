@@ -6,7 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from gold_transaction.models import gold_saving_buy
-from order_fix.api.serializers.OrderGoldSerializer import (
+from order_fix.api.serializers.OrderGoldSerializer.main import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
     SubmitOrderGoldSerializer,

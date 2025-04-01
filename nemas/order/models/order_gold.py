@@ -52,32 +52,30 @@ class order_gold(models.Model):
     order_tracking_amount = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
+
+    # insurance
     order_tracking_insurance = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
-
-    order_tracking_packing = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True
+    order_tracking_insurance_round = models.DecimalField(
+        max_digits=10, decimal_places=0, null=True
     )
     order_tracking_insurance_admin = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
+    )
+    order_tracking_insurance_total = models.DecimalField(
+        max_digits=10, decimal_places=0, null=True
+    )
+    # end of insurance property
+
+    # tracking
+    order_tracking_packing = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
     order_tracking_total_amount = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
-
-    order_tracking_total_amount_rounded = models.DecimalField(
-        max_digits=10, decimal_places=0, null=True
-    )
-
-    order_gold_payment_ref = models.CharField(max_length=255, null=True)
-    order_gold_payment_status = models.CharField(max_length=255, null=True)
-    order_promo_code = models.CharField(max_length=255, null=True)
-
-    order_discount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
-    order_rounded_total_price = models.DecimalField(max_digits=16, decimal_places=0)
-
+    # tracking status
     tracking_status_id = models.CharField(max_length=255, null=True)
     tracking_status = models.CharField(max_length=255, null=True)
 
@@ -93,6 +91,23 @@ class order_gold(models.Model):
     tracking_last_note = models.CharField(max_length=255, null=True)
     tracking_last_updated_datetime = models.DateTimeField(auto_created=True, null=True)
     tracking_sla = models.DateTimeField(auto_created=True, null=True)
+    # end of tracking status
+    # end of tracking
+
+    # start of payment
+    order_gold_payment_ref = models.CharField(max_length=255, null=True)
+    order_gold_payment_status = models.CharField(max_length=255, null=True)
+    # end of payment
+
+    # start of promo
+    order_promo_code = models.CharField(max_length=255, null=True)
+
+    order_discount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    # end of promo
+
+    order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
+
+    order_rounded_total_price = models.DecimalField(max_digits=16, decimal_places=0)
 
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"

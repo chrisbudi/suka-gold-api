@@ -77,7 +77,7 @@ class order_cart_detail(models.Model):
     completed_cart = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ["cart_id", "gold"]
+        unique_together = ["cart", "gold"]
 
     def save(self, *args, **kwargs):
         if not self.created_at:
