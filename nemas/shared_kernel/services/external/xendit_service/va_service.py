@@ -1,4 +1,6 @@
 import requests
+
+from common.responses import NemasReponses
 from .xendit_services import XenditService
 from datetime import datetime, timedelta
 from uuid import uuid4
@@ -38,13 +40,16 @@ class VAPaymentService(XenditService):
                 data=payload,
             )
 
-            print(payload, self.headers, response.status_code, "payload")
-            if response.status_code not in [200, 201]:
-                print(response.json(), "failed response")
-                response.raise_for_status()
-                return None
-
-            return response.json()
+            if response.status_code not in (200, 201):
+                return NemasReponses.failure(
+                    message="Failed to generate VA payment",
+                    errors=response.json(),
+                )
+            response.raise_for_status()
+            return NemasReponses.success(
+                data=response.json(),
+                message="VA payment generated successfully",
+            )
         except Exception as e:
             raise Exception(f"Failed to VA files : {str(e)}")
 
@@ -64,11 +69,15 @@ class VAPaymentService(XenditService):
                 headers=self.headers,
                 data=payload,
             )
-            print(response.json(), "response")
-            if response.status_code not in [200, 201]:
-                response.raise_for_status()
-                return None
-
-            return response.json()
+            if response.status_code not in (200, 201):
+                return NemasReponses.failure(
+                    message="Failed to simulate VA payment",
+                    errors=response.json(),
+                )
+            response.raise_for_status()
+            return NemasReponses.success(
+                data=response.json(),
+                message="VA payment simulated successfully",
+            )
         except Exception as e:
             raise Exception(f"Failed to simulate VA payment : {str(e)}")

@@ -6,6 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from gold_transaction.models import gold_saving_buy
+from common.responses import NemasReponses
 from order_fix.api.serializers.OrderGoldSerializer.main import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
@@ -62,7 +63,10 @@ class OrderGoldAPIView(viewsets.ModelViewSet):
             return response.Response(
                 serializer.context.get("response"), status=status.HTTP_201_CREATED
             )
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return response.Response(
+            NemasReponses.failure("Validation Failed", serializer.errors),
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     @extend_schema(
         summary="Simulate Payment VA",
@@ -82,7 +86,10 @@ class OrderGoldAPIView(viewsets.ModelViewSet):
             return response.Response(
                 serializer.context.get("response"), status=status.HTTP_201_CREATED
             )
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return response.Response(
+            NemasReponses.failure("Validation Failed", serializer.errors),
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     @extend_schema(
         summary="Simulate Payment QRIS",
@@ -99,4 +106,7 @@ class OrderGoldAPIView(viewsets.ModelViewSet):
             return response.Response(
                 serializer.context.get("response"), status=status.HTTP_201_CREATED
             )
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return response.Response(
+            NemasReponses.failure("Validation Failed", serializer.errors),
+            status=status.HTTP_400_BAD_REQUEST,
+        )

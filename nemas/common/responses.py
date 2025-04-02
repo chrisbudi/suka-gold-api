@@ -1,20 +1,33 @@
 from rest_framework.response import Response
 from rest_framework import status
+from typing import Dict, Any, Optional
 
 
-class ApiResponse:
+class NemasReponses:
     @staticmethod
-    def success(data=None, message="Success", status_code=status.HTTP_200_OK):
-        return Response(
-            {"success": True, "message": message, "data": data}, status=status_code
-        )
+    def success(
+        data: Optional[Dict[str, Any]] = None, message: str = "Success"
+    ) -> Dict[str, Any]:
+        """
+        Standard format for a successful response.
+        """
+        return {
+            "success": True,
+            "status": "success",
+            "message": message,
+            "data": data or {},
+        }
 
     @staticmethod
-    def error(
-        message="An error occurred",
-        errors=None,
-        status_code=status.HTTP_400_BAD_REQUEST,
-    ):
-        return Response(
-            {"success": False, "message": message, "errors": errors}, status=status_code
-        )
+    def failure(
+        message: str = "An error occurred", errors: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Standard format for a failed response.
+        """
+        return {
+            "success": False,
+            "status": "failed",
+            "message": message,
+            "errors": errors or {},
+        }

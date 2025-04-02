@@ -107,7 +107,7 @@ class order_gold(models.Model):
 
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
 
-    order_rounded_total_price = models.DecimalField(max_digits=16, decimal_places=0)
+    order_total_price_round = models.DecimalField(max_digits=16, decimal_places=0)
 
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"
@@ -151,3 +151,6 @@ class order_gold_detail(models.Model):
     qty = models.IntegerField()
     order_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price = models.DecimalField(max_digits=16, decimal_places=2)
+    order_detail_total_price_round = models.DecimalField(
+        max_digits=16, decimal_places=0
+    )

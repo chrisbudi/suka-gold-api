@@ -46,7 +46,7 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         # if order cart detail model any then update the endity
 
         if order_cart_detail_model:
-            order_cart_detail_model.price = goldPriceModel.gold_price_buy_round
+            order_cart_detail_model.price = goldPriceModel.gold_price_buy
             order_cart_detail_model.product_cost = goldModel.product_cost
             order_cart_detail_model.weight = goldModel.gold_weight
             order_cart_detail_model.cert_price = (
@@ -81,7 +81,7 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "product_cost": goldModel.product_cost,
                 "gold": goldModel,
                 "user": self.context["request"].user,
-                "price": goldPriceModel.gold_price_buy_round,
+                "price": goldPriceModel.gold_price_buy,
                 "weight": goldModel.gold_weight,
                 "total_price": (
                     ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
@@ -165,11 +165,13 @@ class CartDetailSerializer(serializers.ModelSerializer):
             "price",
             "quantity",
             "total_price",
+            "total_price_round",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
             "order_cart_detail_id",
+            "total_price_round",
             "created_at",
             "updated_at",
             "total_price",

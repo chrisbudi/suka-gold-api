@@ -2,6 +2,8 @@ from decimal import Decimal
 from django.conf import settings
 import requests
 
+from common.responses import NemasReponses
+
 
 class SapxService:
 
@@ -57,18 +59,30 @@ class SapxService:
     def get_price(self, payload=None):
         """ """
         try:
-
             response = requests.post(
                 self.base_url + "v2/master/shipment_cost",
                 headers=self.headers,
                 data=payload,
             )
-            if response.status_code != 200:
-                return {
-                    "status": "failed",
-                    "message": response.json(),
-                }
+            if response.status_code not in (200, 201):
+                return NemasReponses.failure(
+                    message="Failed to get price",
+                    errors=response.json(),
+                )
             response_data = response.json()
-            return response_data
+            return NemasReponses.success(
+                data=response_data.get("data", []),
+                message="Price retrieved successfully",
+            )
+        except requests.exceptions.HTTPError as http_err:
+            return NemasReponses.failure(
+                message="Failed to get price",
+                errors={"error": str(http_err)},
+            )
+        except requests.exceptions.RequestException as req_err:
+            return NemasReponses.failure(
+                message="Failed to get price",
+                errors={"error": str(req_err)},
+            )
         except Exception as e:
             raise Exception(f"Failed to get price: {str(e)}")

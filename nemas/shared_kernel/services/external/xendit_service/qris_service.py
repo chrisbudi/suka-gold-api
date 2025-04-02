@@ -1,4 +1,6 @@
 import requests
+
+from common.responses import NemasReponses
 from .xendit_services import XenditService
 from uuid import uuid4
 from datetime import datetime, timedelta
@@ -40,13 +42,23 @@ class QRISPaymentService(XenditService):
             )
 
             # check if response is not 200
-            if response.status_code != 200:
-                return response.json()
-
+            if response.status_code not in (200, 201):
+                return NemasReponses.failure(
+                    message="Failed to generate QRIS payment",
+                    errors=response.json(),
+                )
             response.raise_for_status()
-            return response.json()
+            return NemasReponses.success(
+                data=response.json(),
+                message="QRIS payment generated successfully",
+            )
+        except requests.exceptions.HTTPError as http_err:
+            return NemasReponses.failure(
+                message="Failed to generate QRIS payment",
+                errors={"error": str(http_err)},
+            )
         except Exception as e:
-            raise Exception(f"Failed to QRIS files : {str(e)}")
+            raise Exception(f"Failed to generate QRIS payment : {str(e)}")
 
     def qris_payment_simulate(self, reference_id: str, payload=None):
         """
@@ -64,10 +76,15 @@ class QRISPaymentService(XenditService):
                 data=payload,
             )
 
-            if response.status_code != 200:
-                return response.json()
-
+            if response.status_code not in (200, 201):
+                return NemasReponses.failure(
+                    message="Failed to simulate QRIS payment",
+                    errors=response.json(),
+                )
             response.raise_for_status()
-            return response.json()
+            return NemasReponses.success(
+                data=response.json(),
+                message="QRIS payment simulated successfully",
+            )
         except Exception as e:
             raise Exception(f"Failed to simulate QRIS payment : {str(e)}")

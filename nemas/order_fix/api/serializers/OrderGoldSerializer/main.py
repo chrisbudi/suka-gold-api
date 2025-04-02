@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
 from rest_framework import serializers
+from common.responses import NemasReponses
 from order_fix.api.serializers.OrderGoldSerializer.Payment import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
@@ -99,20 +100,21 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         payload_data = json.dumps(payload)
 
         shipping_data = sapx_service.get_price(payload_data)
-        if shipping_data.get("status") == "failed":
-            self.context["response"] = {"message": shipping_data.get("message")}
-            return serializers.ValidationError(shipping_data.get("message"))
+        if not shipping_data.get("success"):
+            raise serializers.ValidationError(shipping_data.get("message"))
+
         print(shipping_data, "shipping_data")
         tracking_service_code = validated_data.get("tracking_courier_service_code")
-        # mapping shipping data
         services = list(
             filter(
                 lambda s: s.get("service_type_code") == tracking_service_code,
-                shipping_data.get("data", {}).get("services", []),
+                shipping_data["data"].get("data", {}).get("services", []),
             )
         )
         service = next(iter(services), {})
+
         insurance = service.get("insurance")
+        insurance_round = (insurance // 100 * 100 + 100) if insurance is not None else 0
         insurance_admin = service.get("insurance_admin")
         packing = service.get("packing")
         cost = service.get("cost")
@@ -141,10 +143,10 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_pickup_customer_datetime": None,
                     "order_tracking_amount": cost,
                     "order_tracking_insurance": insurance,
+                    "order_tracking_insurance_round": insurance_round,
                     "order_tracking_packing": packing,
                     "order_tracking_insurance_admin": insurance_admin,
                     "order_tracking_total_amount": shipping_total,
-                    "order_tracking_total_amount_rounded": shipping_total_rounded,
                     "order_promo_code": None,
                     "order_discount": 0,
                     "order_total_price": (
@@ -186,112 +188,20 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     validated_data, order_amount, user, order_gold_instance
                 )
             else:
-                pay_ref = process.va_payment(validated_data, user)
+                pay_ref = process.va_payment(
+                    validated_data, order_amount, user, order_gold_instance
+                )
 
-            if isinstance(pay_ref, dict) and (
-                pay_ref.get("errors") or pay_ref.get("status") == "failed"
-            ):
-                error_message = pay_ref.get("errors") or "Failed to process payment."
-                raise serializers.ValidationError({"payment_error": error_message})
+            if not pay_ref.get("success"):
+                raise serializers.ValidationError(pay_ref)
 
-        return order_gold_instance
-
-    # def process_va_payment_method(
-    #     self, validated_data, order_amount, user, order_gold_instance
-    # ):
-    #     payment_service = VAPaymentService()
-
-    #     payload = payment_service.generate_payload(
-    #         float(order_amount),
-    #         f"qris_generated_user_{user.id}_{str(uuid4())}",
-    #         validated_data.get("order_payment_va_bank"),
-    #         user,
-    #         validated_data.get("order_payment_va_number"),
-    #     )
-    #     payload_json = json.dumps(payload)
-
-    #     vaPaymentMethod = payment_service.va_payment_generate(payload_json)
-    #     if not vaPaymentMethod:
-    #         raise serializers.ValidationError(
-    #             "Failed to process vaPaymentMethod payment."
-    #         )
-
-    #     if vaPaymentMethod.get("errors") or vaPaymentMethod.get("status") == "failed":
-    #         error_message = vaPaymentMethod.get(
-    #             "errors", "Failed to process vaPaymentMethod payment."
-    #         )
-    #         self.context["response"] = {"message": error_message}
-    #         return serializers.ValidationError(error_message)
-
-    #     print(vaPaymentMethod, "vaPaymentMethod")
-
-    #     # generate payment payload
-    #     order_payment.objects.create(
-    #         order_payment_ref=vaPaymentMethod.get("reference_id"),
-    #         order_payment_status="PENDING",
-    #         order_payment_method_id=validated_data.get("order_payment_method_id"),
-    #         order_payment_va_bank=validated_data.get("order_payment_va_bank"),
-    #         order_payment_va_number=validated_data.get("order_payment_va_number"),
-    #         order_payment_amount=order_amount,
-    #         order_payment_admin_amount=0,
-    #         order_payment_number=vaPaymentMethod.get("qr_string"),
-    #         order_payment_method_name=validated_data.get("order_payment_method_name"),
-    #         order_gold=order_gold_instance,
-    #         order_payment_timestamp=datetime.now(),
-    #     )
-
-    #     self.context["response"] = {
-    #         "total_amount": order_amount,
-    #         "qr_string": vaPaymentMethod.get("qr_string"),
-    #         "reference_id": vaPaymentMethod.get("reference_id"),
-    #         "order_gold_id": order_gold_instance.order_gold_id,
-    #     }
-    #     return vaPaymentMethod
-
-    # def process_qris_payment_method(
-    #     self, validated_data, order_amount, user, order_gold_instance
-    # ):
-    #     payment_service = QRISPaymentService()
-
-    #     payload = payment_service.generate_payload(
-    #         float(order_amount),
-    #         f"qris_generated_user_{user.id}_{str(uuid4())}",
-    #     )
-    #     payload_json = json.dumps(payload)
-
-    #     qris = payment_service.qris_payment_generate(payload_json)
-    #     if not qris:
-    #         raise serializers.ValidationError("Failed to process QRIS payment.")
-
-    #     if qris.get("errors") or qris.get("status") == "failed":
-    #         error_message = qris.get("errors", "Failed to process QRIS payment.")
-    #         self.context["response"] = {"message": error_message}
-    #         return serializers.ValidationError(error_message)
-
-    #     print(qris, "qris")
-
-    #     # generate payment payload
-    #     order_payment.objects.create(
-    #         order_payment_ref=qris.get("reference_id"),
-    #         order_payment_status="PENDING",
-    #         order_payment_method_id=validated_data.get("order_payment_method_id"),
-    #         order_payment_va_bank=validated_data.get("order_payment_va_bank"),
-    #         order_payment_va_number=validated_data.get("order_payment_va_number"),
-    #         order_payment_amount=order_amount,
-    #         order_payment_admin_amount=0,
-    #         order_payment_number=qris.get("qr_string"),
-    #         order_payment_method_name=validated_data.get("order_payment_method_name"),
-    #         order_gold=order_gold_instance,
-    #         order_payment_timestamp=datetime.now(),
-    #     )
-    #     self.context["response"] = {
-    #         "total_amount": order_amount,
-    #         "qr_string": qris.get("qr_string"),
-    #         "reference_id": qris.get("reference_id"),
-    #         "order_gold_id": order_gold_instance.order_gold_id,
-    #     }
-    #     return qris
-    # return super().create(validated_data)
+        return NemasReponses.success(
+            data={
+                "order_gold_instance": order_gold_instance,
+                "pay_ref": pay_ref.get("data"),
+            },
+            message="Order created successfully",
+        )
 
 
 class OrderGoldListSerializer(serializers.Serializer):
@@ -312,6 +222,7 @@ class OrderGoldDetailSerializer(serializers.ModelSerializer):
             "qty",
             "cert_price",
             "order_detail_total_price",
+            "order_detail_total_price_round",
         ]
         read_only_fields = ["order_gold_detail_id", "order_gold_id"]
 
@@ -338,7 +249,9 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "order_promo_code",
             "order_discount",
             "order_total_price",
+            "order_total_price_round",
             "order_tracking_insurance",
+            "order_tracking_insurance_round",
             "order_tracking_packing",
             "order_tracking_insurance_admin",
             "order_tracking_total_amount",
@@ -362,63 +275,3 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "order_gold_id",
             "order_payment_va_number",
         ]
-
-
-#     def create(self, validated_data):
-#         user = self.context["request"].user
-#         gold = GoldModel()
-#         order_details_data = validated_data.pop("order_details")
-#         validated_data["user"] = self.context["request"].user
-#         validated_data["order_number"] = gold.generate_number()
-#         validated_data["order_timestamp"] = datetime.now()
-
-#         # # if va process payment va
-#         # if validated_data["order_payment_method"] == "VA":
-#         #     self.process_va_payment(validated_data, user)
-#         # else:
-#         #     validated_data["order_payment_va_bank"] = None
-#         #     self.process_qris_payment(validated_data, user)
-
-#         validated_data["order_gold_payment_ref"] = self.context["response"][
-#             "reference_id"
-#         ]
-
-#         order_gold_data = order_gold.objects.create(**validated_data)
-
-#         for order_detail_data in order_details_data:
-
-#             order_gold_detail.objects.create(
-#                 order_gold=order_gold_data, **order_detail_data
-#             )
-
-#         self.context["response"]["order_gold_id"] = order_gold_data.order_gold_id
-#         return order_gold
-
-# def process_va_payment(self, validated_data, user):
-
-# def process_qris_payment(self, validated_data, user):
-#     qris = validated_data["order_payment_method"]
-#     service = qris_service.QRISPaymentService()
-#     payload = {
-#         "reference_id": f"qris_generated_user_{user.id}_{str(uuid4())}",
-#         "type": "DYNAMIC",
-#         "currency": "IDR",
-#         "amount": float(validated_data["order_total_price"]),
-#         "expired_at": (datetime.now() + timedelta(hours=2)).strftime(
-#             "%Y-%m-%dT%H:%M:%S"
-#         ),
-#         "channel_code": "ID_DANA",
-#         "is_closed": True,
-#     }
-#     payload_json = json.dumps(payload)
-#     qris = service.qris_payment_generate(payload_json)
-#     if not qris:
-#         raise serializers.ValidationError("Failed to process QRIS payment.")
-#     print(qris, "qris")
-
-#     self.context["response"] = {
-#         "total_amount": validated_data["order_total_price"],
-#         "qr_string": qris.get("qr_string"),
-#         "reference_id": qris.get("reference_id"),
-#         "order_gold_id": "",
-#     }
