@@ -67,15 +67,17 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         user_address_id = validated_data.get("order_user_address_id")
         user_address_model = user_address.objects.filter(id=user_address_id).first()
 
-        userVa = UserVa.objects.filter(user=user).first()
-        coreBank = core_bank.objects.get(
-            bank_merchant_code=validated_data.get("order_payment_va_bank")
-        )
-        virtual_account_number = (
-            f"{coreBank.bank_create_code_va}{userVa.va_number[len(userVa.merchant_code):]}"
-            if userVa
-            else f"{coreBank.bank_create_code_va}{coreBank.generate_va()}"
-        )
+        if validated_data.get("order_payment_method_name") == "VA":
+            userVa = UserVa.objects.filter(user=user).first()
+            coreBank = core_bank.objects.get(
+                bank_merchant_code=validated_data.get("order_payment_va_bank")
+            )
+            virtual_account_number = (
+                f"{coreBank.bank_create_code_va}{userVa.va_number[len(userVa.merchant_code):]}"
+                if userVa
+                else f"{coreBank.bank_create_code_va}{coreBank.generate_va()}"
+            )
+
         order_cart_id = validated_data.get("order_cart_id")
 
         order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)

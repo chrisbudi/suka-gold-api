@@ -1,3 +1,4 @@
+import decimal
 from common.responses import NemasReponses
 from order.models import order_payment
 from user.models import user_virtual_account as UserVa
@@ -8,6 +9,7 @@ from shared_kernel.services.external.xendit_service import (
     VAPaymentService,
 )
 from uuid import uuid4
+from decimal import Decimal
 from rest_framework import serializers
 
 import json
@@ -37,19 +39,18 @@ class PaymentProcess:
             order_payment_status="PENDING",
             order_payment_method_id=validated_data.get("order_payment_method_id"),
             order_payment_va_bank=validated_data.get("order_payment_va_bank"),
-            order_payment_va_number=validated_data.get("order_payment_va_number"),
-            order_payment_amount=order_amount,
-            order_payment_admin_amount=0,
-            order_payment_number=qris.get("qr_string"),
+            order_payment_amount=order_amount + (order_amount * Decimal("0.7")),
+            order_payment_admin_amount=order_amount * Decimal(0.7),
+            order_payment_number=qris["data"].get("qr_string"),
             order_payment_method_name=validated_data.get("order_payment_method_name"),
             order_gold=order_gold_instance,
             order_payment_timestamp=datetime.now(),
         )
         return NemasReponses.success(
             data={
-                "total_amount": order_amount,
-                "qr_string": qris.get("qr_string"),
-                "reference_id": qris.get("reference_id"),
+                "total_amount": order_amount + (order_amount * Decimal(0.7)),
+                "qr_string": qris["data"].get("qr_string"),
+                "reference_id": qris["data"].get("reference_id"),
                 "order_gold_id": order_gold_instance.order_gold_id,
             },
             message="QRIS payment generated successfully",
