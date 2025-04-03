@@ -33,7 +33,7 @@ class PaymentProcess:
 
         # generate payment payload
         order_payment.objects.create(
-            order_payment_ref=qris.get("reference_id"),
+            order_payment_ref=qris["data"].get("reference_id"),
             order_payment_status="PENDING",
             order_payment_method_id=validated_data.get("order_payment_method_id"),
             order_payment_va_bank=validated_data.get("order_payment_va_bank"),
@@ -80,27 +80,21 @@ class PaymentProcess:
         order_payment.objects.create(
             order_payment_ref=va_method["data"].get("external_id"),
             order_payment_status="PENDING",
-            order_payment_method_id=validated_data["data"].get(
-                "order_payment_method_id"
-            ),
-            order_payment_va_bank=validated_data["data"].get("order_payment_va_bank"),
-            order_payment_va_number=validated_data["data"].get(
-                "order_payment_va_number"
-            ),
-            order_payment_amount=order_amount,
-            order_payment_admin_amount=0,
-            order_payment_number=va_method["data"].get("qr_string"),
-            order_payment_method_name=validated_data["data"].get(
-                "order_payment_method_name"
-            ),
+            order_payment_method_id=validated_data.get("order_payment_method_id"),
+            order_payment_va_bank=validated_data.get("order_payment_va_bank"),
+            order_payment_va_number=va_method["data"].get("account_number"),
+            order_payment_amount=va_method["data"].get("expected_amount") + 4500,
+            order_payment_admin_amount=4500,
+            order_payment_number=va_method["data"].get("account_number"),
+            order_payment_method_name=validated_data.get("order_payment_method_name"),
             order_gold=order_gold_instance,
             order_payment_timestamp=datetime.now(),
         )
 
         return NemasReponses.success(
             data={
-                "total_amount": order_amount,
-                "qr_string": va_method.get("qr_string"),
+                "total_amount": va_method["data"].get("expected_amount") + 4500,
+                "virtual_account": va_method.get("account_number"),
                 "reference_id": va_method.get("external_id"),
                 "order_gold_id": order_gold_instance.order_gold_id,
             },
