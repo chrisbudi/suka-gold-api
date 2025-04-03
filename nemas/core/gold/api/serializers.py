@@ -129,17 +129,26 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
     gold_price_summary_roundup = serializers.SerializerMethodField()
 
     def get_gold_price_summary(self, obj):
-        product_cost = obj.product_cost if obj.product_cost is not None else 0
         return (
-            (self.activate_price.gold_price_buy + product_cost) * obj.gold_weight
-        ) + obj.certificate.cert_price
+            self.activate_price.get_active_price().gold_price_buy * obj.gold_weight
+            + obj.product_cost
+            + obj.certificate.cert_price
+        )
 
     def get_gold_price_summary_roundup(self, obj):
-        product_cost = obj.product_cost if obj.product_cost is not None else 0
         return (
-            ((self.activate_price.gold_price_buy + product_cost) * obj.gold_weight)
+            (
+                (
+                    self.activate_price.get_active_price().gold_price_buy
+                    * obj.gold_weight
+                )
+                // 100
+                * 100
+                + 100
+            )
+            + obj.product_cost
             + obj.certificate.cert_price
-        ) // 100 * 100 + 100
+        )
 
     class Meta:
         model = gold

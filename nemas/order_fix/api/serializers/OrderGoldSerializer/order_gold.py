@@ -51,9 +51,16 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         # if payment qris then max payment in 10.000.000
         if data.get("order_payment_method_name") == "QRIS":
             order_cart_id = data.get("order_cart_id")
-            order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
+            try:
+                order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
+            except order_cart.DoesNotExist:
+                raise serializers.ValidationError("Order cart not found")
             if order_cart_models.total_price > 10000000:
-                raise serializers.ValidationError("Payment QRIS max 10.000.000")
+                raise serializers.ValidationError(
+                    {"order_payment_method_name": "Payment QRIS max 10.000.000"}
+                )
+
+        return super().validate(data)
 
     def create(self, validated_data):
         user = self.context["request"].user
@@ -120,7 +127,9 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         cost = service.get("cost")
         shipping_total = Decimal(service.get("total") or 0)
         shipping_total_rounded = shipping_total // 100 * 100 + 100
-
+        order_amount_billed = (
+            order_cart_models.total_price_round + shipping_total_rounded
+        )
         # Insert data from order_cart into order_gold
 
         with transaction.atomic():
@@ -150,7 +159,10 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_promo_code": None,
                     "order_discount": 0,
                     "order_total_price": (
-                        order_cart_models.total_price + shipping_total_rounded
+                        order_cart_models.total_price + shipping_total
+                    ),
+                    "order_total_price_round": (
+                        order_cart_models.total_price_round + shipping_total_rounded
                     ),
                     "tracking_courier_id": validated_data.get("tracking_courier_id"),
                     "tracking_courier_service_id": validated_data.get(
@@ -177,6 +189,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     cert_price=cart_detail.cert_price,
                     product_cost=cart_detail.product_cost,
                     order_detail_total_price=cart_detail.total_price,
+                    order_detail_total_price_round=cart_detail.total_price_round,
                 )
 
             # process payment
@@ -185,11 +198,15 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             # if qris
             if validated_data.get("order_payment_method_name") == "QRIS":
                 pay_ref = process.qris_payment(
-                    validated_data, order_amount, user, order_gold_instance
+                    validated_data, order_amount_billed, user, order_gold_instance
                 )
             else:
                 pay_ref = process.va_payment(
-                    validated_data, order_amount, user, order_gold_instance
+                    validated_data,
+                    order_amount_billed,
+                    user,
+                    virtual_account_number,
+                    order_gold_instance,
                 )
 
             if not pay_ref.get("success"):

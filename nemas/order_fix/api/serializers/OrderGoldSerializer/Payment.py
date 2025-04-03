@@ -55,7 +55,9 @@ class PaymentProcess:
             message="QRIS payment generated successfully",
         )
 
-    def va_payment(self, validated_data, order_amount, user, order_gold_instance):
+    def va_payment(
+        self, validated_data, order_amount, user, va_number, order_gold_instance
+    ):
         payment_service = VAPaymentService()
 
         payload = payment_service.generate_payload(
@@ -63,7 +65,7 @@ class PaymentProcess:
             f"qris_generated_user_{user.id}_{str(uuid4())}",
             validated_data.get("order_payment_va_bank"),
             user,
-            validated_data.get("order_payment_va_number"),
+            va_number,
         )
         payload_json = json.dumps(payload)
 
@@ -72,17 +74,25 @@ class PaymentProcess:
         if not va_method.get("success"):
             raise serializers.ValidationError(va_method)
 
+        print(va_method, "va_method")
+
         # generate payment payload
         order_payment.objects.create(
-            order_payment_ref=va_method.get("reference_id"),
+            order_payment_ref=va_method["data"].get("external_id"),
             order_payment_status="PENDING",
-            order_payment_method_id=validated_data.get("order_payment_method_id"),
-            order_payment_va_bank=validated_data.get("order_payment_va_bank"),
-            order_payment_va_number=validated_data.get("order_payment_va_number"),
+            order_payment_method_id=validated_data["data"].get(
+                "order_payment_method_id"
+            ),
+            order_payment_va_bank=validated_data["data"].get("order_payment_va_bank"),
+            order_payment_va_number=validated_data["data"].get(
+                "order_payment_va_number"
+            ),
             order_payment_amount=order_amount,
             order_payment_admin_amount=0,
-            order_payment_number=va_method.get("qr_string"),
-            order_payment_method_name=validated_data.get("order_payment_method_name"),
+            order_payment_number=va_method["data"].get("qr_string"),
+            order_payment_method_name=validated_data["data"].get(
+                "order_payment_method_name"
+            ),
             order_gold=order_gold_instance,
             order_payment_timestamp=datetime.now(),
         )
@@ -91,7 +101,7 @@ class PaymentProcess:
             data={
                 "total_amount": order_amount,
                 "qr_string": va_method.get("qr_string"),
-                "reference_id": va_method.get("reference_id"),
+                "reference_id": va_method.get("external_id"),
                 "order_gold_id": order_gold_instance.order_gold_id,
             },
             message="VA payment generated successfully",

@@ -19,6 +19,7 @@ class order_cart(models.Model):
     )
     total_weight = models.DecimalField(max_digits=10, decimal_places=4)
     total_price = models.DecimalField(max_digits=16, decimal_places=2)
+    total_price_round = models.DecimalField(max_digits=16, decimal_places=0)
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
     completed_cart = models.BooleanField(default=False)

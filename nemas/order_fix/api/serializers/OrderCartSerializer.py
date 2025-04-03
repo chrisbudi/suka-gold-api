@@ -111,7 +111,8 @@ class ProcessCartSerializer(serializers.Serializer):
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
         order_cart_detail_model = order_cart_detail.objects.filter(
-            user=validated_data["user"]
+            user=validated_data["user"],
+            completed_cart=False,
         )
         if not order_cart_detail_model:
             raise serializers.ValidationError("Cart is empty")
@@ -124,6 +125,7 @@ class ProcessCartSerializer(serializers.Serializer):
                 "updated_at": datetime.now(),
                 "total_weight": 0,
                 "total_price": 0,
+                "total_price_round": 0,
             },
         )
 
@@ -133,7 +135,10 @@ class ProcessCartSerializer(serializers.Serializer):
         order_cart_instance.total_price = Decimal(
             sum([item.total_price for item in order_cart_detail_model])
         )
-        if order_cart_instance is None:
+        order_cart_instance.total_price_round = Decimal(
+            sum([item.total_price_round for item in order_cart_detail_model])
+        )
+        if created:
             order_cart_instance.created_at = datetime.now()
             order_cart_instance.updated_at = datetime.now()
             order_cart_instance.session_key = str(uuid.uuid4())
