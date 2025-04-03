@@ -94,8 +94,8 @@ class PaymentProcess:
         return NemasReponses.success(
             data={
                 "total_amount": va_method["data"].get("expected_amount") + 4500,
-                "virtual_account": va_method.get("account_number"),
-                "reference_id": va_method.get("external_id"),
+                "virtual_account": va_method["data"].get("account_number"),
+                "reference_id": va_method["data"].get("external_id"),
                 "order_gold_id": order_gold_instance.order_gold_id,
             },
             message="VA payment generated successfully",

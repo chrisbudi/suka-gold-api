@@ -214,7 +214,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         return NemasReponses.success(
             data={
-                "order_gold_instance": order_gold_instance,
+                # "order_gold_instance": OrderGoldSerializer(order_gold_instance).data,
                 "pay_ref": pay_ref.get("data"),
             },
             message="Order created successfully",
