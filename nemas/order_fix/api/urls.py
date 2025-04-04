@@ -61,14 +61,21 @@ urlpatterns = [
                     views.OrderGoldAPIView.as_view({"post": "perform_create"}),
                     name="order-create",
                 ),
+            ],
+        ),
+    ),
+    path(
+        "order/payment/",
+        include(
+            [
                 path(
-                    "simulate/va/<str:pk>/",
-                    views.OrderGoldAPIView.as_view({"post": "simulate_va_payment"}),
+                    "simulate/va/",
+                    views.OrderPaymentView.as_view({"post": "simulate_va_payment"}),
                     name="order-va-payment",
                 ),
                 path(
-                    "simulate/qris/<str:pk>/",
-                    views.OrderGoldAPIView.as_view({"post": "simulate_qris_payment"}),
+                    "simulate/qris/",
+                    views.OrderPaymentView.as_view({"post": "simulate_qris_payment"}),
                     name="order-qris-payment",
                 ),
             ],

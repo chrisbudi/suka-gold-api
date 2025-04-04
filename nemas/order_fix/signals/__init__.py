@@ -1,1 +1,2 @@
-# from .order import handle_purchase
+from .order_gold import handle_order_gold
+from .order_gold_payment import handle_order_gold_payment

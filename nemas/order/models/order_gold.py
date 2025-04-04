@@ -116,8 +116,8 @@ class order_gold(models.Model):
         validated_data["order_number"] = self.generate_number()
         return order_gold.objects.create(**validated_data)
 
-    def update_status(self, status: str):
-        self.tracking_status = status
+    def update_payment_status(self, status: str):
+        self.order_gold_payment_status = status
         self.save()
 
     def generate_number(self):

@@ -1,18 +1,17 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from common.responses import NemasReponses
 from order_fix.api.serializers.OrderGoldSerializer.Payment import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
-from order.models import order_cart, order_payment
+from order.models import order_cart
 from shared_kernel.services.external.xendit_service import va_service, qris_service
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
 from core.domain.gold import gold as GoldModel
 from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
-from uuid import UUID, uuid4
 import json
 from django.db import transaction
 

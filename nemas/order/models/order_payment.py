@@ -12,6 +12,10 @@ class order_payment(models.Model):
     )
     order_payment_timestamp = models.DateTimeField(auto_created=True)
     order_payment_amount = models.DecimalField(max_digits=16, decimal_places=2)
+    order_payment_summary_amount = models.DecimalField(max_digits=16, decimal_places=2)
+    order_payment_summary_amount_round = models.DecimalField(
+        max_digits=16, decimal_places=0
+    )
     order_payment_admin_amount = models.DecimalField(max_digits=10, decimal_places=2)
     order_payment_method = models.ForeignKey(
         payment_method,

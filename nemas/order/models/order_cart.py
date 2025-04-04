@@ -31,6 +31,10 @@ class order_cart(models.Model):
     def remove_cart(self):
         self.completed_cart = True
 
+    def complete_cart(self):
+        self.completed_cart = True
+        self.save()
+
 
 class order_cart_detail(models.Model):
     order_cart_detail_id = UUIDv7Field(primary_key=True, unique=True, editable=False)

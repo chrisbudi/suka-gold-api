@@ -33,14 +33,6 @@ def handle_order_gold(
             detail.completed_cart = True
             detail.save()
 
-        # update user gold history
-
-        # update user wallet history
-
-    # update user gold history
-
-    # update user wallet history
-
     print(created, "created", "gold saving buy")
 
     if created:

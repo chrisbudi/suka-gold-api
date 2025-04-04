@@ -26,12 +26,17 @@
 1. ----
 Add total price rounded in product show --> done
 Add stock information for product show
-Check VA payment
-check order cart (add payment still failed)
-remove order va number
-refactoring code for topup va and topup qris
+Check VA payment --> done
+check order cart (add payment still failed) --> done
+remove order va number --> done
+refactoring code for topup va and topup qris --> done
 
 — ask
 Tanya mas Ivan apabila order harga 100.000
 1 merit kemudian get latest price  harga 101.000
 Yang di get yang mana
+
+
+
+verifikasi dari xendit
+email

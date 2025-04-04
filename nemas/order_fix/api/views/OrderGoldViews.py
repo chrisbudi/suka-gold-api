@@ -7,16 +7,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # Correct model import
 from gold_transaction.models import gold_saving_buy
 from common.responses import NemasReponses
-from order_fix.api.serializers.OrderGoldSerializer.order_gold import (
+from order_fix.api.serializers.OrderGoldSerializer.serialize import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
     SubmitOrderGoldSerializer,
 )
-from order_fix.api.serializers.OrderSimulatePaymentSerializer import (
-    OrderSimulatedPaymentQrisSerializer,
-    OrderSimulatedPaymentVaSerializer,
-)
-
 from order.models import order_gold
 
 
@@ -61,47 +56,6 @@ class OrderGoldAPIView(viewsets.ModelViewSet):
             result = serializer.save()
             print(result, "result serializer")
             return response.Response(result, status=status.HTTP_201_CREATED)
-        return response.Response(
-            NemasReponses.failure("Validation Failed", serializer.errors),
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    @extend_schema(
-        summary="Simulate Payment VA",
-        description="Simulate a payment for a virtual account.",
-        request=OrderSimulatedPaymentVaSerializer,
-        responses={200: OrderSimulatedPaymentVaSerializer},
-    )
-    def simulate_va_payment(self, request, pk: str):
-        print(request.data, "request.data", pk)
-
-        serializer = OrderSimulatedPaymentVaSerializer(
-            data=request.data, context={"request": request}
-        )
-        if serializer.is_valid():
-            print(serializer, "serializer")
-            serializer.save()
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
-        return response.Response(
-            NemasReponses.failure("Validation Failed", serializer.errors),
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    @extend_schema(
-        summary="Simulate Payment QRIS",
-        description="Simulate a payment for a QRIS.",
-        request=OrderSimulatedPaymentQrisSerializer,
-        responses={200: OrderSimulatedPaymentQrisSerializer},
-    )
-    def simulate_qris_payment(self, request, pk: str):
-        serializer = OrderSimulatedPaymentQrisSerializer(
-            data=request.data, context={"request": request}
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return response.Response(
-                serializer.context.get("response"), status=status.HTTP_201_CREATED
-            )
         return response.Response(
             NemasReponses.failure("Validation Failed", serializer.errors),
             status=status.HTTP_400_BAD_REQUEST,

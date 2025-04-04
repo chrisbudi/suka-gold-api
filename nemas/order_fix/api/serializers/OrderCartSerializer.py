@@ -149,7 +149,6 @@ class ProcessCartSerializer(serializers.Serializer):
 
         for item in order_cart_detail_model:
             item.cart = order_cart_instance
-
             item.save()
 
         print(CartSerializer(order_cart_instance), "order_cart_instance")
@@ -196,6 +195,7 @@ class CartSerializer(serializers.ModelSerializer):
             "order_cart_id",
             "total_weight",
             "total_price",
+            "total_price_round",
             "created_at",
             "updated_at",
             "completed_cart",

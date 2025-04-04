@@ -25,7 +25,6 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
             if amount <= 0:
                 raise serializers.ValidationError("Amount must be greater than 0")
 
-        print(reference_id, "reference_id")
         if not reference_id:
             raise serializers.ValidationError("Reference ID is need")
 
@@ -43,13 +42,14 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
             }
             payload_json = json.dumps(payload)
             response = qris_service.qris_payment_simulate(reference_id, payload_json)
-            print(response, "response")
+
             orderTransaction = order_gold.objects.get(
                 order_gold_payment_ref=reference_id
             )
-            orderCart = order_cart_detail.objects.get(user_id=user)
-            orderCart.complete_cart()
-            orderTransaction.update_status("SUCCESS")
+            if orderTransaction:
+                orderTransaction.update_payment_status("PAID")
+            else:
+                raise serializers.ValidationError("Order transaction not found")
 
             mail = orderMailService()
             mail.send_email(orderTransaction, user=user)
@@ -70,7 +70,7 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             if amount <= 0:
                 raise serializers.ValidationError("Amount must be greater than 0")
 
-        return data
+        return super().validate(data)
 
     def create(self, validated_data):
         amount = validated_data["amount"]
@@ -83,18 +83,19 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             }
             payload_json = json.dumps(payload)
             response = va_service.va_payment_simulate(reference_id, payload_json)
-
-            orderTransaction = order_gold.objects.get(
+            orderTransaction = order_gold.objects.filter(
                 order_gold_payment_ref=reference_id
-            )
-            orderCart = order_cart_detail.objects.get(user_id=user)
-            orderCart.complete_cart()
-            orderTransaction.update_status("SUCCESS")
+            ).first()
+
+            if not orderTransaction:
+                raise serializers.ValidationError("Order transaction not found")
+
+            orderTransaction.update_payment_status("PAID")
 
             # mail service
             print(orderTransaction, "order transaction")
-            mail = orderMailService()
-            mail.send_email(orderTransaction, user=user)
+            # mail = orderMailService()
+            # mail.send_email(orderTransaction, user=user)
 
             return response
         except Exception as e:
@@ -120,7 +121,7 @@ class orderMailService:
         for detail in order_detail:
             table_product_data += f"""
             <tr>
-            <td>{detail.order_qty}</td>
+            <td>{detail.qty}</td>
             <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
             <td>{detail.order_detail_total_price}</td>
             </tr>"""
