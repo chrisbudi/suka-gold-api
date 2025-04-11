@@ -128,6 +128,8 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
     gold_price_summary = serializers.SerializerMethodField()
     gold_price_summary_roundup = serializers.SerializerMethodField()
 
+    stock = serializers.SerializerMethodField()
+
     def get_gold_price_summary(self, obj):
         return (
             self.activate_price.get_active_price().gold_price_buy * obj.gold_weight
@@ -150,6 +152,9 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
             + obj.certificate.cert_price
         )
 
+    def get_stock(self, obj):
+        return obj.get_stock()
+
     class Meta:
         model = gold
         fields = [
@@ -161,6 +166,7 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
             "certificate_id",
             "certificate_weight",
             "product_cost",
+            "stock",
             "gold_image_1",
             "gold_image_2",
             "gold_image_3",

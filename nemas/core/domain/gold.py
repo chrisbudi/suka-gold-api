@@ -87,6 +87,11 @@ class gold(models.Model):
     def generate_number(self):
         return str(random.randint(100000, 999999))
 
+    def get_stock(self):
+        return gold_cert_detail_price.objects.filter(
+            gold=self, include_stock=True
+        ).count()
+
     def delete(self):
         self.is_deleted = True
         self.save()
