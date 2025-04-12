@@ -15,6 +15,7 @@ from core.domain import (
     gold_cert_detail_price,
     cert,
 )
+from nemas.order.models.order_gold import order_gold_detail
 
 
 # region cert
@@ -153,7 +154,7 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
         )
 
     def get_stock(self, obj):
-        return obj.get_stock()
+        return obj.get_stock() - order_gold_detail().get_sum_status_open()
 
     class Meta:
         model = gold

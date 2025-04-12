@@ -149,8 +149,19 @@ class order_gold_detail(models.Model):
     product_cost = models.DecimalField(max_digits=10, decimal_places=2)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
     qty = models.IntegerField()
+    # if status == open then this item can be cancelled and stock can be returned
+    # if status == closed then this item cannot be cancelled and stock cannot be returned
+    # if status == cancelled then this item cannot be cancelled and stock can be returned
+    order_detail_stock_status = models.CharField(
+        max_length=255, null=True, default="open"
+    )
     order_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price_round = models.DecimalField(
         max_digits=16, decimal_places=0
     )
+
+    def get_sum_status_open(self):
+        return order_gold_detail.objects.filter(
+            order_detail_stock_status="open"
+        ).count()
