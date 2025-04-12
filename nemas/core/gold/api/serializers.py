@@ -15,7 +15,7 @@ from core.domain import (
     gold_cert_detail_price,
     cert,
 )
-from nemas.order.models.order_gold import order_gold_detail
+from order.models.order_gold import order_gold_detail
 
 
 # region cert
