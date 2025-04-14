@@ -37,7 +37,9 @@ Tanya mas Ivan apabila order harga 100.000
 Yang di get yang mana
 
 
-STOK --> ON progress
-verifikasi dari xendit 
-email
+STOK -->done 
+verifikasi dari xendit --> on progress
+email --> on progress 
 realtime data order --> ON progress
+chart -->
+ambil mandiri --> done

@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from common.responses import NemasReponses
+from nemas.shared_kernel.services.external import sapx_service
 from order_fix.api.serializers.OrderGoldSerializer.Payment import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
@@ -99,35 +100,23 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         # shipping region
         sapx_service = SapxService()
-        payload = sapx_service.generate_payload(
+        shipping_details = sapx_service._get_shipping_details(
+            validated_data.get("tracking_courier_service_code"),
             order_amount,
             shipping_weight,
-            "",
-            "",
         )
-        payload_data = json.dumps(payload)
 
-        shipping_data = sapx_service.get_price(payload_data)
-        if not shipping_data.get("success"):
-            raise serializers.ValidationError(shipping_data.get("message"))
-
-        print(shipping_data, "shipping_data")
-        tracking_service_code = validated_data.get("tracking_courier_service_code")
-        services = list(
-            filter(
-                lambda s: s.get("service_type_code") == tracking_service_code,
-                shipping_data["data"].get("data", {}).get("services", []),
-            )
+        insurance = shipping_details["insurance"]
+        insurance_round = shipping_details["insurance_round"]
+        insurance_admin = shipping_details["insurance_admin"]
+        packing = shipping_details["packing"]
+        cost = shipping_details["cost"]
+        shipping_total = shipping_details["shipping_total"]
+        shipping_total_rounded = shipping_details["shipping_total_rounded"]
+        order_amount_billed = (
+            order_cart_models.total_price_round + shipping_total_rounded
         )
-        service = next(iter(services), {})
 
-        insurance = service.get("insurance")
-        insurance_round = (insurance // 100 * 100 + 100) if insurance is not None else 0
-        insurance_admin = service.get("insurance_admin")
-        packing = service.get("packing")
-        cost = service.get("cost")
-        shipping_total = Decimal(service.get("total") or 0)
-        shipping_total_rounded = shipping_total // 100 * 100 + 100
         order_amount_billed = (
             order_cart_models.total_price_round + shipping_total_rounded
         )

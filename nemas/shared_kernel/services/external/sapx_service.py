@@ -1,4 +1,5 @@
 from decimal import Decimal
+import json
 from django.conf import settings
 import requests
 
@@ -86,3 +87,51 @@ class SapxService:
             )
         except Exception as e:
             raise Exception(f"Failed to get price: {str(e)}")
+
+    def _get_shipping_details(
+        self, service_code: str, order_amount: Decimal, shipping_weight: Decimal
+    ):
+        # Get the shipping details based on the provided data
+
+        payload = self.generate_payload(
+            order_amount,
+            shipping_weight,
+            "",
+            "",
+        )
+        payload_data = json.dumps(payload)
+
+        shipping_data = self.get_price(payload_data)
+        if not shipping_data.get("success"):
+            return NemasReponses.failure(
+                message="Failed to get price",
+                errors={"error": shipping_data.get("message")},
+            )
+
+        # tracking_service_code = validated_data.get("tracking_courier_service_code")
+        tracking_service_code = service_code
+        services = list(
+            filter(
+                lambda s: s.get("service_type_code") == tracking_service_code,
+                shipping_data["data"].get("data", {}).get("services", []),
+            )
+        )
+        service = next(iter(services), {})
+
+        insurance = service.get("insurance")
+        insurance_round = (insurance // 100 * 100 + 100) if insurance is not None else 0
+        insurance_admin = service.get("insurance_admin")
+        packing = service.get("packing")
+        cost = service.get("cost")
+        shipping_total = Decimal(service.get("total") or 0)
+        shipping_total_rounded = shipping_total // 100 * 100 + 100
+
+        return {
+            "insurance": insurance,
+            "insurance_round": insurance_round,
+            "insurance_admin": insurance_admin,
+            "packing": packing,
+            "cost": cost,
+            "shipping_total": shipping_total,
+            "shipping_total_rounded": shipping_total_rounded,
+        }
