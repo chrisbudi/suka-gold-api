@@ -3,14 +3,15 @@ from django.conf import settings
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
 from core.domain import (
-    gold,
     gold_price_config,
     cert,
     delivery_partner,
     delivery_partner_service,
     payment_method,
 )
+from core.domain.gold import gold
 from core.domain.delivery import delivery_partner_service
+from order.models.order_payment import order_payment
 from order.models.order_cart import order_cart_detail
 from user.models.users import user_address
 
@@ -106,8 +107,9 @@ class order_gold(models.Model):
     # end of promo
 
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
-
     order_total_price_round = models.DecimalField(max_digits=16, decimal_places=0)
+    order_pph22 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    order_grand_total_price = models.DecimalField(max_digits=16, decimal_places=2)
 
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"
@@ -161,7 +163,7 @@ class order_gold_detail(models.Model):
         max_digits=16, decimal_places=0
     )
 
-    def get_sum_status_open(self):
+    def get_sum_status_open(self, goldModel: "gold") -> int:
         return order_gold_detail.objects.filter(
-            order_detail_stock_status="open"
+            gold=goldModel, order_detail_stock_status="open"
         ).count()

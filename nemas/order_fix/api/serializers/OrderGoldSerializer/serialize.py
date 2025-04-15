@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from common.responses import NemasReponses
-from nemas.shared_kernel.services.external import sapx_service
+from shared_kernel.services.external import sapx_service
 from order_fix.api.serializers.OrderGoldSerializer.Payment import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
@@ -122,6 +122,11 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         )
         # Insert data from order_cart into order_gold
 
+        # add calculation for order pph22
+        order_total = order_cart_models.total_price_round + shipping_total_rounded
+        order_pph22 = order_total * Decimal((25 / 100 / 100))
+        order_grand_total_price = order_total + order_pph22
+
         with transaction.atomic():
             validated_data.update(
                 {
@@ -154,6 +159,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_total_price_round": (
                         order_cart_models.total_price_round + shipping_total_rounded
                     ),
+                    "order_pph22": order_pph22,
+                    "order_grand_total_price": order_grand_total_price,
                     "tracking_courier_id": validated_data.get("tracking_courier_id"),
                     "tracking_courier_service_id": validated_data.get(
                         "tracking_courier_service_id"

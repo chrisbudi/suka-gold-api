@@ -51,9 +51,6 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
             else:
                 raise serializers.ValidationError("Order transaction not found")
 
-            mail = orderMailService()
-            mail.send_email(orderTransaction, user=user)
-
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))

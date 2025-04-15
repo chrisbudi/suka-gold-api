@@ -154,7 +154,8 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
         )
 
     def get_stock(self, obj):
-        return obj.get_stock() - order_gold_detail().get_sum_status_open()
+        goldModel = gold.objects.get(gold_id=obj.gold_id)
+        return obj.get_stock() - order_gold_detail().get_sum_status_open(goldModel)
 
     class Meta:
         model = gold

@@ -6,6 +6,6 @@ class GoldTransactionConfig(AppConfig):
     name = "order"
 
     def ready(self) -> None:
-        # import order.signals
+        import order_fix.signals
 
         return super().ready()
