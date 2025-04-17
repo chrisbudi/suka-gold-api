@@ -32,3 +32,4 @@ def handle_disburst(
                 wallet_history_type="D",
                 wallet_history_notes="disb-" + str(instance.disburst_transaction_id),
             )
+        # send email
