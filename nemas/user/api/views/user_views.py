@@ -98,11 +98,11 @@ class GETUserProfileByPhoneNumberView(generics.RetrieveAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
+    def get_object(self):
         """Retrieve user profile by phone number"""
         phone_number = self.request.GET.get("phone_number")  # Access query parameters
         if not phone_number:
-            return (
-                user.objects.none()
-            )  # Return empty queryset if no phone number is provided
-        return user.objects.filter(phone_number=phone_number)
+            raise ValueError(
+                "Phone number is required"
+            )  # Raise an error if no phone number is provided
+        return user.objects.get(phone_number=phone_number)
