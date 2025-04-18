@@ -46,7 +46,11 @@ urlpatterns = [
     path("create/", CreateUserView.as_view(), name="create"),
     path("create/super_user/", CreateSuperUserView.as_view(), name="create_super_user"),
     path("me/", ManageUserView.as_view(), name="me"),
-    path("me/phone/<str:phone>", ManageUserView.as_view(), name="me"),
+    path(
+        "me/identifier/<str:id>",
+        GETUserProfileByPhoneNumberView.as_view({"get": "get"}),
+        name="me_identifier",
+    ),
     path(
         "user/prop/",
         UserPropView.as_view({"get": "get"}),

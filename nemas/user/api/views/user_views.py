@@ -2,9 +2,12 @@
 views for the user API
 """
 
+from django.forms import model_to_dict
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, permissions
 from rest_framework.settings import api_settings
+from rest_framework import viewsets
+from rest_framework.response import Response
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -89,20 +92,32 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 
 
 @extend_schema(
-    tags=["User - User Manager"],
+    tags=["User - get by phone number"],
 )
-class GETUserProfileByPhoneNumberView(generics.RetrieveAPIView):
+class GETUserProfileByPhoneNumberView(viewsets.ModelViewSet):
     """Retrieve user profile by phone number"""
 
     serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
+    def get(self, request, *args, **kwargs):
+        # The 'id' is passed as part of the URL, so you can access it through kwargs
+        id = kwargs.get("id")
+
+        if not id:
+            raise ValueError("Phone number is required")
+
+        # Pass the id directly to the method without keyword argument
+        user_instance = self.get_user_by_identifier(id)
+        user_data = UserSerializer(user_instance).data
+        return Response({"user": user_data}, status=200)
+
+    def get_user_by_identifier(self, id: str):
         """Retrieve user profile by phone number"""
-        phone_number = self.request.GET.get("phone_number")  # Access query parameters
-        if not phone_number:
-            raise ValueError(
-                "Phone number is required"
-            )  # Raise an error if no phone number is provided
-        return user.objects.get(phone_number=phone_number)
+        # Query for user by phone number or email
+        user_instance = (
+            user.objects.filter(phone_number=id).first()
+            or user.objects.filter(email=id).first()
+        )
+        return user_instance
