@@ -3,6 +3,7 @@ URL mapping for user app
 """
 
 from django.urls import path
+from rest_framework import generics
 from .views import (
     CreateTokenView,
     ManageRefreshTokenView,
@@ -10,6 +11,7 @@ from .views import (
     CreateUserView,
     CreateSuperUserView,
     ManageUserView,
+    GETUserProfileByPhoneNumberView,
     # user props
     UserPropView,
     UserKtpView,
@@ -44,6 +46,7 @@ urlpatterns = [
     path("create/", CreateUserView.as_view(), name="create"),
     path("create/super_user/", CreateSuperUserView.as_view(), name="create_super_user"),
     path("me/", ManageUserView.as_view(), name="me"),
+    path("me/phone/<str:phone>", ManageUserView.as_view(), name="me"),
     path(
         "user/prop/",
         UserPropView.as_view({"get": "get"}),

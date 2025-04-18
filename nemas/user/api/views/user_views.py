@@ -16,6 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 from user.api.serializers import UserSerializer, AuthTokenObtainPairSerializer
+from user.models import user  # Import the User model
 
 
 @extend_schema(
@@ -85,3 +86,23 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         """Retrieve and return authenticated user"""
         return self.request.user
+
+
+@extend_schema(
+    tags=["User - User Manager"],
+)
+class GETUserProfileByPhoneNumberView(generics.RetrieveAPIView):
+    """Retrieve user profile by phone number"""
+
+    serializer_class = UserSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve user profile by phone number"""
+        phone_number = self.request.GET.get("phone_number")  # Access query parameters
+        if not phone_number:
+            return (
+                user.objects.none()
+            )  # Return empty queryset if no phone number is provided
+        return user.objects.filter(phone_number=phone_number)
