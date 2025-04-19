@@ -4,15 +4,16 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 from core.domain import gold_price
 
-from django.db import transaction
 from order.models import order_gold, order_gold_detail
 from order.models import order_payment
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from django.conf import Settings, settings
+from django.conf import settings
 from django.template.loader import render_to_string
 
 from user.models.users import user as User
+
+from shared_kernel.services.email_service import EmailService
 
 
 @receiver(post_save, sender=order_payment)
@@ -21,24 +22,15 @@ def handle_order_gold_payment(
 ):
     print("send email")
     if instance.order_payment_status == "PAID":
-        sendGridEmail = settings.SENDGRID_EMAIL
+
         order_gold_model = instance.order_gold
         user = instance.order_gold.user
+        mailService = EmailService()
         mail = generate_email(order_gold_model, instance, user)
-
-        sg = SendGridAPIClient(sendGridEmail["API_KEY"])
-        response = sg.send(message=mail)
-        print(
-            response.status_code,
-            response.body,
-            response.headers,
-            "response",
-        )
-        if response.status_code == 202:
-            print("Email sent successfully")
+        if mail:
+            mailService.sendMail(mail)
         else:
-            print("Failed to send email")
-        return response.status_code
+            print("Failed to generate email. Mail object is None.")
 
 
 #     else:
@@ -92,8 +84,6 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         print(email_html, "email_html")
         sendGridEmail = settings.SENDGRID_EMAIL
         print(sendGridEmail, "email setting")
-        # sendgrid_api_key = settings.SENDGRID_API_KEY
-        # default_from_email = settings.DEFAULT_FROM_EMAIL
 
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
@@ -116,7 +106,6 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
             print("Email sent successfully")
         else:
             print("Failed to send email")
-        # return response.status_code
     except Exception as e:
         print("Failed to render email template:", e)
     return message
