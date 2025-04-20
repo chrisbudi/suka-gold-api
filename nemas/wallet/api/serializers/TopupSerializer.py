@@ -75,26 +75,28 @@ class TopupVASerializer(serializers.ModelSerializer):
         if not userVa:
             userVa = UserVa.objects.create(
                 user=user,
-                bank=bank_code,
-                va_number=virtual_account.get("account_number").removeprefix(
-                    virtual_account.get("merchant_code")
-                ),
-                merchant_code=virtual_account.get("merchant_code"),
+                bank=coreBank,
+                va_number=virtual_account["data"].get("account_number"),
+                merchant_code=virtual_account["data"].get("merchant_code"),
             )
 
         validated_data["topup_payment_method"] = "VA"
         validated_data["topup_payment_channel_code"] = virtual_account.get(
             "channel_code"
         )
-        validated_data["topup_payment_number"] = str(virtual_account.get("id"))
-        validated_data["topup_payment_expires_at"] = virtual_account.get("expires_at")
-        validated_data["topup_payment_ref"] = virtual_account.get("external_id")
-        validated_data["topup_payment_ref_code"] = virtual_account.get("account_number")
+        validated_data["topup_payment_number"] = str(virtual_account["data"].get("id"))
+        validated_data["topup_payment_expires_at"] = virtual_account["data"].get(
+            "expires_at"
+        )
+        validated_data["topup_payment_ref"] = virtual_account["data"].get("external_id")
+        validated_data["topup_payment_ref_code"] = virtual_account["data"].get(
+            "account_number"
+        )
 
         self.context["response"] = {
             "total_amount": validated_data["topup_total_amount"],
-            "va_number": virtual_account.get("account_number"),
-            "reference_id": virtual_account.get("external_id"),
+            "va_number": virtual_account["data"].get("account_number"),
+            "reference_id": virtual_account["data"].get("external_id"),
         }
 
         return super().create(validated_data, **kwargs)
@@ -144,18 +146,18 @@ class TopupQrisSerializer(serializers.ModelSerializer):
         print(qris, "qris")
 
         validated_data["topup_payment_method"] = "QRIS"
-        validated_data["topup_payment_channel_code"] = qris.get("channel_code")
-        validated_data["topup_payment_number"] = str(qris.get("id"))
-        validated_data["topup_payment_expires_at"] = qris.get("expires_at")
-        validated_data["topup_payment_ref"] = qris.get("reference_id")
-        validated_data["topup_payment_ref_code"] = qris.get("qr_string")
+        validated_data["topup_payment_channel_code"] = qris["data"].get("channel_code")
+        validated_data["topup_payment_number"] = str(qris["data"].get("id"))
+        validated_data["topup_payment_expires_at"] = qris["data"].get("expires_at")
+        validated_data["topup_payment_ref"] = qris["data"].get("reference_id")
+        validated_data["topup_payment_ref_code"] = qris["data"].get("qr_string")
 
         # topup_transaction.objects.create(**validated_data)
 
         self.context["response"] = {
             "total_amount": validated_data["topup_total_amount"],
-            "qr_string": qris.get("qr_string"),
-            "reference_id": qris.get("reference_id"),
+            "qr_string": qris["data"].get("qr_string"),
+            "reference_id": qris["data"].get("reference_id"),
         }
 
         return super().create(validated_data, **kwargs)

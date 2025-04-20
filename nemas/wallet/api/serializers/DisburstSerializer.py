@@ -16,11 +16,8 @@ class DisburstSerializer(serializers.ModelSerializer):
         model = disburst_transaction
         fields = [
             "disburst_total_amount",
-            "disburst_admin",
             "disburst_amount",
             "disburst_payment_bank_code",
-            "disburst_payment_bank_number",
-            "disburst_payment_bank_account_holder_name",
         ]
 
     def validate(self, data):
