@@ -21,6 +21,15 @@ class GoldTransferSerializer(serializers.ModelSerializer):
         read_only_fields = ["gold_transfer_id"]
 
     def validate(self, attrs):
+        # validate if phone number is valid
+        if not user.objects.filter(phone_number=attrs["phone_number"]).exists():
+            raise serializers.ValidationError("Phone number is not valid")
+        # validate if user is not the same
+        if (
+            user.objects.get(phone_number=attrs["phone_number"])
+            == self.context["request"].user
+        ):
+            raise serializers.ValidationError("Cannot transfer to yourself")
         # validate balance is enough
 
         if not user_props.objects.get(
