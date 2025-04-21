@@ -46,7 +46,6 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
     order_detail = order_gold_detail.objects.select_related("gold").filter(
         order_gold=order
     )
-    print(order_detail, "order_detail")
     detail_number = 1
     table_product_data = ""
     for detail in order_detail:
@@ -55,7 +54,8 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         <td>{detail_number}</td>
         <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
         <td>{detail.qty}</td>
-        <td>{detail.order_detail_total_price_round}</td>
+        <td>gr</td>
+        <td>{detail.order_price}</td>
         <td>{detail.order_detail_total_price_round}</td>
         </tr>"""
         detail_number += 1

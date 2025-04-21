@@ -87,13 +87,19 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "product_cost": goldModel.product_cost,
                 "gold": goldModel,
                 "user": self.context["request"].user,
-                "price": goldPriceModel.gold_price_buy,
+                "price": (
+                    ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
+                    + (goldModel.certificate.cert_price if goldModel.certificate else 0)
+                    + (goldModel.product_cost or 0)
+                ),
+                "gold_price": goldPriceModel.gold_price_buy,
                 "weight": goldModel.gold_weight,
                 "total_price": (
                     ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
                     + (goldModel.certificate.cert_price if goldModel.certificate else 0)
                     + (goldModel.product_cost or 0)
-                ),
+                )
+                * validated_data["quantity"],
                 "total_price_round": (
                     (
                         ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
