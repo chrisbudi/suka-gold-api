@@ -46,7 +46,13 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         # if order cart detail model any then update the endity
 
         if order_cart_detail_model:
-            order_cart_detail_model.price = goldPriceModel.gold_price_buy
+            order_cart_detail_model.price = (
+                ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
+                + (goldModel.certificate.cert_price if goldModel.certificate else 0)
+                + (goldModel.product_cost or 0)
+            )
+
+            order_cart_detail_model.gold_price = goldPriceModel.gold_price_buy
             order_cart_detail_model.product_cost = goldModel.product_cost
             order_cart_detail_model.weight = goldModel.gold_weight
             order_cart_detail_model.cert_price = (

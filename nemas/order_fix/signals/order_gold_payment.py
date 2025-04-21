@@ -21,16 +21,14 @@ def handle_order_gold_payment(
     sender: type[order_payment], instance: order_payment, created, **kwargs
 ):
     print("send email")
-    if instance.order_payment_status == "PAID":
-
-        order_gold_model = instance.order_gold
-        user = instance.order_gold.user
-        mailService = EmailService()
-        mail = generate_email(order_gold_model, instance, user)
-        if mail:
-            mailService.sendMail(mail)
-        else:
-            print("Failed to generate email. Mail object is None.")
+    order_gold_model = instance.order_gold
+    user = instance.order_gold.user
+    mailService = EmailService()
+    mail = generate_email(order_gold_model, instance, user)
+    if mail:
+        mailService.sendMail(mail)
+    else:
+        print("Failed to generate email. Mail object is None.")
 
 
 #     else:
@@ -49,15 +47,18 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         order_gold=order
     )
     print(order_detail, "order_detail")
+    detail_number = 1
     table_product_data = ""
     for detail in order_detail:
         table_product_data += f"""
         <tr>
+        <td>{detail_number}</td>
         <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
         <td>{detail.qty}</td>
-        <td>{detail.order_price}</td>
+        <td>{detail.order_detail_total_price_round}</td>
         <td>{detail.order_detail_total_price_round}</td>
         </tr>"""
+        detail_number += 1
 
     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
 
@@ -96,12 +97,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
 
         sg = SendGridAPIClient(sendGridEmail["API_KEY"])
         response = sg.send(message)
-        print(
-            response.status_code,
-            response.body,
-            response.headers,
-            "response",
-        )
+
         if response.status_code == 202:
             print("Email sent successfully")
         else:

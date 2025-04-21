@@ -158,6 +158,7 @@ class order_gold_detail(models.Model):
         max_length=255, null=True, default="open"
     )
     order_price = models.DecimalField(max_digits=16, decimal_places=2)
+    gold_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price_round = models.DecimalField(
         max_digits=16, decimal_places=0

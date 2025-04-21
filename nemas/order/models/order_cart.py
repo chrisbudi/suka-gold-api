@@ -72,6 +72,7 @@ class order_cart_detail(models.Model):
 
     selected = models.BooleanField(default=True)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
+    gold_price = models.DecimalField(max_digits=16, decimal_places=2)
     price = models.DecimalField(max_digits=16, decimal_places=2)
     total_price = models.DecimalField(max_digits=16, decimal_places=2, editable=False)
     total_price_round = models.DecimalField(

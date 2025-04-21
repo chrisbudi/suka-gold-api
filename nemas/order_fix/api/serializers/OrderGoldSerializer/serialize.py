@@ -181,6 +181,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     gold_brand=detailGold.brand,
                     weight=detailGold.gold_weight,
                     order_price=cart_detail.price,
+                    gold_price=cart_detail.gold_price,
                     qty=cart_detail.quantity,
                     cert=cart_detail.cert,
                     cert_price=cart_detail.cert_price,
