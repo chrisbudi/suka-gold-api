@@ -61,13 +61,8 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         detail_number += 1
 
     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
-
-    print(table_product_data, "product data")
-    print("successfully render to html")
-
-    # print(email_html, "email_html")
+    mail_props = EmailService().get_email_props()
     try:
-        print("try to send email")
         email_html = render_to_string(
             "email/transaction/invoice.html",
             {
@@ -80,6 +75,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
                 "Pph22": order.order_pph22,
                 "GrandTotal": order.order_grand_total_price,
                 "Pembayaran": order_payment.order_payment_method_name,
+                **mail_props,
             },
         )
         print(email_html, "email_html")

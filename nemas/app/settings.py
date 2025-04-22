@@ -377,12 +377,12 @@ SENDGRID_EMAIL = {
     "DEFAULT_FROM_EMAIL": os.getenv("DEFAULT_FROM_EMAIL"),
 }
 
-# Email configuration
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_SITE_URL = os.getenv("EMAIL_SITE_URL", "http://localhost:8000")
+MAIL = {
+    "NAMA_PERUSAHAAN": os.getenv("MAIL_NAMA_PERUSAHAAN", "PT. NEMAS INDONESIA"),
+    "ALAMAT_PERUSAHAAN": os.getenv("MAIL_ALAMAT_PERUSAHAAN", "Jl. Raya JAKARTA"),
+    "WEBSITE": os.getenv("MAIL_WEBSITE", "nemas.id"),
+    "WEBSITE_URL": os.getenv("MAIL_WEBSITE_URL", "https://nemas.id"),
+    "TELP": os.getenv("MAIL_TELP", "021-12345678"),
+    "TELP_URL": os.getenv("MAIL_TELP_URL", "wa.me/6281234567890"),
+    "SUPPORT": os.getenv("MAIL_SUPPORT", "mailto:support@nemas.com"),
+}

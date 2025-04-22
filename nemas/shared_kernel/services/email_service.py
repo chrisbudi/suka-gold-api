@@ -15,3 +15,15 @@ class EmailService:
         else:
             print("Failed to send email")
         return response.status_code
+
+    def get_email_props(self):
+        mail = settings.MAIL
+        return {
+            "NAMA_PERUSAHAAN": mail["NAMA_PERUSAHAAN"],
+            "ALAMAT_PERUSAHAAN": mail["ALAMAT_PERUSAHAAN"],
+            "TELP": mail["TELP"],
+            "TELP_URL": mail["TELP_URL"],
+            "WEBSITE": mail["WEBSITE"],
+            "WEBSITE_URL": mail["WEBSITE_URL"],
+            "SUPPORT": mail["SUPPORT"],
+        }
