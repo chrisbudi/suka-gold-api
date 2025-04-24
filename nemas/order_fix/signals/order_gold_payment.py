@@ -98,6 +98,8 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
             print("Email sent successfully")
         else:
             print("Failed to send email")
+        return message
+    except FileNotFoundError as e:
+        print("Template file not found:", e)
     except Exception as e:
         print("Failed to render email template:", e)
-    return message
