@@ -23,25 +23,16 @@ def handle_order_gold_payment(
     print("send email")
     order_gold_model = instance.order_gold
     user = instance.order_gold.user
-    mailService = EmailService()
-    mail = generate_email(order_gold_model, instance, user)
-    if mail:
-        mailService.sendMail(mail)
-    else:
-        print("Failed to generate email. Mail object is None.")
-
-
-#     else:
-# send email send grid service
-# pass
+    if order_gold_model.order_gold_payment_status == "PAID" or created:
+        mailService = EmailService()
+        mail = generate_email(order_gold_model, instance, user)
+        if mail:
+            mailService.sendMail(mail)
+        else:
+            print("Failed to generate email. Mail object is None.")
 
 
 def generate_email(order: order_gold, order_payment: order_payment, user: User):
-
-    print("start generate email")
-    # with open(template_path, "r") as template_file:
-    #     email_body = template_file.read()
-
     # Format the email body with the reset key
     order_detail = order_gold_detail.objects.select_related("gold").filter(
         order_gold=order
@@ -54,7 +45,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         <td>{detail_number}</td>
         <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
         <td>{detail.qty}</td>
-        <td>gr</td>
+        <td>grams</td>
         <td>{detail.order_price}</td>
         <td>{detail.order_detail_total_price_round}</td>
         </tr>"""
@@ -71,7 +62,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
                 "transaction_account": order.user.id,
                 "first_name": order.user.name,
                 "table_product": table_product_data,
-                "SubTotal": order.order_total_price,
+                "SubTotal": order.order_total_price_round,
                 "Pph22": order.order_pph22,
                 "GrandTotal": order.order_grand_total_price,
                 "Pembayaran": order_payment.order_payment_method_name,
@@ -88,16 +79,6 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
             subject="Nemas Invoice",
             html_content=email_html,
         )
-
-        print(user.email, sendGridEmail["DEFAULT_FROM_EMAIL"], "message")
-
-        sg = SendGridAPIClient(sendGridEmail["API_KEY"])
-        response = sg.send(message)
-
-        if response.status_code == 202:
-            print("Email sent successfully")
-        else:
-            print("Failed to send email")
         return message
     except FileNotFoundError as e:
         print("Template file not found:", e)

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Konfirmasi Transaksi Deposit Uang</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,13 +36,14 @@
     }
 
     .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 20px;
-        gap: 20px;
-        flex-wrap: wrap; /* untuk responsif */
-        border-bottom: 3px solid #F0BF6B;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+      /* untuk responsif */
+      border-bottom: 3px solid #F0BF6B;
     }
 
     .header-section {
@@ -103,7 +105,8 @@
       margin: 20px 0;
     }
 
-    .table-container th, .table-container td {
+    .table-container th,
+    .table-container td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
@@ -143,15 +146,15 @@
       padding: 15px 20px;
       font-size: 15px;
       text-align: center;
-      color: #777; 
+      color: #777;
     }
 
     .footer-note {
-    font-size: 12px;
-    text-align: center;
-    color: #999; 
-    margin-top: 0px;
-}
+      font-size: 12px;
+      text-align: center;
+      color: #999;
+      margin-top: 0px;
+    }
 
     .footer-message {
       display: flex;
@@ -182,49 +185,63 @@
       height: 30px;
       width: 30px;
     }
-    .hr-line {
-  border-top: 1px solid #eee;
-  margin: 20px 0; /* jarak atas bawah */
-}
 
-.hr-line-full {
-  border: none;
-  border-top: 1px solid #eee;
-  margin: 5px;
-  width: 100vw;     /* lebar seluruh viewport */
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-}
+    .hr-line {
+      border-top: 1px solid #eee;
+      margin: 20px 0;
+      /* jarak atas bawah */
+    }
+
+    .hr-line-full {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 5px;
+      width: 100vw;
+      /* lebar seluruh viewport */
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="header">
       <div class="header-section">
-        <img class="logo-img" src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/128a662e-d689-46e7-887d-b312927c9fcc/5988x2556.png" alt="Logo" />
+        <img class="logo-img"
+          src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/128a662e-d689-46e7-887d-b312927c9fcc/5988x2556.png"
+          alt="Logo" />
       </div>
-      <div class="header-section center"><p><strong>{NAMA_PERUSAHAAN}</strong></p>
-        <p>{ALAMAT_PERUSAHAAN} </p>
-        <p><a href="{WEBSITE}">{WEBSITE}</a> </p></div>
-       
+      <div class="header-section center">
+        <p><strong>{{NAMA_PERUSAHAAN}}</strong></p>
+        <p>{{ALAMAT_PERUSAHAAN}} </p>
+        <p><a href="{{WEBSITE_URL}}">{{WEBSITE}}</a> </p>
+      </div>
+
       <div class="header-section right">
- 
-        <p>{TELEPON} <img class="icon" src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4138bb6a-9c21-4f6e-8511-c0c9b79642d7/40x40.png" alt="Telepon" /></p>
-        <p>{WHATSAPP} <img class="icon" src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/2f942479-b182-4197-bf6b-a6e4541a3701/40x40.png" alt="WhatsApp" /></p>
-        <p><a href="mailto:{email}">{email}</a> <img class="icon" src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4a466397-769d-47f1-a147-3fefb43fd189/40x40.png" alt="Email" /></p>
+
+        <p>{{TELP}} <img class="icon"
+            src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4138bb6a-9c21-4f6e-8511-c0c9b79642d7/40x40.png"
+            alt="Telepon" /></p>
+        <p>{{TELP_URL}} <img class="icon"
+            src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/2f942479-b182-4197-bf6b-a6e4541a3701/40x40.png"
+            alt="WhatsApp" /></p>
+        <p><a href="mailto:{{SUPPORT}}">{{SUPPORT}}</a> <img class="icon"
+            src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4a466397-769d-47f1-a147-3fefb43fd189/40x40.png"
+            alt="Email" /></p>
       </div>
     </div>
 
     <div class="info-section">
-      <p><strong>Kepada:</strong> {NAMA_USER}</p>
-      <p><strong>ID Nasabah:</strong> {ID_PELANGGAN}</p>
+      <p><strong>Kepada:</strong> {{NAMA_USER}}</p>
+      <p><strong>ID Nasabah:</strong> {{ID_PELANGGAN}}</p>
     </div>
 
     <div class="transaction-label">
       <p>Deposit</p>
-      <p>{TANGGAL_WAKTU}</p>
-      <p>No. Transaksi: {NO_TRANSAKSI}</p>
+      <p>{{TANGGAL_WAKTU}}</p>
+      <p>No. Transaksi: {{NO_TRANSAKSI}}</p>
     </div>
 
     <div class="table-wrapper">
@@ -240,14 +257,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Deposit Uang</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>{JUMLAH_SALDO}</td>
-          </tr>
+          {{table_product|safe}}
         </tbody>
       </table>
     </div>
@@ -256,38 +266,57 @@
       <table class="summary-table">
         <tr>
           <td>Sub Total</td>
-          <td>{JUMLAH_SALDO}</td>
+          <td>{{SubTotal}}</td>
+        </tr>
+        <tr>
+          <td>PPh 22</td>
+          <td>{{Pph22}}</td>
         </tr>
         <tr>
           <td>Grand Total</td>
-          <td>{JUMLAH_SALDO}</td>
+          <td>{{GrandTotal}}</td>
         </tr>
         <tr>
           <td>Metode Pembayaran</td>
-          <td>{METODE_PEMBAYARAN}</td>
+          <td>{{Pembayaran}}</td>
         </tr>
       </table>
     </div>
 
     <div class="footer">
-        <div class="hr-line-full"></div>
-        <p>Terima Kasih Telah Bertransaksi di <strong>{NAMA_PERUSAHAAN}</strong></p>
-        <div class="footer-note"><p>Transaksi Anda telah diproses dan Saldo Emas telah ditambahkan ke dalam Account Nemas</p></div>  
-    <div class="hr-line-full"></div>
+      <div class="hr-line-full"></div>
+      <p>Terima Kasih Telah Bertransaksi di <strong>{{NAMA_PERUSAHAAN}}</strong></p>
+      <div class="footer-note">
+        <p>Transaksi Anda telah diproses dan Saldo Emas telah ditambahkan ke dalam Account Nemas</p>
+      </div>
+      <div class="hr-line-full"></div>
       <div class="footer-message">
         <span>Email (invoice) ini dapat Anda cetak sebagai bukti transaksi pada Nemas</span>
         <span>Email (invoice) ini sudah dianggap pembayaran yang sah dan tidak membutuhkan tanda tangan</span>
       </div>
       <div class="hr-line-full"></div>
-      <div class="footer-note"><p>Jikalau Anda tidak seharusnya menerima email ini, mohon informasikan kepada kami dan hapus dari inbox email Anda. Setiap sanggahan/penolakan bukti transaksi akan dicocokkan dengan sistem, inventori dan rekening bank Nemas</p></div>  
+      <div class="footer-note">
+        <p>Jikalau Anda tidak seharusnya menerima email ini, mohon informasikan kepada kami dan hapus dari inbox email
+          Anda. Setiap sanggahan/penolakan bukti transaksi akan dicocokkan dengan sistem, inventori dan rekening bank
+          Nemas</p>
+      </div>
     </div>
 
     <div class="footer-social">
-      <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d3692620-c32b-40e9-b9ac-065a15ad749a/40x40.png" alt="Instagram">
-      <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/448ff3ba-5c6c-4d80-bc4e-a81bd502927e/40x40.png" alt="Facebook">
-      <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/399f17f2-bea6-46fb-ae43-411a8c589a6e/40x40.png" alt="X">
-      <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c89e3852-20c5-40d1-bb52-0e3650faf75c/40x40.png" alt="Line">
+      <img
+        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d3692620-c32b-40e9-b9ac-065a15ad749a/40x40.png"
+        alt="Instagram">
+      <img
+        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/448ff3ba-5c6c-4d80-bc4e-a81bd502927e/40x40.png"
+        alt="Facebook">
+      <img
+        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/399f17f2-bea6-46fb-ae43-411a8c589a6e/40x40.png"
+        alt="X">
+      <img
+        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c89e3852-20c5-40d1-bb52-0e3650faf75c/40x40.png"
+        alt="Line">
     </div>
   </div>
 </body>
+
 </html>

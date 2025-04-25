@@ -15,9 +15,6 @@ def handle_order_gold(
     sender: type[order_gold], instance: order_gold, created, **kwargs
 ):
 
-    order_gold_model: order_gold = instance
-
-    # update order cart to complete true
     if created:
         with transaction.atomic():
             if instance.order_cart is not None:
