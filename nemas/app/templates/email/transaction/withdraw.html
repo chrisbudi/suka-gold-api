@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="id">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Konfirmasi Transaksi Deposit Uang</title>
+  <title>Konfirmasi Penarikan Uang</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -202,6 +203,40 @@
       left: 50%;
       transform: translateX(-50%);
     }
+
+    .break-url {
+      word-break: break-all;
+    }
+
+    /* Tambahkan di bawah sini */
+    @media (max-width: 600px) {
+      .header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .header-section,
+      .header-section.right {
+        text-align: center !important;
+        width: 100%;
+      }
+
+      .email-content p,
+      .footer-note p,
+      .button-container,
+      .footer-message {
+        text-align: center !important;
+      }
+
+      .confirm-button {
+        margin: 0 auto;
+      }
+
+      .footer-social {
+        flex-wrap: wrap;
+      }
+    }
   </style>
 </head>
 
@@ -239,7 +274,7 @@
     </div>
 
     <div class="transaction-label">
-      <p>Deposit</p>
+      <p>Penarikan Uang</p>
       <p>{{TANGGAL_WAKTU}}</p>
       <p>No. Transaksi: {{NO_TRANSAKSI}}</p>
     </div>
@@ -248,12 +283,9 @@
       <table class="table-container">
         <thead>
           <tr>
-            <th>No</th>
-            <th>Keterangan</th>
-            <th>Jumlah</th>
-            <th>Satuan</th>
-            <th>Harga</th>
-            <th>Jumlah IDR</th>
+            <th style="width: 5%;">No</th>
+            <th style="width: 65%; text-align: left;">Keterangan</th>
+            <th style="width: 30%; text-align: right;">Jumlah IDR</th>
           </tr>
         </thead>
         <tbody>
@@ -265,35 +297,16 @@
     <div class="summary">
       <table class="summary-table">
         <tr>
-          <td>Sub Total</td>
-          <td>{{SubTotal}}</td>
+          <td>Total</td>
+          <td>{{JUMLAH_SALDO}}</td>
         </tr>
-        <tr>
-          <td>PPh 22</td>
-          <td>{{Pph22}}</td>
-        </tr>
-        <tr>
-          <td>Grand Total</td>
-          <td>{{GrandTotal}}</td>
-        </tr>
-        <tr>
-          <td>Metode Pembayaran</td>
-          <td>{{Pembayaran}}</td>
-        </tr>
+
       </table>
     </div>
 
     <div class="footer">
       <div class="hr-line-full"></div>
       <p>Terima Kasih Telah Bertransaksi di <strong>{{NAMA_PERUSAHAAN}}</strong></p>
-      <div class="footer-note">
-        <p>Transaksi Anda telah diproses dan Saldo Emas telah ditambahkan ke dalam Account Nemas</p>
-      </div>
-      <div class="hr-line-full"></div>
-      <div class="footer-message">
-        <span>Email (invoice) ini dapat Anda cetak sebagai bukti transaksi pada Nemas</span>
-        <span>Email (invoice) ini sudah dianggap pembayaran yang sah dan tidak membutuhkan tanda tangan</span>
-      </div>
       <div class="hr-line-full"></div>
       <div class="footer-note">
         <p>Jikalau Anda tidak seharusnya menerima email ini, mohon informasikan kepada kami dan hapus dari inbox email
