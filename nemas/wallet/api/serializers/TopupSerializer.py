@@ -72,14 +72,6 @@ class TopupVASerializer(serializers.ModelSerializer):
         if not virtual_account:
             raise serializers.ValidationError("Failed to process VA payment.")
 
-        # if not userVa:
-        # userVa = UserVa.objects.create(
-        #     user=user,
-        #     bank=coreBank,
-        #     va_number=virtual_account["data"].get("account_number"),
-        #     merchant_code=virtual_account["data"].get("merchant_code"),
-        # )
-
         validated_data["topup_payment_method"] = "VA"
         validated_data["topup_payment_channel_code"] = virtual_account.get(
             "channel_code"

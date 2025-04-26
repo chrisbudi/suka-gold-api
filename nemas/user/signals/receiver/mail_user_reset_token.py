@@ -7,35 +7,51 @@ from django.conf import settings
 from user.models import user
 from django.dispatch import Signal
 from user.signals import email_user_reset_token_done, email_user_reset_token
+from sendgrid.helpers.mail import Mail
+from django.template.loader import render_to_string
+
+from user.models.users import user as User
+
+from shared_kernel.services.email_service import EmailService
 
 
 @receiver(email_user_reset_token)
 def send_reset_password_email(
     sender, user: user, reset_key: str, email_type=str, **kwargs
 ):
-    print(email_type, "email type")
 
-    template_file = "reset_pin.txt" if email_type == "PIN" else "reset_password.txt"
-    reset_link = f"{settings.EMAIL_SITE_URL}/{'reset-pin' if email_type == 'PIN' else 'reset-password'}/{reset_key}/"
-    template_path = os.path.join(
-        settings.BASE_DIR, "app", "templates", "email", "user", template_file
-    )
-    with open(template_path, "r") as template_file:
-        email_body = template_file.read()
+    mail = generate_email(user, reset_key, str(email_type))
+    if mail:
+        mailService = EmailService()
+        mailService.sendMail(mail)
+    else:
+        print("Failed to generate email. Mail object is None.")
 
+
+def generate_email(user: User, reset_key: str, email_type: str):
     # Format the email body with the reset key
-    email_body = email_body.replace("{user_name}", user.name).replace(
-        "{reset_link}", f'<a href="{reset_link}">{reset_link}</a>'
-    )
+    reset_link = f"{settings.EMAIL_SITE_URL}/{'reset-pin' if email_type == 'PIN' else 'reset-password'}/{reset_key}/"
+    mail_props = EmailService().get_email_props()
+    try:
+        email_html = render_to_string(
+            "email/user/reset_password.html",
+            {
+                "NAMA_USER": user.name,
+                "URL_RESET_PASSWORD_PIN": reset_link,
+                **mail_props,
+            },
+        )
+        sendGridEmail = settings.SENDGRID_EMAIL
 
-    # Send the email
-    send_mail(
-        subject=f"{email_type} Reset Request",
-        message="",
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email] if user.email else [],
-        html_message=email_body,
-    )
+        message = Mail(
+            from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
+            to_emails=[user.email],
+            subject=f"{email_type} Reset Request",
+            html_content=email_html,
+        )
+        return message
+    except Exception as e:
+        print(e)
 
 
 @receiver(email_user_reset_token_done)

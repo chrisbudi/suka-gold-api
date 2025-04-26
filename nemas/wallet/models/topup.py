@@ -65,11 +65,8 @@ class topup_transaction(models.Model):
         self.topup_status = topup_status
         self.save()
 
-        print(self.topup_payment_method, "topup_payment_method")
         user = user_props.objects.get(user=self.user)
-        print(user, "user")
         user.update_balance(self.topup_amount)
-        print("update balance")
         return f"TOPUP Transaction {self.topup_transaction_id} - Type:"
 
 

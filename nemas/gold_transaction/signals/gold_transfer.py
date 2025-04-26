@@ -5,6 +5,14 @@ from user.models import user_gold_history
 from core.domain import gold_price
 from datetime import datetime
 from decimal import Decimal
+from sendgrid.helpers.mail import Mail
+
+from django.template.loader import render_to_string
+
+from user.models.users import user as User
+
+from shared_kernel.services.email_service import EmailService
+from django.conf import settings
 
 
 @receiver(post_save, sender=gold_transfer)
@@ -50,6 +58,59 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
                 ),
             ]
         )
+
+        UserFrom = instance.user_from
+        UserTo = instance.user_to
+        mailFrom = generate_email(instance, UserFrom)
+        mailTo = generate_email(instance, UserTo)
+        mailService = EmailService()
+        if mailService:
+            if mailFrom:
+                mailService.sendMail(mailFrom)
+            else:
+                print("Failed to generate email for sender. Mail object is None.")
+            if mailTo:
+                mailService.sendMail(mailTo)
+            else:
+                print("Failed to generate email for receiver. Mail object is None.")
+        else:
+            print("Failed to create EmailService instance. Mail object is None.")
+
+
+def generate_email(transfer: gold_transfer, user: User):
+    # Format the email body with the reset key
+    detail_number = 1
+    table_product_data = ""
+    table_product_data += f"""
+    <tr>
+    <td>{detail_number}</td>
+    <td>Transfer Gold</td>
+    <td>{transfer.transfer_member_gold_weight}</td>
+    </tr>"""
+    detail_number += 1
+
+    mail_props = EmailService().get_email_props()
+    try:
+        email_html = render_to_string(
+            "email/transaction/invoice.html",
+            {
+                "table_product": table_product_data,
+                **mail_props,
+            },
+        )
+        sendGridEmail = settings.SENDGRID_EMAIL
+
+        message = Mail(
+            from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
+            to_emails=[user.email],
+            subject="Nemas Invoice",
+            html_content=email_html,
+        )
+        return message
+    except FileNotFoundError as e:
+        print("Template file not found:", e)
+    except Exception as e:
+        print("Failed to render email template:", e)
 
 
 # def generate_email(order: order_gold, order_payment: order_payment, user: User):
