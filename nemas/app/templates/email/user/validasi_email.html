@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Konfirmasi Ubah Password/PIN</title>
+    <title>Konfirmasi Email</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -205,16 +205,16 @@
         }
 
         .banner {
-            padding: 10px;
+            padding: 20px;
             text-align: center;
         }
 
         .banner img {
-            height: 190px;
+            height: 180px;
         }
 
         .email-content {
-            padding: 5px;
+            padding: 20px;
             text-align: center;
             font-size: 14px;
             color: #464646;
@@ -299,22 +299,22 @@
         </div>
 
         <div class="banner">
-            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/9be33aef-fe92-4100-a9e9-c47e856002d8/1536x1024.png"
+            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d202b6fd-5076-47e5-98d2-1588cf3546b1/700x200.png"
                 height="180" alt="Konfirmasi Email">
         </div>
         <div class="email-content">
             <p><strong>Hi {{NAMA_USER}}</strong></p>
-            <p>Silakan konfirmasi perubahan Password/PIN Anda dengan klik tombol di bawah ini:</p>
+            <p>Silakan konfirmasi email Anda dengan klik tombol di bawah ini:</p>
 
             <div class="button-container">
-                <a href="{{URL_RESET_PASSWORD_PIN}}" class="confirm-button">
-                    Ubah Password/PIN
+                <a href="{{URL_KONFIRMASI}}" class="confirm-button">
+                    Konfirmasi Email
                 </a>
             </div>
 
             <p>Jika Anda tidak dapat mengklik tombol di atas, salin dan tempel URL berikut di browser Anda:</p>
             <p class="break-url">
-                {{URL_RESET_PASSWORD_PIN}}
+                {{URL_KONFIRMASI}}
             </p>
 
             <p>
