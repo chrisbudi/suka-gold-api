@@ -50,3 +50,57 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
                 ),
             ]
         )
+
+
+# def generate_email(order: order_gold, order_payment: order_payment, user: User):
+#     # Format the email body with the reset key
+#     order_detail = order_gold_detail.objects.select_related("gold").filter(
+#         order_gold=order
+#     )
+#     detail_number = 1
+#     table_product_data = ""
+#     for detail in order_detail:
+#         table_product_data += f"""
+#         <tr>
+#         <td>{detail_number}</td>
+#         <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
+#         <td>{detail.qty}</td>
+#         <td>grams</td>
+#         <td>{detail.order_price}</td>
+#         <td>{detail.order_detail_total_price_round}</td>
+#         </tr>"""
+#         detail_number += 1
+
+#     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
+#     mail_props = EmailService().get_email_props()
+#     try:
+#         email_html = render_to_string(
+#             "email/transaction/invoice.html",
+#             {
+#                 "transaction_date": order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+#                 "transaction_number": order.order_number,
+#                 "transaction_account": order.user.id,
+#                 "first_name": order.user.name,
+#                 "table_product": table_product_data,
+#                 "SubTotal": order.order_total_price_round,
+#                 "Pph22": order.order_pph22,
+#                 "GrandTotal": order.order_grand_total_price,
+#                 "Pembayaran": order_payment.order_payment_method_name,
+#                 **mail_props,
+#             },
+#         )
+#         print(email_html, "email_html")
+#         sendGridEmail = settings.SENDGRID_EMAIL
+#         print(sendGridEmail, "email setting")
+
+#         message = Mail(
+#             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
+#             to_emails=[user.email],
+#             subject="Nemas Invoice",
+#             html_content=email_html,
+#         )
+#         return message
+#     except FileNotFoundError as e:
+#         print("Template file not found:", e)
+#     except Exception as e:
+#         print("Failed to render email template:", e)

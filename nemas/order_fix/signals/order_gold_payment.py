@@ -6,7 +6,6 @@ from core.domain import gold_price
 
 from order.models import order_gold, order_gold_detail
 from order.models import order_payment
-from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.conf import settings
 from django.template.loader import render_to_string

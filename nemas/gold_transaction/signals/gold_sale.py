@@ -8,7 +8,13 @@ from gold_transaction.models import gold_saving_sell
 from user.models import user_gold_history, user_wallet_history, user_props
 from django.db import transaction
 
-User = get_user_model()
+from sendgrid.helpers.mail import Mail
+from django.conf import settings
+from django.template.loader import render_to_string
+
+from user.models.users import user as User
+
+from shared_kernel.services.email_service import EmailService
 
 
 @receiver(post_save, sender=gold_saving_sell)
@@ -46,3 +52,58 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
                 wallet_history_type="D",
                 wallet_history_notes="sale-" + str(instance.gold_transaction_id),
             )
+            # send email
+            mailService = EmailService()
+            if instance.user is not None:
+                mail = generate_email(instance, instance.user)
+            else:
+                print("User is None, cannot generate email.")
+                return
+
+            if mail:
+                mailService.sendMail(mail)
+            else:
+                print("Failed to generate email. Mail object is None.")
+
+
+def generate_email(gold: gold_saving_sell, user: User):
+    # Format the email body with the reset key
+    detail_number = 1
+    table_product_data = f"""
+        <tr>
+        <td>{detail_number}</td>
+        <td>Pembelian Emas Digital</td>
+        <td>{gold.weight}</td>
+        <td>grams</td>
+        <td>{gold.price}</td>
+        <td>{gold.total_price}</td>
+        </tr>"""
+
+    # email_body = email_body.replace(f"{{table_product}}", table_product_data)
+    mail_props = EmailService().get_email_props()
+    try:
+        email_html = render_to_string(
+            "email/transaction/purchase.html",
+            {
+                "NAMA_USER": user.name,
+                "NO_TRANSAKSI": gold.gold_transaction_id,
+                "Total": gold.total_price,
+                "table_product": table_product_data,
+                **mail_props,
+            },
+        )
+        print(email_html, "email_html")
+        sendGridEmail = settings.SENDGRID_EMAIL
+        print(sendGridEmail, "email setting")
+
+        message = Mail(
+            from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
+            to_emails=[user.email],
+            subject="Nemas Invoice",
+            html_content=email_html,
+        )
+        return message
+    except FileNotFoundError as e:
+        print("Template file not found:", e)
+    except Exception as e:
+        print("Failed to render email template:", e)
