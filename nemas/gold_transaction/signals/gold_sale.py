@@ -72,7 +72,7 @@ def generate_email(gold: gold_saving_sell, user: User):
     table_product_data = f"""
         <tr>
         <td>{detail_number}</td>
-        <td>Pembelian Emas Digital</td>
+        <td>Penjualan Emas Digital</td>
         <td>{gold.weight}</td>
         <td>grams</td>
         <td>{gold.price}</td>
