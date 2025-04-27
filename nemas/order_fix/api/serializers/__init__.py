@@ -1,4 +1,7 @@
-from .OrderShippingSerializer import OrderShippingSerializer
+from .OrderShippingSerializer import (
+    OrderShippingSerializer,
+    OrderShippingAssignSerializer,
+)
 
 from .OrderSimulatePaymentSerializer import (
     OrderSimulatedPaymentQrisSerializer,

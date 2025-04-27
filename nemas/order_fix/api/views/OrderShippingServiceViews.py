@@ -14,7 +14,7 @@ from order_fix.api.serializers import OrderShippingSerializer
 @extend_schema(
     tags=["Order Shipping Fix - Get Shipping Service Price"],
 )
-class OrderShippingAPIView(viewsets.ModelViewSet):
+class OrderShippingServiceAPIView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
