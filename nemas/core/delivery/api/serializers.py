@@ -59,6 +59,7 @@ class DeliveryPartnerServiceFilter(filters.FilterSet):
 
         fields = {
             "delivery_partner_service_code": ["icontains"],
+            "delivery_partner": ["exact"],
         }
 
 

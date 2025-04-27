@@ -34,6 +34,10 @@ class DeliveryPartnerServiceViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = modelInfo.objects.all()
+        if request.query_params.get("delivery_partner_id"):
+            queryset = queryset.filter(
+                delivery_partner=request.query_params.get("delivery_partner_id")
+            )
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = customSerializer(paginated_queryset, many=True)
