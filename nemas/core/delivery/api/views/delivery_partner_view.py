@@ -41,7 +41,7 @@ class DeliveryPartnerViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         # queryset join from province and city
-        queryset = modelInfo.objects.all()
+        queryset = modelInfo.objects.filter(is_deleted=False)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = customSerializer(paginated_queryset, many=True)

@@ -21,6 +21,7 @@ class DeliveryPartnerSerializer(serializers.ModelSerializer):
             "delivery_partner_name",
             "delivery_partner_code",
             "delivery_partner_description",
+            "is_deleted",
         ]
 
 

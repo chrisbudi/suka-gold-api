@@ -355,6 +355,7 @@ class GoldCertPriceServiceFilter(filters.FilterSet):
 
         fields = {
             "gold_cert_code": ["icontains"],
+            "gold_id": ["exact"],
         }
 
 

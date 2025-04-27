@@ -32,6 +32,9 @@ class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = modelInfo.objects.all()
+        if request.query_params.get("gold_id"):
+            queryset = queryset.filter(gold_id=request.query_params.get("gold_id"))
+
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = objectSerializer(paginated_queryset, many=True)
