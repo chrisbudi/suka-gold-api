@@ -24,6 +24,16 @@ class order_shipping(models.Model):
     delivery_pickup_date = models.DateTimeField(auto_created=True)
     delivery_est_date = models.DateTimeField(auto_created=True)
     delivery_actual_date = models.DateTimeField(auto_created=True)
+    delivery_status = models.CharField(max_length=50, null=True)
+    delivery_tracking_number = models.CharField(max_length=100, null=True)
+    delivery_tracking_url = models.CharField(max_length=255, null=True)
+    delivery_notes = models.CharField(max_length=100, null=True)
+    delivery_address = models.CharField(max_length=255, null=True)
+    delivery_postal_code = models.CharField(max_length=10, null=True)
+    delivery_city = models.CharField(max_length=100, null=True)
+    delivery_state = models.CharField(max_length=100, null=True)
+    delivery_phone_number = models.CharField(max_length=50, null=True)
+    delivery_email = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return f"Gold Transaction {self.order_delivery_id} - Type:"
