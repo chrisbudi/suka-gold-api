@@ -7,12 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from shared_kernel.services.external.sapx_service import SapxService
 
+
 # Correct model import
 from order_fix.api.serializers import OrderShippingSerializer
 
 
 @extend_schema(
-    tags=["Order Shipping Fix - Get Shipping Service Price"],
+    tags=["Order Shipping Fix - Manage shipping request"],
 )
 class OrderShippingAPIView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
