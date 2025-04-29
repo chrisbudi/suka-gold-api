@@ -2,14 +2,15 @@ from core.delivery.api.serializers import (
     DeliveryPartnerServiceSerializer as customSerializer,
     DeliveryPartnerServiceFilter as customFilter,
 )
-from rest_framework import status, viewsets, filters, pagination, response, permissions
+from rest_framework import status, viewsets, filters, pagination, response
 from core.domain import delivery_partner_service as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
+
+# Removed unused import
 
 
 @extend_schema(
@@ -43,13 +44,12 @@ class DeliveryPartnerServiceViewSet(viewsets.ModelViewSet):
         serializer = customSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
-    def get(self, request, id=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=id)
+    def get(self, _, id=None):
+        info = get_object_or_404(modelInfo, pk=id)
         serializer = customSerializer(info)
         return response.Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -59,8 +59,7 @@ class DeliveryPartnerServiceViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, id=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=id)
+        info = get_object_or_404(modelInfo, pk=id)
         serializer = customSerializer(info, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -70,7 +69,7 @@ class DeliveryPartnerServiceViewSet(viewsets.ModelViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    def delete(self, request, id=None):
+    def delete(self, _, id=None):  # Unused 'request' replaced with '_'
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
         info.delete()
