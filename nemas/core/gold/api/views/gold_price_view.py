@@ -60,8 +60,7 @@ class GoldPriceServiceViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, id=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=id)
+        info = get_object_or_404(modelInfo, pk=id)
         serializer = objectSerializer(
             info, data=request.data, context={"request": request}
         )

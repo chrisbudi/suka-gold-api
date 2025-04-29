@@ -56,8 +56,7 @@ class GoldPromoViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, pk=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=pk)
+        info = get_object_or_404(modelInfo, pk=pk)
         serializer = modelSerializer(info, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -68,8 +67,7 @@ class GoldPromoViewSet(viewsets.ModelViewSet):
             )
 
     def delete(self, request, pk=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=pk)
+        info = get_object_or_404(modelInfo, pk=pk)
         info.delete()
         return response.Response(
             {

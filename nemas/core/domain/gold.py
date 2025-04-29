@@ -53,7 +53,7 @@ class gold_cert_detail_price(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Gold Cert Detail Price {self.id} - Gold: {self.gold}"
+        return str(id)
 
     def delete(self):
         self.is_deleted = True

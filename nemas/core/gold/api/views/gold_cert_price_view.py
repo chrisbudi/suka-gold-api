@@ -49,7 +49,7 @@ class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = objectSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            serializer.save(create_user=request.user)
+            serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(
@@ -57,18 +57,13 @@ class GoldCertPriceServiceViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, id=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=id)
+        info = get_object_or_404(modelInfo, pk=id)
         serializer = objectSerializer(
             info, data=request.data, context={"request": request}
         )
-        if serializer.is_valid():
-            serializer.save(create_user=request.user)
-            return response.Response(serializer.data)
-        else:
-            return response.Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, id=None):
         queryset = modelInfo.objects.all()

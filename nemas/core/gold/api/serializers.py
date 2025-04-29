@@ -40,21 +40,27 @@ class CertSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user.id
-        validated_data["create_user_email"] = self.context["request"].user.email
 
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["upd_user_email"] = self.context["request"].user.email
+        certModel = cert.objects.create(
+            **validated_data,
+            create_user=self.context["request"].user.id,
+            create_time=datetime.now(),
+            create_user_email=self.context["request"].user.email,
+            upd_user=self.context["request"].user.id,
+            upd_time=datetime.now(),
+            upd_user_email=self.context["request"].user.email,
+        )
+        return certModel
 
-        validated_data["create_time"] = datetime.now()
-        validated_data["upd_time"] = datetime.now()
-        return super().create(validated_data)
+    def update(self, instance: cert, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.upd_user = self.context["request"].user.id
+        instance.upd_time = datetime.now()
+        instance.upd_user_email = self.context["request"].user.email
+        instance.save()
 
-    def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["upd_time"] = datetime.now()
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        return super().update(instance, validated_data)
+        return instance
 
 
 class CertFilterSerializer(filters.FilterSet):
@@ -101,19 +107,28 @@ class GoldSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user.id
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["create_time"] = datetime.now()
-        validated_data["upd_time"] = datetime.now()
-        validated_data["create_user_email"] = self.context["request"].user.email
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        return super().create(validated_data)
 
-    def update(self, instance, validated_data):
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["upd_time"] = datetime.now()
-        return super().update(instance, validated_data)
+        goldModel = gold.objects.create(
+            **validated_data,
+            create_user=self.context["request"].user.id,
+            create_time=datetime.now(),
+            create_user_email=self.context["request"].user.email,
+            upd_user=self.context["request"].user.id,
+            upd_time=datetime.now(),
+            upd_user_email=self.context["request"].user.email,
+        )
+
+        return goldModel
+
+    def update(self, instance: gold, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.upd_user = self.context["request"].user.id
+        instance.upd_time = datetime.now()
+        instance.upd_user_email = self.context["request"].user.email
+        instance.save()
+
+        return instance
 
 
 class GoldProductShowSerializer(serializers.ModelSerializer):
@@ -254,20 +269,29 @@ class GoldPriceConfigSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         print(self.context["request"].user, "validated_data")
-        validated_data["create_user"] = self.context["request"].user.id
-        validated_data["create_user_email"] = self.context["request"].user.email
+        goldPriceConfig = gold_price_config.objects.create(
+            **validated_data,
+            create_user=self.context["request"].user.id,
+            create_time=datetime.now(),
+            create_user_email=self.context["request"].user.email,
+            upd_user=self.context["request"].user.id,
+            upd_time=datetime.now(),
+            upd_user_email=self.context["request"].user.email,
+        )
 
-        validated_data["upd_user"] = str(self.context["request"].user)
-        validated_data["upd_user_email"] = self.context["request"].user.email
+        return goldPriceConfig
 
-        validated_data["create_time"] = datetime.now()
-        validated_data["upd_time"] = datetime.now()
-        return super().create(validated_data)
+    def update(self, instance: gold_price_config, validated_data):
 
-    def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["upd_time"] = datetime.now()
-        return super().update(instance, validated_data)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.upd_user = self.context["request"].user.id
+        instance.upd_time = datetime.now()
+        instance.upd_user_email = self.context["request"].user.email
+        instance.save()
+
+        return instance
 
 
 class GoldPriceConfigServiceFilter(filters.FilterSet):
@@ -341,19 +365,28 @@ class GoldCertPriceSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user.id
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["create_time"] = datetime.now()
-        validated_data["upd_time"] = datetime.now()
-        validated_data["create_user_email"] = self.context["request"].user.email
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        return super().create(validated_data)
+        goldCert = gold_cert_detail_price.objects.create(
+            **validated_data,
+            create_user=self.context["request"].user.id,
+            create_time=datetime.now(),
+            create_user_email=self.context["request"].user.email,
+            upd_user=self.context["request"].user.id,
+            upd_time=datetime.now(),
+            upd_user_email=self.context["request"].user.email,
+        )
+        return goldCert
 
-    def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["upd_time"] = datetime.now()
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        return super().update(instance, validated_data)
+    def update(self, instance: gold_cert_detail_price, validated_data):
+        print(validated_data, "validated_data")
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.upd_user = self.context["request"].user.id
+        instance.upd_time = datetime.now()
+        instance.upd_user_email = self.context["request"].user.email
+        instance.save()
+
+        return super().update(self.instance, validated_data)
 
 
 class GoldCertPriceServiceFilter(filters.FilterSet):
@@ -399,19 +432,28 @@ class GoldPromoSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        validated_data["create_user"] = self.context["request"].user.id
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["create_time"] = datetime.now()
-        validated_data["upd_time"] = datetime.now()
-        validated_data["create_user_email"] = self.context["request"].user.email
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        return super().create(validated_data)
+
+        goldPromoModel = gold_promo.objects.create(
+            **validated_data,
+            create_user=self.context["request"].user.id,
+            create_time=datetime.now(),
+            create_user_email=self.context["request"].user.email,
+            upd_user=self.context["request"].user.id,
+            upd_time=datetime.now(),
+            upd_user_email=self.context["request"].user.email,
+        )
+        return goldPromoModel
 
     def update(self, instance, validated_data):
-        validated_data["upd_user"] = self.context["request"].user.id
-        validated_data["upd_time"] = datetime.now()
-        validated_data["upd_user_email"] = self.context["request"].user.email
-        return super().update(instance, validated_data)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.upd_user = self.context["request"].user.id
+        instance.upd_time = datetime.now()
+        instance.upd_user_email = self.context["request"].user.email
+        instance.save()
+
+        return super().update(self.instance, validated_data)
 
 
 class GoldPromoFilter(filters.FilterSet):

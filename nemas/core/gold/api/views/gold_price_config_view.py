@@ -56,13 +56,12 @@ class GoldPriceConfigServiceViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, id=None):
-        queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=id)
+        info = get_object_or_404(modelInfo, pk=id)
         serializer = objectSerializer(
             info, data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            serializer.save(create_user=request.user)
+            serializer.save()
             return response.Response(serializer.data)
         else:
             return response.Response(
