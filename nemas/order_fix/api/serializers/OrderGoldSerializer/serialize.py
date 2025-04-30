@@ -2,8 +2,9 @@ from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from common.responses import NemasReponses
+from nemas.core.domain.delivery import delivery_partner
 from shared_kernel.services.external import sapx_service
-from order_fix.api.serializers.OrderGoldSerializer.Payment import PaymentProcess
+from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
 from order.models import order_cart
@@ -64,6 +65,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+
         user_address_id = validated_data.get("order_user_address_id")
         user_address_model = user_address.objects.filter(id=user_address_id).first()
 
@@ -82,7 +84,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         order_cart_models = order_cart.objects.get(order_cart_id=order_cart_id)
 
-        print(order_cart_models, "order_cart_models")
         order_cart_details_model = (
             order_cart_detail.objects.select_related("cert")
             .select_related("gold")
@@ -96,10 +97,23 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Order cart not found")
 
         shipping_weight = order_cart_models.total_weight
-        order_amount = order_cart_models.total_price
+        order_amount = order_cart_models.total_price_round
 
-        # shipping region
+        # get shipping id
+
+        delivery_partner_model = delivery_partner.objects.filter(
+            id=validated_data.get("tracking_courier_service_id"), is_deleted=False
+        ).first()
+        if not delivery_partner_model:
+            raise serializers.ValidationError("Delivery partner not found")
+
+        # get shipping service
+        tracking_service_code = validated_data.get("tracking_courier_service_code")
+        shipping_details = self.get_shipping_service(
+            delivery_partner_model, tracking_service_code, order_amount, shipping_weight
+        )
         sapx_service = SapxService()
+
         shipping_details = sapx_service._get_shipping_details(
             validated_data.get("tracking_courier_service_code"),
             order_amount,
@@ -217,6 +231,47 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             },
             message="Order created successfully",
         )
+
+    def get_shipping_service(
+        self,
+        dp_model: delivery_partner,
+        service_code: str,
+        order_amount: Decimal,
+        shipping_weight: Decimal,
+    ):
+        # get shipping service
+        if dp_model.delivery_partner_code == "SAPX":
+
+            sapx_service = SapxService()
+
+            shipping_details = sapx_service._get_shipping_details(
+                service_code,
+                order_amount,
+                shipping_weight,
+            )
+            if not shipping_details.get("success"):
+                raise serializers.ValidationError(shipping_details)
+            return shipping_details
+        elif dp_model.delivery_partner_code == "PAXEL":
+            return {
+                "insurance": 0,
+                "insurance_round": 0,
+                "insurance_admin": 0,
+                "packing": 0,
+                "cost": 0,
+                "shipping_total": 0,
+                "shipping_total_rounded": 0,
+            }
+        elif dp_model.delivery_partner_code == "MANDIRI":
+            return {
+                "insurance": 0,
+                "insurance_round": 0,
+                "insurance_admin": 0,
+                "packing": 0,
+                "cost": 0,
+                "shipping_total": 0,
+                "shipping_total_rounded": 0,
+            }
 
 
 class OrderGoldListSerializer(serializers.Serializer):

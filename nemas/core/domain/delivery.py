@@ -6,6 +6,8 @@ class delivery_partner(models.Model):
     delivery_partner_code = models.CharField(max_length=50, unique=True)
     delivery_partner_name = models.CharField(max_length=50, unique=True)
     delivery_partner_description = models.CharField(max_length=200, unique=True)
+    delivery_partner_external = models.BooleanField(default=True)
+
     is_deleted = models.BooleanField(default=False)
 
     def delete(self):
@@ -22,6 +24,7 @@ class delivery_partner_service(models.Model):
     delivery_partner_service_name = models.CharField(max_length=50, unique=True)
     delivery_partner_service_code = models.CharField(max_length=50, unique=True)
     delivery_partner_service_description = models.CharField(max_length=50, unique=True)
+    delivery_partner_service_external = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
 
     def delete(self):
