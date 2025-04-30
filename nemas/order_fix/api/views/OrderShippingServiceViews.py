@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from shared_kernel.services.external.sapx_service import SapxService
+from shared_kernel.utils import round_value
 
 # Correct model import
 from order_fix.api.serializers import OrderShippingSerializer
@@ -50,24 +51,28 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                 filtered_data = [
                     item for item in data["data"]["services"] if item["weight"] == 1
                 ]
-
-                print(filtered_data, "filtered_data")
                 item_show = []
                 for item in filtered_data:
+                    insurance_round = round_value.round_up_to_100(
+                        item["insurance_cost"]
+                    )
+                    total_cost_round = round_value.round_up_to_100(item["total_cost"])
+
                     item_show.append(
                         {
                             "weight": item["weight"],
                             "insurance_cost": item["insurance_cost"],
+                            "insurance_cost_round": insurance_round,
                             "insurance_admin_cost": item["insurance_admin_cost"],
                             "packing_cost": item["packing_cost"],
                             "cost": item["cost"],
                             "total_cost": item["total_cost"],
+                            "total_cost_round": total_cost_round,
                             "service_type_code": item["service_type_code"],
                             "service_type_name": item["service_type_name"],
                             "sla": item["sla"],
                         }
                     )
-                print(item_show, "item_show")
                 return response.Response({"services": item_show}, status.HTTP_200_OK)
             return response.Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
