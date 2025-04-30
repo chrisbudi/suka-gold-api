@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from common.responses import NemasReponses
-from nemas.core.domain.delivery import delivery_partner
+from core.domain.delivery import delivery_partner
 from shared_kernel.services.external import sapx_service
 from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
