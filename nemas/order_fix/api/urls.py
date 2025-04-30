@@ -39,7 +39,7 @@ urlpatterns = [
     ),
     path(
         "shipping/service/",
-        views.OrderShippingAPIView.as_view({"post": "list_shipping_service"}),
+        views.OrderShippingServiceAPIView.as_view({"post": "list_shipping_service"}),
         name="shipping-service",
     ),
     path(

@@ -47,8 +47,30 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                 }
                 payload_data = json.dumps(payload)
                 data = sapx_service.get_price(payload_data)
-                # serializer.save()
-                return response.Response(data, status.HTTP_200_OK)
+                filtered_data = [
+                    item for item in data["data"]["services"] if item["weight"] == 1
+                ]
+
+                print(filtered_data, "filtered_data")
+                item_show = []
+                for item in filtered_data:
+                    item_show.append(
+                        {
+                            "service": {
+                                "weight": item["weight"],
+                                "insurance_cost": item["insurance_cost"],
+                                "insurance_admin_cost": item["insurance_admin_cost"],
+                                "packing_cost": item["packing_cost"],
+                                "cost": item["cost"],
+                                "total_cost": item["total_cost"],
+                                "service_type_code": item["service_type_code"],
+                                "service_type_name": item["service_type_name"],
+                                "sla": item["sla"],
+                            }
+                        }
+                    )
+                print(item_show, "item_show")
+                return response.Response(item_show, status.HTTP_200_OK)
             return response.Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
