@@ -53,23 +53,22 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                 ]
                 item_show = []
                 for item in filtered_data:
-                    insurance_round = round_value.round_up_to_100(
-                        item["insurance_cost"]
-                    )
-                    total_cost_round = round_value.round_up_to_100(item["total_cost"])
-
                     item_show.append(
                         {
                             "weight": item["weight"],
                             "insurance_cost": item["insurance_cost"],
-                            "insurance_cost_round": insurance_round,
+                            "insurance_cost_round": round_value.round_up_to_100(
+                                item["insurance_cost"]
+                            ),
+                            "total_cost": item["total_cost"],
+                            "total_cost_round": round_value.round_up_to_100(
+                                item["total_cost"]
+                            ),
+                            "service_type_code": item["service_type_code"],
+                            "service_type_name": item["service_type_name"],
                             "insurance_admin_cost": item["insurance_admin_cost"],
                             "packing_cost": item["packing_cost"],
                             "cost": item["cost"],
-                            "total_cost": item["total_cost"],
-                            "total_cost_round": total_cost_round,
-                            "service_type_code": item["service_type_code"],
-                            "service_type_name": item["service_type_name"],
                             "sla": item["sla"],
                         }
                     )
