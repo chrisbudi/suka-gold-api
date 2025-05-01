@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import status
-from typing import Dict, Any, Optional, TypedDict
+from typing import Dict, Any, Optional, TypedDict, Generic, TypeVar, Literal, Union
 
 
 class NemasReponses:
@@ -33,24 +33,17 @@ class NemasReponses:
         }
 
 
-class ServicesResponses(TypedDict, total=False):
-    """
-    Standard format for a successful response.
-    """
-
-    success: bool
-    data: Optional[Dict[str, Any]]
+T = TypeVar("T")
 
 
-class ObjectReponses:
-    @staticmethod
-    def NewObject(
-        success: bool, data: Optional[Dict[str, Any]] = None
-    ) -> ServicesResponses:
-        """
-        Standardized response format for success or failure.
-        """
-        return {
-            "success": success,
-            "data": data if success and data else None,
-        }
+class SuccessResponse(Generic[T], TypedDict):
+    success: Literal[True]
+    data: T
+
+
+class ErrorResponse(TypedDict):
+    success: Literal[False]
+    data: None
+
+
+ServicesResponse = Union[SuccessResponse[T], ErrorResponse]

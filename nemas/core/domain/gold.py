@@ -132,6 +132,9 @@ class gold_price(models.Model):
     def get_active_price(self):
         # Example usage of the computed property
         gold_price_model = gold_price.objects.filter(gold_price_active=True).first()
+        if not gold_price_model:
+            raise ValueError("No active gold price found.")
+
         return gold_price_model
 
     def delete(self):

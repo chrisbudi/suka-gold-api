@@ -147,10 +147,6 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
     stock = serializers.SerializerMethodField()
 
     def get_gold_price_summary(self, obj):
-        print(self.activate_price.get_active_price().gold_price_buy)
-        print(obj.gold_weight)
-        print(obj.product_cost)
-        print(obj.certificate.cert_price)
         return (
             (
                 (self.activate_price.get_active_price().gold_price_buy or 0)
@@ -268,7 +264,6 @@ class GoldPriceConfigSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        print(self.context["request"].user, "validated_data")
         goldPriceConfig = gold_price_config.objects.create(
             **validated_data,
             create_user=self.context["request"].user.id,
@@ -377,7 +372,6 @@ class GoldCertPriceSerializer(serializers.ModelSerializer):
         return goldCert
 
     def update(self, instance: gold_cert_detail_price, validated_data):
-        print(validated_data, "validated_data")
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 

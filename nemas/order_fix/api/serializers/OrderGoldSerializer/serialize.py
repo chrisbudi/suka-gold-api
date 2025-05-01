@@ -1,9 +1,8 @@
-from ast import Dict
 from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from core.domain.delivery import delivery_partner
-from common.responses import NemasReponses, ObjectReponses, ServicesResponses
+from common.responses import NemasReponses, ServicesResponse, SuccessResponse
 from shared_kernel.services.external import sapx_service
 from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
@@ -15,8 +14,8 @@ from django.contrib.auth import get_user_model
 from core.domain.gold import gold as GoldModel
 from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
-import json
 from django.db import transaction
+from typing import cast
 from .type.shipping_details import ShippingDetails
 
 User = get_user_model()
@@ -113,29 +112,27 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         # get shipping service
         tracking_service_code = validated_data.get("tracking_courier_service_code")
-        shipping_details = self.get_shipping_service(
+        shipping_details: ServicesResponse[ShippingDetails] = self.get_shipping_service(
             delivery_partner_model, tracking_service_code, order_amount, shipping_weight
         )
 
         if (
-            not shipping_details
-            and not shipping_details.get("data")
-            and not shipping_details.get("success")
+            not shipping_details.get("data")
+            and not shipping_details.get("success") == True
         ):
             return NemasReponses.failure(
                 message="Failed to get shipping details",
                 errors={"error": shipping_details.get("message")},
             )
+        shipping_data = cast(ShippingDetails, shipping_details["data"])
 
-        print(shipping_details, "shipping_details")
-
-        insurance = shipping_details["data"]["insurance"]
-        insurance_round = shipping_details["data"]["insurance_round"]
-        insurance_admin = shipping_details["data"]["insurance_admin"]
-        packing = shipping_details["data"]["packing"]
-        cost = shipping_details["data"]["cost"]
-        shipping_total = shipping_details["data"]["shipping_total"]
-        shipping_total_rounded = shipping_details["data"]["shipping_total_rounded"]
+        insurance = shipping_data["insurance"]
+        insurance_round = shipping_data["insurance_round"]
+        insurance_admin = shipping_data["insurance_admin"]
+        packing = shipping_data["packing"]
+        cost = shipping_data["cost"]
+        shipping_total = shipping_data["shipping_total"]
+        shipping_total_rounded = shipping_data["shipping_total_rounded"]
         order_amount_billed = (
             order_cart_models.total_price_round + shipping_total_rounded
         )
@@ -253,7 +250,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         service_code: str,
         order_amount: Decimal,
         shipping_weight: Decimal,
-    ) -> ServicesResponses:
+    ) -> ServicesResponse[ShippingDetails]:
         # get shipping service
         if dp_model.delivery_partner_code == "SAPX":
             sapx_service = SapxService()
@@ -262,52 +259,55 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 order_amount,
                 shipping_weight,
             )
-            return ObjectReponses.NewObject(True, ShippingDetails(**shipping_details))
+            if shipping_details == None:
+                return {
+                    "success": False,
+                    "data": None,
+                }
+            return {
+                "success": True,
+                "data": cast(ShippingDetails, shipping_details),
+            }
+
         elif dp_model.delivery_partner_code == "PAXEL":
-            return ObjectReponses.NewObject(
-                True,
-                vars(
-                    ShippingDetails(
-                        cost=Decimal(0),
-                        shipping_total=Decimal(0),
-                        shipping_total_rounded=Decimal(0),
-                        insurance=Decimal(0),
-                        insurance_round=Decimal(0),
-                        insurance_admin=Decimal(0),
-                        packing=Decimal(0),
-                    )
+            return {
+                "success": True,
+                "data": ShippingDetails(
+                    cost=Decimal(0),
+                    shipping_total=Decimal(0),
+                    shipping_total_rounded=Decimal(0),
+                    insurance=Decimal(0),
+                    insurance_round=Decimal(0),
+                    insurance_admin=Decimal(0),
+                    packing=Decimal(0),
                 ),
-            )
+            }
         elif dp_model.delivery_partner_code == "MANDIRI":
-            return ObjectReponses.NewObject(
-                True,
-                vars(
-                    ShippingDetails(
-                        cost=Decimal(0),
-                        shipping_total=Decimal(0),
-                        shipping_total_rounded=Decimal(0),
-                        insurance=Decimal(0),
-                        insurance_round=Decimal(0),
-                        insurance_admin=Decimal(0),
-                        packing=Decimal(0),
-                    )
+            return {
+                "success": True,
+                "data": ShippingDetails(
+                    cost=Decimal(0),
+                    shipping_total=Decimal(0),
+                    shipping_total_rounded=Decimal(0),
+                    insurance=Decimal(0),
+                    insurance_round=Decimal(0),
+                    insurance_admin=Decimal(0),
+                    packing=Decimal(0),
                 ),
-            )
+            }
         else:
-            return ObjectReponses.NewObject(
-                True,
-                vars(
-                    ShippingDetails(
-                        cost=Decimal(0),
-                        shipping_total=Decimal(0),
-                        shipping_total_rounded=Decimal(0),
-                        insurance=Decimal(0),
-                        insurance_round=Decimal(0),
-                        insurance_admin=Decimal(0),
-                        packing=Decimal(0),
-                    )
+            return {
+                "success": True,
+                "data": ShippingDetails(
+                    cost=Decimal(0),
+                    shipping_total=Decimal(0),
+                    shipping_total_rounded=Decimal(0),
+                    insurance=Decimal(0),
+                    insurance_round=Decimal(0),
+                    insurance_admin=Decimal(0),
+                    packing=Decimal(0),
                 ),
-            )
+            }
 
 
 class OrderGoldListSerializer(serializers.Serializer):
