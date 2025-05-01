@@ -131,7 +131,7 @@ class gold_price(models.Model):
 
     def get_active_price(self):
         # Example usage of the computed property
-        gold_price_model = gold_price.objects.get(gold_price_active=True)
+        gold_price_model = gold_price.objects.filter(gold_price_active=True).first()
         return gold_price_model
 
     def delete(self):

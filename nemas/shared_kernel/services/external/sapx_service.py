@@ -4,6 +4,7 @@ from django.conf import settings
 import requests
 
 from common.responses import NemasReponses
+from shared_kernel.utils.round_value import round_up_to_100
 
 
 class SapxService:
@@ -100,7 +101,6 @@ class SapxService:
             "",
         )
         payload_data = json.dumps(payload)
-
         shipping_data = self.get_price(payload_data)
         if not shipping_data.get("success"):
             return NemasReponses.failure(
@@ -110,22 +110,40 @@ class SapxService:
 
         # tracking_service_code = validated_data.get("tracking_courier_service_code")
         tracking_service_code = service_code
+        print(shipping_data, "shipping_data")
         services = list(
             filter(
                 lambda s: s.get("service_type_code") == tracking_service_code,
-                shipping_data["data"].get("data", {}).get("services", []),
+                shipping_data.get("data", {}).get("services", []),
             )
         )
+
         service = next(iter(services), {})
-
-        insurance = service.get("insurance")
-        insurance_round = (insurance // 100 * 100 + 100) if insurance is not None else 0
-        insurance_admin = service.get("insurance_admin")
-        packing = service.get("packing")
+        print(service, "service")
+        if not service:
+            return NemasReponses.failure(
+                message="Failed to get price",
+                errors={"error": "Service not found"},
+            )
+        # Extracting the required fields from the service
+        service = shipping_data.get("data", {}).get("services", [{}])[0]
+        insurance = service.get("insurance_cost")
+        insurance_round = round_up_to_100(insurance)
+        insurance_admin = service.get("insurance_admin_cost")
+        packing = service.get("packing_cost")
         cost = service.get("cost")
-        shipping_total = Decimal(service.get("total") or 0)
-        shipping_total_rounded = shipping_total // 100 * 100 + 100
+        shipping_total = Decimal(service.get("total_cost") or 0)
+        shipping_total_rounded = round_up_to_100(shipping_total)
 
+        print(
+            insurance,
+            insurance_round,
+            insurance_admin,
+            packing,
+            cost,
+            shipping_total,
+            shipping_total_rounded,
+        )
         return {
             "insurance": insurance,
             "insurance_round": insurance_round,

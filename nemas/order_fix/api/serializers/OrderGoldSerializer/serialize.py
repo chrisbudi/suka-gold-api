@@ -1,8 +1,9 @@
+from ast import Dict
 from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
-from common.responses import NemasReponses
 from core.domain.delivery import delivery_partner
+from common.responses import NemasReponses, ObjectReponses, ServicesResponses
 from shared_kernel.services.external import sapx_service
 from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
@@ -16,6 +17,7 @@ from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
 import json
 from django.db import transaction
+from .type.shipping_details import ShippingDetails
 
 User = get_user_model()
 
@@ -96,14 +98,16 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         if not order_cart_models and not order_cart_details_model:
             raise serializers.ValidationError("Order cart not found")
 
-        shipping_weight = order_cart_models.total_weight
+        shipping_weight = Decimal(1)
         order_amount = order_cart_models.total_price_round
 
         # get shipping id
 
         delivery_partner_model = delivery_partner.objects.filter(
-            id=validated_data.get("tracking_courier_service_id"), is_deleted=False
+            delivery_partner_id=validated_data.get("tracking_courier_id"),
+            is_deleted=False,
         ).first()
+        print(delivery_partner_model, "delivery_partner_model")
         if not delivery_partner_model:
             raise serializers.ValidationError("Delivery partner not found")
 
@@ -112,21 +116,26 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         shipping_details = self.get_shipping_service(
             delivery_partner_model, tracking_service_code, order_amount, shipping_weight
         )
-        sapx_service = SapxService()
 
-        shipping_details = sapx_service._get_shipping_details(
-            validated_data.get("tracking_courier_service_code"),
-            order_amount,
-            shipping_weight,
-        )
+        if (
+            not shipping_details
+            and not shipping_details.get("data")
+            and not shipping_details.get("success")
+        ):
+            return NemasReponses.failure(
+                message="Failed to get shipping details",
+                errors={"error": shipping_details.get("message")},
+            )
 
-        insurance = shipping_details["insurance"]
-        insurance_round = shipping_details["insurance_round"]
-        insurance_admin = shipping_details["insurance_admin"]
-        packing = shipping_details["packing"]
-        cost = shipping_details["cost"]
-        shipping_total = shipping_details["shipping_total"]
-        shipping_total_rounded = shipping_details["shipping_total_rounded"]
+        print(shipping_details, "shipping_details")
+
+        insurance = shipping_details["data"]["insurance"]
+        insurance_round = shipping_details["data"]["insurance_round"]
+        insurance_admin = shipping_details["data"]["insurance_admin"]
+        packing = shipping_details["data"]["packing"]
+        cost = shipping_details["data"]["cost"]
+        shipping_total = shipping_details["data"]["shipping_total"]
+        shipping_total_rounded = shipping_details["data"]["shipping_total_rounded"]
         order_amount_billed = (
             order_cart_models.total_price_round + shipping_total_rounded
         )
@@ -204,6 +213,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     order_detail_total_price_round=cart_detail.total_price_round,
                 )
 
+            # submit order for shipping
+
             # process payment
             process = PaymentProcess(order_gold_instance)
 
@@ -212,13 +223,17 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 pay_ref = process.qris_payment(
                     validated_data, order_amount_billed, user, order_gold_instance
                 )
-            else:
+            elif validated_data.get("order_payment_method_name") == "VA":
                 pay_ref = process.va_payment(
                     validated_data,
                     order_amount_billed,
                     user,
                     virtual_account_number,
                     order_gold_instance,
+                )
+            elif validated_data.get("order_payment_method_name") == "CASH":
+                pay_ref = process.cash_payment(
+                    validated_data, order_amount_billed, user, order_gold_instance
                 )
 
             if not pay_ref.get("success"):
@@ -238,40 +253,61 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         service_code: str,
         order_amount: Decimal,
         shipping_weight: Decimal,
-    ):
+    ) -> ServicesResponses:
         # get shipping service
         if dp_model.delivery_partner_code == "SAPX":
-
             sapx_service = SapxService()
-
             shipping_details = sapx_service._get_shipping_details(
                 service_code,
                 order_amount,
                 shipping_weight,
             )
-            if not shipping_details.get("success"):
-                raise serializers.ValidationError(shipping_details)
-            return shipping_details
+            return ObjectReponses.NewObject(True, ShippingDetails(**shipping_details))
         elif dp_model.delivery_partner_code == "PAXEL":
-            return {
-                "insurance": 0,
-                "insurance_round": 0,
-                "insurance_admin": 0,
-                "packing": 0,
-                "cost": 0,
-                "shipping_total": 0,
-                "shipping_total_rounded": 0,
-            }
+            return ObjectReponses.NewObject(
+                True,
+                vars(
+                    ShippingDetails(
+                        cost=Decimal(0),
+                        shipping_total=Decimal(0),
+                        shipping_total_rounded=Decimal(0),
+                        insurance=Decimal(0),
+                        insurance_round=Decimal(0),
+                        insurance_admin=Decimal(0),
+                        packing=Decimal(0),
+                    )
+                ),
+            )
         elif dp_model.delivery_partner_code == "MANDIRI":
-            return {
-                "insurance": 0,
-                "insurance_round": 0,
-                "insurance_admin": 0,
-                "packing": 0,
-                "cost": 0,
-                "shipping_total": 0,
-                "shipping_total_rounded": 0,
-            }
+            return ObjectReponses.NewObject(
+                True,
+                vars(
+                    ShippingDetails(
+                        cost=Decimal(0),
+                        shipping_total=Decimal(0),
+                        shipping_total_rounded=Decimal(0),
+                        insurance=Decimal(0),
+                        insurance_round=Decimal(0),
+                        insurance_admin=Decimal(0),
+                        packing=Decimal(0),
+                    )
+                ),
+            )
+        else:
+            return ObjectReponses.NewObject(
+                True,
+                vars(
+                    ShippingDetails(
+                        cost=Decimal(0),
+                        shipping_total=Decimal(0),
+                        shipping_total_rounded=Decimal(0),
+                        insurance=Decimal(0),
+                        insurance_round=Decimal(0),
+                        insurance_admin=Decimal(0),
+                        packing=Decimal(0),
+                    )
+                ),
+            )
 
 
 class OrderGoldListSerializer(serializers.Serializer):

@@ -44,9 +44,8 @@ class GoldPriceServiceViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
     def get_active(self, request):
-        queryset = modelInfo.objects.filter(gold_price_active=True).only()
-        info = get_object_or_404(queryset)
-        serializer = objectSerializer(info)
+        queryset = modelInfo.objects.filter(gold_price_active=True).first()
+        serializer = objectSerializer(queryset)
         return response.Response(serializer.data)
 
     def create(self, request):
