@@ -14,6 +14,7 @@ class disburst_transaction(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
+    disburst_number = models.CharField(max_length=100, blank=True, null=True)
 
     disburst_timestamp = models.DateTimeField(auto_created=True)
     disburst_amount = models.DecimalField(max_digits=16, decimal_places=2)
@@ -26,4 +27,4 @@ class disburst_transaction(models.Model):
     disburst_payment_ref = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"TOPUP Transaction {self.disburst_transaction_id} - Type:"
+        return f"disburst Transaction {self.disburst_transaction_id} - Type:"

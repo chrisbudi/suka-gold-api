@@ -5,6 +5,7 @@ from gold_transaction.models import gold_transfer
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from datetime import datetime, timedelta
+from common.generator import generate_alphanumeric_code
 from user.models import user_props, user
 
 
@@ -45,6 +46,16 @@ class GoldTransferSerializer(serializers.ModelSerializer):
         # Calculate total price before saving
         validated_data["transfer_member_datetime"] = datetime.now()
         validated_data["user_from"] = self.context["request"].user
+
+        # generate number for transaction
+        gold_transfer_number = (
+            "TM" + datetime.now().strftime("%y%m") + generate_alphanumeric_code()
+        )
+        validated_data["transfer_ref_number"] = (
+            gold_transfer_number
+            if self.instance is None
+            else self.instance.transfer_ref_number
+        )
 
         # from user phone number to user
         user_to = user.objects.get(phone_number=validated_data["phone_number"])

@@ -125,7 +125,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 errors={"error": shipping_details.get("message")},
             )
         shipping_data = cast(ShippingDetails, shipping_details["data"])
-
         insurance = shipping_data["insurance"]
         insurance_round = shipping_data["insurance_round"]
         insurance_admin = shipping_data["insurance_admin"]
@@ -147,10 +146,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_pph22 = order_total * Decimal((25 / 100 / 100))
         order_grand_total_price = order_total + order_pph22
         order_number = (
-            "BP/"
-            + datetime.now().strftime("%Y/%m")
-            + "/"
-            + generate_alphanumeric_code()
+            "BP/" + datetime.now().strftime("%y%m") + "/" + generate_alphanumeric_code()
         )
         with transaction.atomic():
             validated_data.update(
@@ -266,6 +262,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         shipping_weight: Decimal,
     ) -> ServicesResponse[ShippingDetails]:
         # get shipping service
+        print(dp_model.delivery_partner_code, "dp_model")
         if dp_model.delivery_partner_code == "SAPX":
             sapx_service = SapxService()
             shipping_details = sapx_service._get_shipping_details(

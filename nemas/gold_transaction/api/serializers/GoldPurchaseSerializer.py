@@ -3,7 +3,8 @@ from rest_framework import serializers
 from gold_transaction.models import gold_saving_buy
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
+from common.generator import generate_alphanumeric_code
 from user.models import user_props
 from core.domain import gold_price
 
@@ -50,6 +51,12 @@ class GoldTransactionBuySerializer(serializers.ModelSerializer):
         if price is None:
             raise ValueError("Active gold price not found")
 
+        gold_buy_number = (
+            "BE" + date.today().strftime("%y%m") + generate_alphanumeric_code()
+        )
+        validated_data["gold_buy_number"] = (
+            gold_buy_number if self.instance is None else self.instance.gold_buy_number
+        )
         # Calculate total price before saving
 
         validated_data["gold_history_price_base"] = price.gold_price_base

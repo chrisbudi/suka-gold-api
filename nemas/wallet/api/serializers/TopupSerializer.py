@@ -1,6 +1,7 @@
 from os import read
 from attr import validate
 from rest_framework import serializers
+from common.generator import generate_alphanumeric_code
 from wallet.models import topup_transaction
 from shared_kernel.services.external.xendit_service import (
     QRISPaymentService,
@@ -83,6 +84,12 @@ class TopupVASerializer(serializers.ModelSerializer):
         validated_data["topup_payment_ref"] = virtual_account["data"].get("external_id")
         validated_data["topup_payment_ref_code"] = virtual_account["data"].get(
             "account_number"
+        )
+        topup_number = (
+            "TS/" + datetime.now().strftime("%y%m") + "/" + generate_alphanumeric_code()
+        )
+        validated_data["topup_number"] = (
+            topup_number if self.instance is None else self.instance.topup_number
         )
 
         self.context["response"] = {
