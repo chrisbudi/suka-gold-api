@@ -13,6 +13,7 @@ class topup_transaction(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
+    topup_number = models.CharField(max_length=100, blank=True, null=True)
     create_date = models.DateTimeField(auto_now_add=True)
     topup_payment_method = models.CharField(max_length=255)
 

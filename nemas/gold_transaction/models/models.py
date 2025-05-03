@@ -11,7 +11,7 @@ class gold_saving_sell(models.Model):
         ("Completed", "Completed"),
         ("Cancelled", "Cancelled"),
     ]
-
+    gold_sell_number = models.CharField(max_length=100, blank=True, null=True)
     gold_transaction_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
     weight = models.DecimalField(
         max_digits=8,
@@ -56,6 +56,7 @@ class gold_saving_buy(models.Model):
     ]
 
     gold_transaction_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
+    gold_buy_number = models.CharField(max_length=100, blank=True, null=True)
     weight = models.DecimalField(
         max_digits=8,
         decimal_places=4,
@@ -92,6 +93,7 @@ class gold_saving_buy(models.Model):
 
 class gold_transfer(models.Model):
     gold_transfer_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
+    gold_transfer_number = models.CharField(max_length=100, blank=True, null=True)
     user_from = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

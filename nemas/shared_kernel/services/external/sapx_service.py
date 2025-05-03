@@ -66,6 +66,8 @@ class SapxService:
                 headers=self.headers,
                 data=payload,
             )
+            print(response, "response")
+            print(response.status_code, "response.status_code")
             if response.status_code not in (200, 201):
                 return NemasReponses.failure(
                     message="Failed to get price",
@@ -108,7 +110,6 @@ class SapxService:
                 errors={"error": shipping_data.get("message")},
             )
 
-        # tracking_service_code = validated_data.get("tracking_courier_service_code")
         tracking_service_code = service_code
         print(shipping_data, "shipping_data")
         services = list(

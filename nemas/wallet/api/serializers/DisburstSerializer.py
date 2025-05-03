@@ -1,4 +1,6 @@
+from attr import validate
 from rest_framework import serializers
+from common.generator import generate_alphanumeric_code
 from shared_kernel.services.external.xendit_service.disbursment_service import (
     DisburstService,
 )
@@ -69,6 +71,13 @@ class DisburstSerializer(serializers.ModelSerializer):
         if disburst is None:
             raise serializers.ValidationError("Failed to process Disburstment.")
 
+        # generate disburst number
+        disburst_number = (
+            "TU/" + datetime.now().strftime("%y%m") + "/" + generate_alphanumeric_code()
+        )
+        validated_data["disburst_number"] = (
+            disburst_number if self.instance is None else self.instance.disburst_number
+        )
         validated_data["disburst_timestamp"] = datetime.now()
         validated_data["disburst_payment_ref"] = disburst.get("id")
         self.context["response"] = {
