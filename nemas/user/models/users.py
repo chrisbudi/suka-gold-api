@@ -273,6 +273,7 @@ class user_address(models.Model):
     district = models.CharField(max_length=255)
     subdistrict = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255)
     is_default = models.BooleanField(default=True, null=True)
     is_deleted = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now_add=True)
