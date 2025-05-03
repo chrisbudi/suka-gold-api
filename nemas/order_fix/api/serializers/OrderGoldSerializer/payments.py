@@ -143,10 +143,10 @@ class PaymentProcess:
         # generate payment payload
         order_pay = order_payment.objects.create(
             order_payment_ref="CASH",
-            order_payment_status="ISSUED",
+            order_payment_status="PAID",
             order_payment_method_id=validated_data.get("order_payment_method_id"),
-            order_payment_va_bank=validated_data.get("order_payment_va_bank"),
-            order_payment_va_number="",
+            order_payment_va_bank=None,
+            order_payment_va_number=None,
             order_payment_amount=order_amount_summary,
             order_payment_summary_amount=order_amount_summary,
             order_payment_summary_amount_round=order_amount_summary_round,
@@ -159,13 +159,55 @@ class PaymentProcess:
 
         # update order gold instance order gold payment ref
         order_gold_instance.order_gold_payment_ref = "CASH"
-        order_gold_instance.order_gold_payment_status = "ISSUED"
+        order_gold_instance.order_gold_payment_status = "PAID"
         order_gold_instance.save()
 
         return NemasReponses.success(
             data={
                 "total_amount": order_pay.order_payment_amount,
                 "payment_type": "CASH",
+                "order_gold_id": order_gold_instance.order_gold_id,
+            },
+            message="Cash payment is successfully",
+        )
+
+    def digital_payment(
+        self,
+        validated_data,
+        order_amount,
+        user,
+        order_gold_instance: order_gold,
+    ):
+
+        order_amount_summary = order_amount
+        order_amount_summary_round = order_amount_summary
+
+        # generate payment payload
+        order_pay = order_payment.objects.create(
+            order_payment_ref="GOLD",
+            order_payment_status="PAID",
+            order_payment_method_id=validated_data.get("order_payment_method_id"),
+            order_payment_va_bank=None,
+            order_payment_va_number="",
+            order_payment_amount=order_amount_summary,
+            order_payment_summary_amount=order_amount_summary,
+            order_payment_summary_amount_round=order_amount_summary_round,
+            order_payment_admin_amount=0,
+            order_payment_number="GOLD",
+            order_payment_method_name=None,
+            order_gold=order_gold_instance,
+            order_payment_timestamp=datetime.now(),
+        )
+
+        # update order gold instance order gold payment ref
+        order_gold_instance.order_gold_payment_ref = "GOLD"
+        order_gold_instance.order_gold_payment_status = "PAID"
+        order_gold_instance.save()
+
+        return NemasReponses.success(
+            data={
+                "total_amount": order_pay.order_payment_amount,
+                "payment_type": "GOLD",
                 "order_gold_id": order_gold_instance.order_gold_id,
             },
             message="VA payment generated successfully",

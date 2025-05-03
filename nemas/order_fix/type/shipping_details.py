@@ -3,6 +3,7 @@ from typing import TypedDict
 
 
 class ShippingDetails(TypedDict):
+
     insurance: Decimal
     insurance_round: Decimal
     insurance_admin: Decimal

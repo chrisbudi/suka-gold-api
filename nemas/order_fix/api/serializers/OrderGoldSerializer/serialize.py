@@ -2,13 +2,13 @@ from datetime import datetime
 from decimal import Decimal
 from rest_framework import serializers
 from core.domain.delivery import delivery_partner
-from common.responses import NemasReponses, ServicesResponse, SuccessResponse
-from shared_kernel.services.external import sapx_service
+from common.responses import NemasReponses, ServicesResponse
+from common.generator import generate_alphanumeric_code
+from order_fix.api.serializers.OrderGoldSerializer.tracking import TrackingProcess
 from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
 from order.models.order_cart import order_cart_detail
 from order.models import order_cart
-from shared_kernel.services.external.xendit_service import va_service, qris_service
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
 from core.domain.gold import gold as GoldModel
@@ -16,7 +16,7 @@ from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
 from django.db import transaction
 from typing import cast
-from .type.shipping_details import ShippingDetails
+from order_fix.type.shipping_details import ShippingDetails
 
 User = get_user_model()
 
@@ -146,13 +146,23 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_total = order_cart_models.total_price_round + shipping_total_rounded
         order_pph22 = order_total * Decimal((25 / 100 / 100))
         order_grand_total_price = order_total + order_pph22
-
+        order_number = (
+            "BP/"
+            + datetime.now().strftime("%Y/%m")
+            + "/"
+            + generate_alphanumeric_code()
+        )
         with transaction.atomic():
             validated_data.update(
                 {
                     "order_timestamp": datetime.now(),
                     "order_user_address": user_address_model,
                     "user": user,
+                    "order_number": (
+                        order_number
+                        if self.instance is None
+                        else self.instance.order_number
+                    ),
                     "order_payment_method_id": validated_data.get(
                         "order_payment_method_id"
                     ),
@@ -211,6 +221,10 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 )
 
             # submit order for shipping
+            process_tracking = TrackingProcess(order_gold_instance)
+            tracking_ref = process_tracking.submit_tracking(
+                validated_data, user, shipping_data, delivery_partner_model
+            )
 
             # process payment
             process = PaymentProcess(order_gold_instance)
