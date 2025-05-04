@@ -1,10 +1,7 @@
-from operator import truediv
-from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from gold_transaction.models import gold_transfer
-from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
-from datetime import datetime, timedelta
+from datetime import datetime
 from common.generator import generate_alphanumeric_code
 from user.models import user_props, user
 

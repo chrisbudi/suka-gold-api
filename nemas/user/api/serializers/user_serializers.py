@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from common.generator import generate_numeric_code
 from user.models import user
 
 
@@ -32,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = (
             "id",
+            "member_number",
             "user_name",
             "email",
             "phone_number",
@@ -53,6 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
+        member_number = "IDN" + generate_numeric_code(5)
+        validated_data["member_number"] = member_number
         if self.context.get("is_superuser", False):
             return get_user_model().objects.create_superuser(**validated_data)
         return get_user_model().objects.create_user(**validated_data)

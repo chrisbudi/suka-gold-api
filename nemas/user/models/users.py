@@ -102,6 +102,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     """
 
     id = UUIDv7Field(primary_key=True, unique=True, editable=False)
+    member_number = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
     user_name = models.CharField(max_length=255, unique=True, null=True, blank=True)
