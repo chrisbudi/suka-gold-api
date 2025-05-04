@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "investment",
     "loan",
     "order_fix",
+    "reporting",
 ]
 
 MIDDLEWARE = [

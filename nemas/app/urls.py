@@ -30,6 +30,7 @@ from core import urls as coreUrl
 from wallet.api import urls as walletUrl
 from gold_transaction.api import urls as goldUrl
 from order_fix.api import urls as orderFixUrl
+from reporting import urls as reporting_url
 
 authentication_classes = [JWTAuthentication]
 
@@ -85,6 +86,7 @@ urlpatterns = [
         name="order-fix-swagger-ui",
     ),
     path("api/orders/fix/", include(orderFixUrl, "order_fix")),
+    path("api/reports/", include(reporting_url, "reporting")),
 ]
 
 # urlpatterns = [
