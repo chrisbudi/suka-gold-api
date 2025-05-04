@@ -18,11 +18,18 @@ from rest_framework.permissions import IsAuthenticated
 class InformationEducationViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = infoSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     filterset_class = educationFilter
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
+
+    ordering_fields = ["information_educational_id", "create_time", "upd_time"]
+    ordering = ["-create_time"]
 
     def get_permissions(self):
         print(self.action, "action permission")
@@ -34,8 +41,12 @@ class InformationEducationViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = modelInfo.objects.all()
-        filter_queryset = self.filter_queryset(queryset)
-        paginated_queryset = self.paginate_queryset(filter_queryset)
+        queryset = self.filter_queryset(queryset)
+        # implement ordering
+        ordering_filter = filters.OrderingFilter()
+        queryset = ordering_filter.filter_queryset(request, queryset, self)
+
+        paginated_queryset = self.paginate_queryset(queryset)
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 

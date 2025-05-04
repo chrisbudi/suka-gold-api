@@ -2,11 +2,13 @@ from core.information.api.serializers import (
     InformationCustomerServiceSerializer as infoSerializer,
     InformationCustomerServiceFilter as customerFilter,
 )
-from rest_framework import status, viewsets, filters, pagination, response, permissions
+from rest_framework import status, viewsets, filters, pagination, response
+
+
 from core.domain import information_customer_service as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -16,11 +18,17 @@ from rest_framework.permissions import IsAuthenticated
 class InformationCustomerServiceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = infoSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     filterset_class = customerFilter
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
+    ordering_fields = ["id", "create_time", "upd_time"]
+    ordering = ["-create_time"]
 
     def get_permissions(self):
         print(self.action, "action permission")
@@ -32,8 +40,14 @@ class InformationCustomerServiceViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = modelInfo.objects.all()
-        filter_queryset = self.filter_queryset(queryset)
-        paginated_queryset = self.paginate_queryset(filter_queryset)
+        queryset = self.filter_queryset(queryset)
+
+        # implement ordering
+        ordering_filter = filters.OrderingFilter()
+        queryset = ordering_filter.filter_queryset(request, queryset, self)
+
+        # implement pagination
+        paginated_queryset = self.paginate_queryset(queryset)
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 

@@ -20,8 +20,15 @@ from rest_framework.permissions import IsAuthenticated
 class InformationArticleViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = infoSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     filterset_class = ratingFilter
+
+    ordering_fields = ["information_article_id", "create_time", "upd_time"]
+    ordering = ["-create_time"]
 
     pagination_class = (
         pagination.LimitOffsetPagination
@@ -37,8 +44,13 @@ class InformationArticleViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = modelInfo.objects.all()
-        filter_queryset = self.filter_queryset(queryset)
-        paginated_queryset = self.paginate_queryset(filter_queryset)
+        queryset = self.filter_queryset(queryset)
+
+        # implement ordering
+        ordering_filter = filters.OrderingFilter()
+        queryset = ordering_filter.filter_queryset(request, queryset, self)
+
+        paginated_queryset = self.paginate_queryset(queryset)
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 

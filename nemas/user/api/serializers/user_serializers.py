@@ -55,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
-        member_number = "IDN" + generate_numeric_code(5)
+        member_number = "IDN-" + generate_numeric_code(5)
         validated_data["member_number"] = (
             member_number if self.instance is None else self.instance.member_number
         )

@@ -19,8 +19,14 @@ from rest_framework.permissions import IsAuthenticated
 class InformationPromoViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = infoSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     filterset_class = promoFilter
+    ordering_fields = ["promo_id", "create_time", "upd_time"]
+    ordering = ["-create_time"]
 
     pagination_class = (
         pagination.LimitOffsetPagination
@@ -55,8 +61,13 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
     )
     def list(self, request):
         queryset = modelInfo.objects.all()
-        filter_queryset = self.filter_queryset(queryset)
-        paginated_queryset = self.paginate_queryset(filter_queryset)
+        queryset = self.filter_queryset(queryset)
+
+        # implement ordering
+        ordering_filter = filters.OrderingFilter()
+        queryset = ordering_filter.filter_queryset(request, queryset, self)
+
+        paginated_queryset = self.paginate_queryset(queryset)
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
@@ -81,8 +92,14 @@ class InformationPromoViewSet(viewsets.ModelViewSet):
     )
     def list_show(self, request):
         queryset = modelInfo.objects.filter(show_banner=True)
-        filter_queryset = self.filter_queryset(queryset)
-        paginated_queryset = self.paginate_queryset(filter_queryset)
+        queryset = self.filter_queryset(queryset)
+
+        # implement ordering
+        ordering_filter = filters.OrderingFilter()
+        queryset = ordering_filter.filter_queryset(request, queryset, self)
+
+        # implement pagination
+        paginated_queryset = self.paginate_queryset(queryset)
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
