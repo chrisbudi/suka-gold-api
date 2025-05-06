@@ -145,9 +145,12 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_total = order_cart_models.total_price_round + shipping_total_rounded
         order_pph22 = order_total * Decimal((25 / 100 / 100))
         order_grand_total_price = order_total + order_pph22
-        order_number = (
-            "BP/" + datetime.now().strftime("%y%m") + "/" + generate_alphanumeric_code()
+        prefix = (
+            "TE/"
+            if validated_data.get("order_payment_method_name") == "FISIK"
+            else "BP/"
         )
+        order_number = f"{prefix}{datetime.now():%y%m}/{generate_alphanumeric_code()}"
         with transaction.atomic():
             validated_data.update(
                 {
@@ -217,10 +220,10 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 )
 
             # submit order for shipping
-            process_tracking = TrackingProcess(order_gold_instance)
-            tracking_ref = process_tracking.submit_tracking(
-                validated_data, user, shipping_data, delivery_partner_model
-            )
+            # process_tracking = TrackingProcess(order_gold_instance)
+            # tracking_ref = process_tracking.submit_tracking(
+            #     validated_data, user, shipping_data, delivery_partner_model
+            # )
 
             # process payment
             process = PaymentProcess(order_gold_instance)
@@ -243,12 +246,16 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     validated_data, order_amount_billed, user, order_gold_instance
                 )
 
+            elif validated_data.get("order_payment_method_name") == "FISIK":
+                pay_ref = process.weight_payment(
+                    validated_data, order_amount_billed, user, order_gold_instance
+                )
+
             if not pay_ref.get("success"):
                 raise serializers.ValidationError(pay_ref)
 
         return NemasReponses.success(
             data={
-                # "order_gold_instance": OrderGoldSerializer(order_gold_instance).data,
                 "pay_ref": pay_ref.get("data"),
             },
             message="Order created successfully",

@@ -171,7 +171,7 @@ class PaymentProcess:
             message="Cash payment is successfully",
         )
 
-    def digital_payment(
+    def weight_payment(
         self,
         validated_data,
         order_amount,

@@ -14,7 +14,6 @@ from order.models import (
 def handle_order_gold(
     sender: type[order_gold], instance: order_gold, created, **kwargs
 ):
-
     if created:
         with transaction.atomic():
             if instance.order_cart is not None:

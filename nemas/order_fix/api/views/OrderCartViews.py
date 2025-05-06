@@ -63,7 +63,7 @@ class CartItemListAPIView(viewsets.ModelViewSet):
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            instance = serializer.save(user=request.user)
+            serializer.save(user=request.user)
             # select all data from order cart detail then update show it
             queryset = order_cart_detail.objects.filter(
                 user_id=request.user, completed_cart=False, selected=True
@@ -73,10 +73,6 @@ class CartItemListAPIView(viewsets.ModelViewSet):
                 updated_serializer.data, status=status.HTTP_201_CREATED
             )
 
-            # updated_serializer = CartDetailSerializer(instance, many=True)
-            # return response.Response(
-            #     updated_serializer.data, status=status.HTTP_201_CREATED
-            # )
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(

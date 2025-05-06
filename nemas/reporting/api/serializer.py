@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .contracts import GoldTransactionContract
+from reporting.contracts import GoldTransactionContract
 
 
 class GoldTransactionContractSerializer(serializers.Serializer):
