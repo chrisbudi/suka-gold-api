@@ -4,9 +4,55 @@ from rest_framework.response import Response
 from django.db import connection
 from .contracts import GoldTransactionContract
 from .serializer import GoldTransactionContractSerializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 class GoldTransactionLogView(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="user_id",
+                required=False,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="start_date",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                name="end_date",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                name="order_by",
+                required=False,
+                type=str,
+                enum=["transaction_date", "user_id", "weight", "price"],
+            ),
+            OpenApiParameter(
+                name="order_direction",
+                # description="Order direction (ASC or DESC, default: DESC)",
+                required=False,
+                type=str,
+                enum=["ASC", "DESC"],
+            ),
+            OpenApiParameter(
+                name="fetch",
+                required=False,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="offset",
+                required=False,
+                type=int,
+            ),
+        ],
+        responses={
+            200: GoldTransactionContractSerializer(many=True),
+        },
+    )
     def get(self, request):
         query = """
             SELECT uu.email, uu.id AS user_id, uu.user_name, gt.*
@@ -54,8 +100,28 @@ class GoldTransactionLogView(APIView):
                 FROM order_order_gold og
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id
-            ORDER BY gt.transaction_date DESC;
         """
+
+        # Apply filters
+        user_id = request.query_params.get("user_id")
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+        order_by = request.query_params.get("order_by", "transaction_date")
+        order_direction = request.query_params.get("order_direction", "DESC")
+
+        filters = []
+        if user_id:
+            filters.append(f"uu.id = {user_id}")
+        if start_date:
+            filters.append(f"gt.transaction_date >= '{start_date}'")
+        if end_date:
+            filters.append(f"gt.transaction_date <= '{end_date}'")
+
+        if filters:
+            query += " WHERE " + " AND ".join(filters)
+
+        # Apply ordering
+        query += f" ORDER BY {order_by} {order_direction}"
 
         with connection.cursor() as cursor:
             cursor.execute(query)
@@ -66,7 +132,19 @@ class GoldTransactionLogView(APIView):
                 columns = []
                 rows = []
 
-        contracts = [GoldTransactionContract(**dict(zip(columns, row))) for row in rows]
+        # Apply pagination
+        fetch = int(request.query_params.get("fetch", 10))
+        offset = int(request.query_params.get("offset", 0))
+        paginated_rows = rows[offset : offset + fetch]
+
+        contracts = [
+            GoldTransactionContract(**dict(zip(columns, row))) for row in paginated_rows
+        ]
 
         serializer = GoldTransactionContractSerializer(contracts, many=True)
-        return Response(serializer.data)
+        return Response(
+            {
+                "count": len(rows),
+                "results": serializer.data,
+            }
+        )
