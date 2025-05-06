@@ -1,6 +1,6 @@
 # urls.py
 from django.urls import path
-from .views import GoldTransactionLogView
+from api.views import GoldTransactionLogView
 
 app_name = "reporting"
 

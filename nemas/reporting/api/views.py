@@ -2,7 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
-from .contracts import GoldTransactionContract
+from reporting.contracts import GoldTransactionContract
 from .serializer import GoldTransactionContractSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
