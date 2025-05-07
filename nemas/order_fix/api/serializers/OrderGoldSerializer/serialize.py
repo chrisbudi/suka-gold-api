@@ -257,11 +257,12 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     virtual_account_number,
                     order_gold_instance,
                 )
-            elif validated_data.get("order_payment_method_name") == "CASH":
+            elif validated_data.get("order_payment_method_name") == "SALDO":
                 pay_ref = process.cash_payment(
                     validated_data, order_amount_billed, user, order_gold_instance
                 )
 
+            print(pay_ref, "pay_ref")
             if not pay_ref.get("success"):
                 raise serializers.ValidationError(pay_ref)
 
