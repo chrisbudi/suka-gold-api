@@ -3,7 +3,7 @@ import json
 from django.conf import settings
 import requests
 
-from common.responses import NemasReponses
+from common.responses import NemasReponses, ServicesResponse, SuccessResponse
 from shared_kernel.utils.round_value import round_up_to_100
 
 
@@ -58,7 +58,7 @@ class SapxService:
         except Exception as e:
             raise Exception(f"Failed to get data: {str(e)}")
 
-    def get_price(self, payload=None):
+    def get_price(self, payload=None) -> ServicesResponse:
         """ """
         try:
             response = requests.post(
@@ -66,34 +66,36 @@ class SapxService:
                 headers=self.headers,
                 data=payload,
             )
-            print(response, "response")
-            print(response.status_code, "response.status_code")
+            print(response.json(), "response")
             if response.status_code not in (200, 201):
-                return NemasReponses.failure(
-                    message="Failed to get price",
-                    errors=response.json(),
-                )
+                return {
+                    "success": False,
+                    "data": response.json(),
+                }
             response_data = response.json()
-            return NemasReponses.success(
-                data=response_data.get("data", []),
-                message="Price retrieved successfully",
-            )
+            return {"success": True, "data": response_data.get("data")}
         except requests.exceptions.HTTPError as http_err:
-            return NemasReponses.failure(
-                message="Failed to get price",
-                errors={"error": str(http_err)},
-            )
+            return {
+                "success": False,
+                "data": {
+                    "status_code": response.status_code,
+                    "message": str(http_err),
+                },
+            }
         except requests.exceptions.RequestException as req_err:
-            return NemasReponses.failure(
-                message="Failed to get price",
-                errors={"error": str(req_err)},
-            )
+            return {
+                "success": False,
+                "data": {
+                    "status_code": 500,
+                    "message": str(req_err),
+                },
+            }
         except Exception as e:
             raise Exception(f"Failed to get price: {str(e)}")
 
     def _get_shipping_details(
         self, service_code: str, order_amount: Decimal, shipping_weight: Decimal
-    ):
+    ) -> ServicesResponse:
         # Get the shipping details based on the provided data
 
         payload = self.generate_payload(
@@ -104,14 +106,16 @@ class SapxService:
         )
         payload_data = json.dumps(payload)
         shipping_data = self.get_price(payload_data)
+        print(shipping_data, "shipping_data")
         if not shipping_data.get("success"):
-            return NemasReponses.failure(
-                message="Failed to get price",
-                errors={"error": shipping_data.get("message")},
-            )
+            return {
+                "success": False,
+                "data": shipping_data.get("data"),
+            }
 
         tracking_service_code = service_code
-        print(shipping_data, "shipping_data")
+        print(shipping_data.get("data").get("data"), "shipping_data")
+
         services = list(
             filter(
                 lambda s: s.get("service_type_code") == tracking_service_code,
@@ -122,12 +126,14 @@ class SapxService:
         service = next(iter(services), {})
         print(service, "service")
         if not service:
-            return NemasReponses.failure(
-                message="Failed to get price",
-                errors={"error": "Service not found"},
-            )
+            return {
+                "success": False,
+                "data": {
+                    "message": "Service not found",
+                },
+            }
         # Extracting the required fields from the service
-        service = shipping_data.get("data", {}).get("services", [{}])[0]
+        print(service, "service")
         insurance = service.get("insurance_cost")
         insurance_round = round_up_to_100(insurance)
         insurance_admin = service.get("insurance_admin_cost")
@@ -146,11 +152,14 @@ class SapxService:
             shipping_total_rounded,
         )
         return {
-            "insurance": insurance,
-            "insurance_round": insurance_round,
-            "insurance_admin": insurance_admin,
-            "packing": packing,
-            "cost": cost,
-            "shipping_total": shipping_total,
-            "shipping_total_rounded": shipping_total_rounded,
+            "success": True,
+            "data": {
+                "insurance": insurance,
+                "insurance_round": insurance_round,
+                "insurance_admin": insurance_admin,
+                "packing": packing,
+                "cost": cost,
+                "shipping_total": shipping_total,
+                "shipping_total_rounded": shipping_total_rounded,
+            },
         }

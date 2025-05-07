@@ -33,6 +33,16 @@ class NemasReponses:
         }
 
 
+# jk    @staticmethod
+#     def failure(errors: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+#         """
+#         Standard format for a failed response.
+#         """
+#         return {
+#             "errors": errors or {},
+#         }
+
+
 T = TypeVar("T")
 
 
@@ -43,7 +53,7 @@ class SuccessResponse(Generic[T], TypedDict):
 
 class ErrorResponse(TypedDict):
     success: Literal[False]
-    data: None
+    data: Any
 
 
 ServicesResponse = Union[SuccessResponse[T], ErrorResponse]

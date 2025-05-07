@@ -73,6 +73,9 @@ class gold(models.Model):
     product_cost = models.DecimalField(
         max_digits=10, decimal_places=2, default=decimal(0.00)
     )
+    redeem_price = models.DecimalField(
+        max_digits=10, decimal_places=2, default=decimal(0.00)
+    )  # biaya tarik emas
     gold_image_1 = models.CharField(max_length=255, default="")
     gold_image_2 = models.CharField(max_length=255, default="")
     gold_image_3 = models.CharField(max_length=255, default="")

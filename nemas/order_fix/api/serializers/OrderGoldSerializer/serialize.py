@@ -11,7 +11,7 @@ from order.models.order_cart import order_cart_detail
 from order.models import order_cart
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
-from core.domain.gold import gold as GoldModel
+from core.domain.gold import gold as GoldModel, gold_price
 from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
 from django.db import transaction
@@ -97,8 +97,30 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         if not order_cart_models and not order_cart_details_model:
             raise serializers.ValidationError("Order cart not found")
 
+        goldPriceModel = gold_price().get_active_price()
+
         shipping_weight = Decimal(1)
         order_amount = order_cart_models.total_price_round
+        order_shipping_item_amount = Decimal(
+            0 if order_cart_models.order_type == "redeem" else order_amount
+        )
+        for cart_detail in order_cart_details_model:
+            goldModel = cart_detail.gold
+            certificateModel = goldModel.certificate
+
+            order_shipping_item_amount = (
+                Decimal(
+                    (
+                        (goldPriceModel.gold_price_buy * goldModel.gold_weight)
+                        // 100
+                        * 100
+                        + 100
+                    )
+                    + (certificateModel.cert_price if certificateModel else 0)
+                    + (goldModel.product_cost or 0)
+                )
+                * order_cart_models.total_weight
+            )
 
         # get shipping id
 
@@ -110,21 +132,22 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         if not delivery_partner_model:
             raise serializers.ValidationError("Delivery partner not found")
 
-        # get shipping service
         tracking_service_code = validated_data.get("tracking_courier_service_code")
+        # get shipping service
         shipping_details: ServicesResponse[ShippingDetails] = self.get_shipping_service(
-            delivery_partner_model, tracking_service_code, order_amount, shipping_weight
+            delivery_partner_model,
+            tracking_service_code,
+            order_shipping_item_amount,
+            shipping_weight,
         )
 
-        if (
-            not shipping_details.get("data")
-            and not shipping_details.get("success") == True
-        ):
+        if shipping_details.get("success") == False or not shipping_details.get("data"):
             return NemasReponses.failure(
                 message="Failed to get shipping details",
-                errors={"error": shipping_details.get("message")},
+                errors={"error": shipping_details.get("data")},
             )
-        shipping_data = cast(ShippingDetails, shipping_details["data"])
+
+        shipping_data = cast(ShippingDetails, shipping_details.get("data"))
         insurance = shipping_data["insurance"]
         insurance_round = shipping_data["insurance_round"]
         insurance_admin = shipping_data["insurance_admin"]
@@ -135,21 +158,11 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_amount_billed = (
             order_cart_models.total_price_round + shipping_total_rounded
         )
-
-        order_amount_billed = (
-            order_cart_models.total_price_round + shipping_total_rounded
-        )
-        # Insert data from order_cart into order_gold
-
         # add calculation for order pph22
         order_total = order_cart_models.total_price_round + shipping_total_rounded
         order_pph22 = order_total * Decimal((25 / 100 / 100))
         order_grand_total_price = order_total + order_pph22
-        prefix = (
-            "TE/"
-            if validated_data.get("order_payment_method_name") == "FISIK"
-            else "BP/"
-        )
+        prefix = "TE/" if order_cart_models.order_type == "redeem" else "BP/"
         order_number = f"{prefix}{datetime.now():%y%m}/{generate_alphanumeric_code()}"
         with transaction.atomic():
             validated_data.update(
@@ -182,6 +195,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_tracking_total_amount": shipping_total,
                     "order_promo_code": None,
                     "order_discount": 0,
+                    "order_type": order_cart_models.order_type,
                     "order_total_price": (
                         order_cart_models.total_price + shipping_total
                     ),
@@ -196,6 +210,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     ),
                     "tracking_status_id": "0",
                     "order_status": "PENDING",
+                    "order_shipping_item_amount": order_shipping_item_amount,
                 }
             )
             order_gold_instance = order_gold.objects.create(**validated_data)
@@ -217,6 +232,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     product_cost=cart_detail.product_cost,
                     order_detail_total_price=cart_detail.total_price,
                     order_detail_total_price_round=cart_detail.total_price_round,
+                    order_type=cart_detail.order_type,
                 )
 
             # submit order for shipping
@@ -246,11 +262,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     validated_data, order_amount_billed, user, order_gold_instance
                 )
 
-            elif validated_data.get("order_payment_method_name") == "FISIK":
-                pay_ref = process.weight_payment(
-                    validated_data, order_amount_billed, user, order_gold_instance
-                )
-
             if not pay_ref.get("success"):
                 raise serializers.ValidationError(pay_ref)
 
@@ -269,7 +280,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         shipping_weight: Decimal,
     ) -> ServicesResponse[ShippingDetails]:
         # get shipping service
-        print(dp_model.delivery_partner_code, "dp_model")
         if dp_model.delivery_partner_code == "SAPX":
             sapx_service = SapxService()
             shipping_details = sapx_service._get_shipping_details(
@@ -277,14 +287,11 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 order_amount,
                 shipping_weight,
             )
-            if shipping_details == None:
-                return {
-                    "success": False,
-                    "data": None,
-                }
+            if shipping_details == None or shipping_details.get("success") == False:
+                return {"success": False, "data": shipping_details.get("data")}
             return {
                 "success": True,
-                "data": cast(ShippingDetails, shipping_details),
+                "data": cast(ShippingDetails, shipping_details.get("data")),
             }
 
         elif dp_model.delivery_partner_code == "PAXEL":
