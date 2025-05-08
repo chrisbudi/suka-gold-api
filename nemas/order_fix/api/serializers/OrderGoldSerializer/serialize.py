@@ -1,7 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
+from django.utils import timezone
 from rest_framework import serializers
-from core.domain.delivery import delivery_partner
+from core.domain.delivery import delivery_partner, delivery_partner_service
 from common.responses import NemasReponses, ServicesResponse
 from common.generator import generate_alphanumeric_code
 from order_fix.api.serializers.OrderGoldSerializer.tracking import TrackingProcess
@@ -133,6 +134,11 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Delivery partner not found")
 
         tracking_service_code = validated_data.get("tracking_courier_service_code")
+        tracking_service_model = delivery_partner_service.objects.filter(
+            delivery_partner_service_code=tracking_service_code,
+        ).first()
+        if not tracking_service_model:
+            raise serializers.ValidationError("Delivery service not found")
         # get shipping service
         shipping_details: ServicesResponse[ShippingDetails] = self.get_shipping_service(
             delivery_partner_model,
@@ -149,25 +155,22 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         shipping_data = cast(ShippingDetails, shipping_details.get("data"))
         insurance = shipping_data["insurance"]
-        insurance_round = shipping_data["insurance_round"]
         insurance_admin = shipping_data["insurance_admin"]
+        insurance_total = insurance_admin + insurance
         packing = shipping_data["packing"]
         cost = shipping_data["cost"]
         shipping_total = shipping_data["shipping_total"]
-        shipping_total_rounded = shipping_data["shipping_total_rounded"]
-        order_amount_billed = (
-            order_cart_models.total_price_round + shipping_total_rounded
-        )
+        order_amount_billed = order_cart_models.total_price_round + shipping_total
         # add calculation for order pph22
-        order_total = order_cart_models.total_price_round + shipping_total_rounded
-        order_pph22 = order_total * Decimal((25 / 100 / 100))
-        order_grand_total_price = order_total + order_pph22
+        order_total = order_cart_models.total_price_round + shipping_total
+        order_pph22 = order_cart_models.total_price_round * Decimal((25 / 100 / 100))
+        order_grand_total_price = order_total
         prefix = "TE/" if order_cart_models.order_type == "redeem" else "BP/"
         order_number = f"{prefix}{datetime.now():%y%m}/{generate_alphanumeric_code()}"
         with transaction.atomic():
             validated_data.update(
                 {
-                    "order_timestamp": datetime.now(),
+                    "order_timestamp": timezone.now(),
                     "order_user_address": user_address_model,
                     "user": user,
                     "order_number": (
@@ -189,28 +192,26 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_pickup_customer_datetime": None,
                     "order_tracking_amount": cost,
                     "order_tracking_insurance": insurance,
-                    "order_tracking_insurance_round": insurance_round,
                     "order_tracking_packing": packing,
                     "order_tracking_insurance_admin": insurance_admin,
+                    "order_tracking_insurance_total": insurance_total,
+                    "order_tracking_item_insurance_amount": order_shipping_item_amount,
                     "order_tracking_total_amount": shipping_total,
                     "order_promo_code": None,
                     "order_discount": 0,
                     "order_type": order_cart_models.order_type,
-                    "order_total_price": (
-                        order_cart_models.total_price + shipping_total
-                    ),
-                    "order_total_price_round": (
-                        order_cart_models.total_price_round + shipping_total_rounded
-                    ),
+                    "order_total_price": (order_cart_models.total_price),
+                    "order_total_price_round": (order_cart_models.total_price_round),
                     "order_pph22": order_pph22,
                     "order_grand_total_price": order_grand_total_price,
                     "tracking_courier_id": validated_data.get("tracking_courier_id"),
+                    "tracking_courier_name": delivery_partner_model.delivery_partner_name,
+                    "tracking_courier_service_name": tracking_service_model.delivery_partner_service_name,
                     "tracking_courier_service_id": validated_data.get(
                         "tracking_courier_service_id"
                     ),
                     "tracking_status_id": "0",
-                    "order_status": "PENDING",
-                    "order_shipping_item_amount": order_shipping_item_amount,
+                    "order_status": "ISSUED",
                 }
             )
             order_gold_instance = order_gold.objects.create(**validated_data)
@@ -224,8 +225,10 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     gold_type=detailGold.type,
                     gold_brand=detailGold.brand,
                     weight=detailGold.gold_weight,
-                    order_price=cart_detail.price,
+                    order_price=cart_detail.order_price,
+                    order_price_round=cart_detail.order_price_round,
                     gold_price=cart_detail.gold_price,
+                    gold_price_round=cart_detail.gold_price_round,
                     qty=cart_detail.quantity,
                     cert=cart_detail.cert,
                     cert_price=cart_detail.cert_price,

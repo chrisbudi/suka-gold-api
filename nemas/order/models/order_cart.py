@@ -18,8 +18,10 @@ class order_cart(models.Model):
         on_delete=models.CASCADE,
     )
     total_weight = models.DecimalField(max_digits=10, decimal_places=4)
+
     total_price = models.DecimalField(max_digits=16, decimal_places=2)
     total_price_round = models.DecimalField(max_digits=16, decimal_places=0)
+
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
     order_type = models.CharField(max_length=50, null=True, blank=True)
@@ -78,6 +80,9 @@ class order_cart_detail(models.Model):
     selected = models.BooleanField(default=True)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
     gold_price = models.DecimalField(max_digits=16, decimal_places=2)
+    gold_price_round = models.DecimalField(max_digits=16, decimal_places=0)
+    order_price = models.DecimalField(max_digits=16, decimal_places=2)
+    order_price_round = models.DecimalField(max_digits=16, decimal_places=2)
     price = models.DecimalField(max_digits=16, decimal_places=2)
     total_price = models.DecimalField(max_digits=16, decimal_places=2, editable=False)
     total_price_round = models.DecimalField(

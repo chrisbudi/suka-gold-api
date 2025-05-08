@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from datetime import datetime
+from django.utils import timezone
 from core.domain import gold_price
 
 from order.models import order_gold, order_gold_detail
@@ -43,10 +44,10 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         <tr>
         <td>{detail_number}</td>
         <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
-        <td>{detail.qty}</td>
-        <td>grams</td>
-        <td>{detail.order_price}</td>
-        <td>{detail.order_detail_total_price_round}</td>
+        <td>{detail.qty:,}</td>
+        <td>gr</td>
+        <td>{detail.order_price_round:,.2f}</td>
+        <td>{detail.order_detail_total_price_round:,.2f}</td>
         </tr>"""
         detail_number += 1
 
@@ -56,15 +57,23 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         email_html = render_to_string(
             "email/transaction/invoice.html",
             {
-                "transaction_date": order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-                "transaction_number": order.order_number,
-                "transaction_account": order.user.id,
-                "first_name": order.user.name,
+                "NAMA_USER": user.name,
+                "ID_PELANGGAN": user.member_number,
+                "TANGGAL_WAKTU": (
+                    order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    if order.order_timestamp
+                    else "N/A"
+                ),
+                "NO_TRANSAKSI": order.order_number,
                 "table_product": table_product_data,
-                "SubTotal": order.order_total_price_round,
-                "Pph22": order.order_pph22,
-                "GrandTotal": order.order_grand_total_price,
-                "Pembayaran": order_payment.order_payment_method_name,
+                "Expedisi": order.tracking_courier_name,
+                "Expedisi_Cost": f"{((order.order_tracking_amount or 0) + (order.order_tracking_packing or 0)):,.2f}",
+                "Insurance_Cost": f"{(order.order_tracking_insurance_total or 0.0):,.2f}",
+                "SubTotal": f"{order.order_total_price_round:,.2f}",
+                "GrandTotal": f"{order.order_grand_total_price:,.2f}",
+                "Pembayaran": (order_payment.order_payment_method_name or "")
+                + " - "
+                + (order_payment.order_payment_number or ""),
                 **mail_props,
             },
         )

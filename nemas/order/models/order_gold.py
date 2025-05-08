@@ -11,7 +11,6 @@ from core.domain import (
 )
 from core.domain.gold import gold
 from core.domain.delivery import delivery_partner_service
-from order.models.order_payment import order_payment
 from order.models.order_cart import order_cart_detail
 from user.models.users import user_address
 
@@ -56,17 +55,14 @@ class order_gold(models.Model):
     order_type = models.CharField(max_length=50, null=True, blank=True)
 
     # insurance
-    order_shipping_item_amount = models.DecimalField(
-        max_digits=12, decimal_places=2, null=True
+    order_tracking_item_insurance_amount = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True
     )
     order_tracking_insurance = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
-    order_tracking_insurance_round = models.DecimalField(
-        max_digits=10, decimal_places=0, null=True
-    )
     order_tracking_insurance_admin = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True
+        max_digits=10, decimal_places=0, null=True
     )
     order_tracking_insurance_total = models.DecimalField(
         max_digits=10, decimal_places=0, null=True
@@ -80,6 +76,7 @@ class order_gold(models.Model):
     order_tracking_total_amount = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
     )
+
     # tracking status
     tracking_status_id = models.CharField(max_length=255, null=True)
     tracking_status = models.CharField(max_length=255, null=True)
@@ -87,10 +84,11 @@ class order_gold(models.Model):
     tracking_courier = models.ForeignKey(
         delivery_partner, on_delete=models.CASCADE, null=True
     )
-
+    tracking_courier_name = models.CharField(max_length=100, null=True)
     tracking_courier_service = models.ForeignKey(
         delivery_partner_service, on_delete=models.CASCADE, null=True
     )
+    tracking_courier_service_name = models.CharField(max_length=100, null=True)
     tracking_courier_service_code = models.CharField(max_length=50, null=True)
     tracking_number = models.CharField(max_length=255, null=True)
     tracking_last_note = models.CharField(max_length=255, null=True)
@@ -101,6 +99,7 @@ class order_gold(models.Model):
 
     # start of payment
     order_gold_payment_ref = models.CharField(max_length=255, null=True)
+
     order_gold_payment_status = models.CharField(max_length=255, null=True)
     # end of payment
 
@@ -112,7 +111,7 @@ class order_gold(models.Model):
 
     order_total_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_total_price_round = models.DecimalField(max_digits=16, decimal_places=0)
-    order_pph22 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    order_pph22 = models.DecimalField(max_digits=10, decimal_places=0, null=True)
     order_grand_total_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_total_redeem_price = models.DecimalField(
         max_digits=16, decimal_places=2, null=True
@@ -150,11 +149,15 @@ class order_gold_detail(models.Model):
     )
     gold_type = models.CharField(max_length=255, null=True)
     gold_brand = models.CharField(max_length=255)
-    gold_price = models.ForeignKey(
+    gold_price_ref = models.ForeignKey(
         gold_price_config, on_delete=models.CASCADE, null=True
     )
-    order_type = models.CharField(max_length=50, null=True)
     cert = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
+    gold_price = models.DecimalField(max_digits=16, decimal_places=2, null=True)
+    gold_price_round = models.DecimalField(max_digits=16, decimal_places=2, null=True)
+    order_price = models.DecimalField(max_digits=16, decimal_places=2, null=True)
+    order_price_round = models.DecimalField(max_digits=16, decimal_places=2, null=True)
+    order_type = models.CharField(max_length=50, null=True)
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
     product_cost = models.DecimalField(max_digits=10, decimal_places=2)
     weight = models.DecimalField(max_digits=10, decimal_places=4)
@@ -165,8 +168,6 @@ class order_gold_detail(models.Model):
     order_detail_stock_status = models.CharField(
         max_length=255, null=True, default="open"
     )
-    order_price = models.DecimalField(max_digits=16, decimal_places=2)
-    gold_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price = models.DecimalField(max_digits=16, decimal_places=2)
     order_detail_total_price_round = models.DecimalField(
         max_digits=16, decimal_places=0

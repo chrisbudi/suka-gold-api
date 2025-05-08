@@ -48,33 +48,52 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
 
         if validated_data["order_type"] == "redeem":
             redeem_price = Decimal(Decimal(goldModel.redeem_price))
-
             price = (
                 redeem_price
                 + (certificateModel.cert_price if certificateModel else 0)
                 + (goldModel.product_cost or 0)
             )
+            order_price = price // 100 * 100 + 100
+            order_price_round = order_price
             total_price = price * validated_data["quantity"]
             total_price_round = (price) * validated_data["quantity"]
         else:
             redeem_price = Decimal(0)
-            price = (
-                (goldPriceModel.gold_price_buy * goldModel.gold_weight)
+            price = goldPriceModel.gold_price_buy * goldModel.gold_weight
+            price_round = price // 100 * 100 + 100
+            order_price = (
+                price
+                + goldModel.product_cost
                 + (certificateModel.cert_price if certificateModel else 0)
-                + (goldModel.product_cost or 0)
             )
-            total_price = price * validated_data["quantity"]
-            total_price_round = ((price // 100) * 100 + 100) * validated_data[
-                "quantity"
-            ]
+            order_price_round = (
+                price_round
+                + goldModel.product_cost
+                + (certificateModel.cert_price if certificateModel else 0)
+            )
+
+            total_price = (
+                price
+                + goldModel.product_cost
+                + (certificateModel.cert_price if certificateModel else 0)
+            ) * validated_data["quantity"]
+
+            total_price_round = (
+                price_round
+                + goldModel.product_cost
+                + (certificateModel.cert_price if certificateModel else 0)
+            ) * validated_data["quantity"]
 
         if order_cart_detail_model:
             order_cart_detail_model.price = price
             order_cart_detail_model.gold_price = goldPriceModel.gold_price_buy
+            order_cart_detail_model.gold_price_round = price_round
+            order_cart_detail_model.order_price = order_price
+            order_cart_detail_model.order_price_round = order_price_round
             order_cart_detail_model.product_cost = goldModel.product_cost
             order_cart_detail_model.weight = goldModel.gold_weight
-            order_cart_detail_model.cert_price = (
-                certificateModel.cert_price if certificateModel else Decimal("0")
+            order_cart_detail_model.cert_price = Decimal(
+                certificateModel.cert_price if certificateModel else 0
             )
             order_cart_detail_model.quantity = validated_data["quantity"]
             order_cart_detail_model.total_price = total_price
@@ -93,6 +112,9 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "user": self.context["request"].user,
                 "price": price,
                 "gold_price": goldPriceModel.gold_price_buy,
+                "gold_price_round": price_round,
+                "order_price": order_price,
+                "order_price_round": order_price_round,
                 "weight": goldModel.gold_weight,
                 "total_price": total_price,
                 "total_price_round": total_price_round,
@@ -136,12 +158,15 @@ class ProcessCartSerializer(serializers.Serializer):
         order_cart_instance.total_weight = Decimal(
             sum([item.weight for item in order_cart_detail_model])
         )
+
         order_cart_instance.total_price = Decimal(
             sum([item.total_price for item in order_cart_detail_model])
         )
+
         order_cart_instance.total_price_round = Decimal(
             sum([item.total_price_round for item in order_cart_detail_model])
         )
+
         order_cart_instance.order_type = validated_data.get("order_type")
 
         order_cart_instance.total_redeem_price = Decimal(
@@ -177,6 +202,10 @@ class CartDetailSerializer(serializers.ModelSerializer):
             "weight",
             "price",
             "quantity",
+            "gold_price",
+            "gold_price_round",
+            "order_price",
+            "order_price_round",
             "total_price",
             "total_price_round",
             "created_at",
