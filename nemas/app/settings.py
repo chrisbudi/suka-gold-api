@@ -372,6 +372,7 @@ SAPX = {
     "API_KEY": os.getenv("SAPX_API_KEY"),
 }
 
+EMAIL_SITE_URL = os.getenv("EMAIL_SITE_URL", "https://mail.nemas.id")
 
 SENDGRID_EMAIL = {
     "API_KEY": os.getenv("SENDGRID_API_KEY"),
