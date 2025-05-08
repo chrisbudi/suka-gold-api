@@ -1,322 +1,118 @@
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Konfirmasi Email</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Validation</title>
+  <style>
+    @media only screen and (min-width: 600px) {
+      .company-header-table td {
+        vertical-align: top;
+      }
+      .company-logo {
+        text-align: left !important;
+      }
+      .company-center {
+        text-align: right !important;
+      }
+      .company-right {
+        text-align: right !important;
+      }
+      .confirm-button {
+  display: inline-block;
+  background-color: #f4bd19; /* keemasan */
+  color: rgb(0, 0, 0);
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-        .logo-img {
-            max-height: 50px;
-            width: auto;
-            display: block;
-            margin: 0 auto;
-        }
+.confirm-button:hover {
+  background-color: #ffcc3e; /* Warna keemasan lebih gelap saat hover */
+  transform: scale(1.05); /* Efek zoom saat hover */
+}
 
-        @media (max-width: 600px) {
-            .logo-img {
-                max-height: 70px;
-            }
-        }
+.confirm-button:active {
+  background-color: #f4bd19; /* Lebih gelap saat diklik */
+  transform: scale(0.98);
+}
 
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            overflow: hidden;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 20px;
-            gap: 20px;
-            flex-wrap: wrap;
-            /* untuk responsif */
-            border-bottom: 3px solid #F0BF6B;
-        }
-
-        .header-section {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .header-section.right {
-            text-align: right;
-        }
-
-        .header-section p {
-            margin: 2px 0;
-            font-size: 13px;
-            color: #333;
-        }
-
-        .header-section img.icon {
-            width: 14px;
-            height: 14px;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-
-        .info-section {
-            padding: 20px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .info-section p {
-            margin: 6px 0;
-        }
-
-        .info-section strong {
-            display: inline-block;
-            width: 120px;
-        }
-
-        .transaction-label {
-            background-color: #fff;
-            color: #333;
-            text-align: right;
-            padding: 0 20px;
-            font-weight: bold;
-        }
-
-        .transaction-label p {
-            margin: 2px 0;
-        }
-
-        .table-wrapper {
-            padding: 0 20px;
-        }
-
-        .table-container {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        .table-container th,
-        .table-container td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .table-container th {
-            background-color: #F0BF6B;
-            color: #333;
-        }
-
-        .summary {
-            padding: 0 20px 20px;
-            font-size: 14px;
-        }
-
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .summary-table td {
-            padding: 10px 0;
-            border-top: 1px solid #ddd;
-            text-align: right;
-        }
-
-        .summary-table td:first-child {
-            text-align: left;
-        }
-
-        .summary-table tr:last-child td {
-            font-weight: bold;
-        }
-
-        .footer {
-            padding: 15px 20px;
-            font-size: 15px;
-            text-align: center;
-            color: #777;
-        }
-
-        .footer-note {
-            font-size: 12px;
-            text-align: center;
-            color: #999;
-            margin-top: 0px;
-        }
-
-        .footer-message {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            text-align: justify;
-        }
-
-        @media (min-width: 600px) {
-            .footer-message {
-                flex-direction: row;
-                justify-content: space-between;
-                gap: 50px;
-            }
-        }
-
-        .footer-social {
-            background-color: #F0BF6B;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 10px 0;
-        }
-
-        .footer-social img {
-            height: 30px;
-            width: 30px;
-        }
-
-        .hr-line {
-            border-top: 1px solid #eee;
-            margin: 20px 0;
-            /* jarak atas bawah */
-        }
-
-        .hr-line-full {
-            border: none;
-            border-top: 1px solid #eee;
-            margin: 5px;
-            width: 100vw;
-            /* lebar seluruh viewport */
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .banner {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .banner img {
-            height: 180px;
-        }
-
-        .email-content {
-            padding: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: #464646;
-        }
-
-        .button-container {
-            margin: 20px 0;
-        }
-
-        .confirm-button {
-            background-color: #f9c51f;
-            padding: 10px 20px;
-            color: #000;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .break-url {
-            word-break: break-all;
-        }
-
-        /* Tambahkan di bawah sini */
-        @media (max-width: 600px) {
-            .header {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-
-            .header-section,
-            .header-section.right {
-                text-align: center !important;
-                width: 100%;
-            }
-
-            .email-content p,
-            .footer-note p,
-            .button-container,
-            .footer-message {
-                text-align: center !important;
-            }
-
-            .confirm-button {
-                margin: 0 auto;
-            }
-
-            .footer-social {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
+    }
+  </style>
 </head>
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family: Arial, sans-serif;">
+  <center>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding: 20px 0;">
+      <tr>
+        <td>
+          <table width="700" cellpadding="0" cellspacing="0" align="center" style="background-color: #fff; border:1px solid #ddd; border-radius:8px;">
 
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="header-section">
-                <img class="logo-img"
-                    src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/128a662e-d689-46e7-887d-b312927c9fcc/5988x2556.png"
-                    alt="Logo" />
-            </div>
-            <div class="header-section center">
-                <p><strong>{{NAMA_PERUSAHAAN}}</strong></p>
-                <p>{{ALAMAT_PERUSAHAAN}} </p>
-                <p><a href="{{WEBSITE_URL}}">{{WEBSITE}}</a> </p>
-            </div>
-
-            <div class="header-section right">
-
-                <p>{{TELP}} <img class="icon"
+            <!-- Header -->
+            <tr>
+              <td style="padding:20px; border-bottom:3px solid #F0BF6B;">
+                <table class="company-header-table" width="100%">
+                  <tr>
+                    <td width="25%" class="company-logo" style="text-align:left;">
+                      <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/172e4f51-ad65-40c2-9e36-8848a1c644c7/1490x792.jpg"
+                        alt="Logo" style="max-height:50px; display:block;" />
+                    </td>
+                    <td width="33%" class="company-center" style="font-size:13px; color:#333; text-align:right;">
+                      <strong>{{NAMA_PERUSAHAAN}}</strong><br>
+                      {{ALAMAT_PERUSAHAAN}} <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c9382236-60e7-4678-9836-9dfb584fa787/40x40.png"
+                        width="14" height="14" alt="Alamat" /><br>
+                      <a href="{{WEBSITE_URL}}" style="color:#333;">{{WEBSITE}}</a> <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/6aedb94c-0352-4064-9af8-90f5d18f0b9c/40x40.png"
+                        width="14" height="14" alt="Website" />
+                    </td>
+                    <td width="33%" class="company-right" style="font-size:13px; color:#333; text-align:right;">
+                      {{TELP}} <img
                         src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4138bb6a-9c21-4f6e-8511-c0c9b79642d7/40x40.png"
-                        alt="Telepon" /></p>
-                <p>{{TELP_URL}} <img class="icon"
+                        width="14" height="14" alt="Telepon" /><br>
+                      {{TELP_URL}} <img
                         src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/2f942479-b182-4197-bf6b-a6e4541a3701/40x40.png"
-                        alt="WhatsApp" /></p>
-                <p><a href="mailto:{{SUPPORT}}">{{SUPPORT}}</a> <img class="icon"
+                        width="14" height="14" alt="WhatsApp" /><br>
+                      <a href="{{SUPPORT}}" style="color:#333;">{{SUPPORT}}</a> <img
                         src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4a466397-769d-47f1-a147-3fefb43fd189/40x40.png"
-                        alt="Email" /></p>
-            </div>
-        </div>
+                        width="14" height="14" alt="Email" />
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
 
-        <div class="banner">
-            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d202b6fd-5076-47e5-98d2-1588cf3546b1/700x200.png"
-                height="180" alt="Konfirmasi Email">
-        </div>
-        <div class="email-content">
-            <p><strong>Hi {{NAMA_USER}}</strong></p>
-            <p>Silakan konfirmasi email Anda dengan klik tombol di bawah ini:</p>
+            <!-- Info Section -->
+            <tr>
+              <td style="padding:20px; font-size:14px; color:#333;">
+                <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d202b6fd-5076-47e5-98d2-1588cf3546b1/700x200.png" height="180" alt="Konfirmasi Email">
+              </td>
+            </tr>
 
-            <div class="button-container">
+            <!-- Transaction Label -->
+            
+
+            <!-- Table -->
+            <tr>
+              <td style="padding:0 20px; font-size:14px; text-align: center; color:#777;">
+                <p><strong>Hi {{NAMA_USER}}</strong></p>
+                <p>Silakan konfirmasi email Anda dengan klik tombol di bawah ini:</p>
+            
+                <div class="button-container">
                 <a href="{{URL_KONFIRMASI}}" class="confirm-button">
                     Konfirmasi Email
                 </a>
-            </div>
-
+                </div>
+            
             <p>Jika Anda tidak dapat mengklik tombol di atas, salin dan tempel URL berikut di browser Anda:</p>
             <p class="break-url">
                 {{URL_KONFIRMASI}}
             </p>
-
+            
             <p>
                 Untuk pertanyaan atau bantuan, hubungi kami:<br>
                 Senin - Jumat pukul 09.00 - 16.00 WIB<br>
@@ -324,29 +120,31 @@
                 WhatsApp: {{TELP_URL}}<br>
                 Email: <strong>{{SUPPORT}}</strong>
             </p>
-        </div>
+              </td>
+            </tr>
+ 
+            <!-- Footer -->
+            <tr>
+              <td style="padding:20px; font-size:14px; text-align:center; color:#777; border-top:1px solid #eee;">
+                 
+                  <p style="font-size:12px; color:#999;">Jika Anda tidak seharusnya menerima email ini, mohon informasikan kepada kami dan hapus dari inbox Anda. Setiap sanggahan akan dicocokkan dengan sistem dan rekening kami.</p>
+              </td>
+            </tr>
 
+            <!-- Social Media -->
+            <tr>
+              <td style="background-color:#F0BF6B; padding:10px 0; text-align:center;">
+                <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d3692620-c32b-40e9-b9ac-065a15ad749a/40x40.png" alt="Instagram" style="margin: 0 10px; height:30px; width:30px;" />
+                <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/448ff3ba-5c6c-4d80-bc4e-a81bd502927e/40x40.png" alt="Facebook" style="margin: 0 10px; height:30px; width:30px;" />
+                <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/399f17f2-bea6-46fb-ae43-411a8c589a6e/40x40.png" alt="X" style="margin: 0 10px; height:30px; width:30px;" />
+                <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c89e3852-20c5-40d1-bb52-0e3650faf75c/40x40.png" alt="Line" style="margin: 0 10px; height:30px; width:30px;" />
+              </td>
+            </tr>
 
-        <div class="footer">
-            <div class="hr-line-full"></div>
-            <div class="footer-note">
-                <p>Jikalau Anda tidak seharusnya menerima email ini, mohon informasikan kepada kami dan hapus dari inbox
-                    email Anda. Setiap sanggahan/penolakan bukti transaksi akan dicocokkan dengan sistem, inventori dan
-                    rekening bank Nemas</p>
-            </div>
-        </div>
-
-        <div class="footer-social">
-            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d3692620-c32b-40e9-b9ac-065a15ad749a/40x40.png"
-                alt="Instagram">
-            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/448ff3ba-5c6c-4d80-bc4e-a81bd502927e/40x40.png"
-                alt="Facebook">
-            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/399f17f2-bea6-46fb-ae43-411a8c589a6e/40x40.png"
-                alt="X">
-            <img src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c89e3852-20c5-40d1-bb52-0e3650faf75c/40x40.png"
-                alt="Line">
-        </div>
-    </div>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </center>
 </body>
-
 </html>
