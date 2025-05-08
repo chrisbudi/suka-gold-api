@@ -19,12 +19,10 @@ class user_reset_token(models.Model):
         primary_key=True, unique=True, editable=False, default=uuid.uuid4
     )
     TYPE_CHOICES = [
-        ("reset_password", "Reset Password"),
-        ("reset_pin", "Reset PIN"),
+        ("Password", "Reset Password"),
+        ("Pin", "Reset PIN"),
     ]
-    type = models.CharField(
-        max_length=100, choices=TYPE_CHOICES, default="reset_password"
-    )
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES, default="Password")
     created_at = models.DateTimeField(auto_now_add=True)
 
     expires_at = models.DateTimeField()
@@ -50,5 +48,5 @@ class user_reset_token(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.expires_at:
-            self.expires_at = now() + timedelta(days=1)
+            self.expires_at = now() + timedelta(minutes=30)
         super().save(*args, **kwargs)

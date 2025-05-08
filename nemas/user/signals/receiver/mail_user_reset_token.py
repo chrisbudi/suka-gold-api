@@ -68,7 +68,6 @@ def send_reset_password_email_done(sender, user: user, email_type: str, **kwargs
 
 def generate_email_done(user: User, email_type: str):
     # Format the email body with the reset key
-    reset_link = f"{settings.EMAIL_SITE_URL}/{'reset-pin' if email_type == 'PIN' else 'reset-password'}/{reset_key}/"
     mail_props = EmailService().get_email_props()
     try:
         email_html = render_to_string(

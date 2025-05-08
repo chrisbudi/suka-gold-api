@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from rest_framework import viewsets
 from user.models import user, users_reset_token
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from user.api.serializers import ResetRequestSerializer, ApplyResetSerializer
 
 
@@ -13,6 +13,31 @@ from user.api.serializers import ResetRequestSerializer, ApplyResetSerializer
 )
 class RequestResetView(viewsets.GenericViewSet):
     serializer_class = ResetRequestSerializer
+
+    # @extend_schema(
+    #     parameters=[
+    #         OpenApiParameter(
+    #             name="token",
+    #             required=True,
+    #             type=str,
+    #             description="The token to be used for password reset.",
+    #         ),
+    #     ]
+    # )
+    def get(self, request, token):
+        # get request pin
+        request_token = token
+        if request_token:
+            # Check if the token is valid
+            token_obj = get_object_or_404(
+                users_reset_token.user_reset_token, token=request_token
+            )
+            if token_obj.is_valid():
+                return JsonResponse({"message": "Token is valid."})
+            else:
+                return JsonResponse({"message": "Token is expired."}, status=400)
+        else:
+            return JsonResponse({"message": "Token is required."}, status=400)
 
     def post(self, request):
         serializer = ResetRequestSerializer(data=request.data)

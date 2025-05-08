@@ -36,6 +36,11 @@ urlpatterns = [
         name="token_reset_request",
     ),
     path(
+        "token/check-token/<str:token>/",
+        view=RequestResetView.as_view({"get": "get"}),
+        name="token_reset_request",
+    ),
+    path(
         "token/reset-token/<str:token>/",
         view=ResetView.as_view({"post": "post"}),
         name="token_reset_password_done",
