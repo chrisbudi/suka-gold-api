@@ -171,7 +171,7 @@ class PaymentProcess:
             message="Cash payment is successfully",
         )
 
-    def weight_payment(
+    def redeem_payment(
         self,
         validated_data,
         order_amount,

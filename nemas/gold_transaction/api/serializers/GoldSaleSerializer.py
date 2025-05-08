@@ -19,7 +19,6 @@ class GoldTransactionSellSerializer(serializers.ModelSerializer):
             "gold_transaction_id",
             "weight",
             "price",
-            # TODO: get data price per gram from price will be updated in the future
             "total_price",
             "transaction_date",
         ]

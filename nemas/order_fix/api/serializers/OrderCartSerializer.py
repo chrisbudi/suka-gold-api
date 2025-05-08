@@ -18,17 +18,15 @@ class GoldSerializer(serializers.ModelSerializer):
 
 
 class AddCartDetailSerializer(serializers.ModelSerializer):
-    # gold = serializers.PrimaryKeyRelatedField(
-    #     queryset=GoldModel.objects.all(), write_only=True
-    # )
     gold_id = serializers.IntegerField(write_only=True)
+    order_type = serializers.ChoiceField(
+        choices=[("buy", "Buy"), ("redeem", "Redeem")], write_only=True
+    )
+    quantity = serializers.IntegerField(write_only=True, default=1, min_value=1)
 
     class Meta:
         model = order_cart_detail
-        fields = [
-            "gold_id",
-            "quantity",
-        ]
+        fields = ["gold_id", "quantity", "order_type"]
 
     def create(self, validated_data):
         goldModel = GoldModel.objects.select_related("certificate").get(
@@ -37,7 +35,10 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         certificateModel = goldModel.certificate
         goldPriceModel = gold_price().get_active_price()
         order_cart_detail_model = order_cart_detail.objects.filter(
-            gold=goldModel, user_id=self.context["request"].user, completed_cart=False
+            gold=goldModel,
+            user_id=self.context["request"].user,
+            completed_cart=False,
+            order_type=validated_data["order_type"],
         ).first()
         if goldModel is None:
             raise serializers.ValidationError("Gold not found")
@@ -45,41 +46,44 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Gold price not found")
         # if order cart detail model any then update the endity
 
-        if order_cart_detail_model:
-            order_cart_detail_model.price = (
-                ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
-                + (goldModel.certificate.cert_price if goldModel.certificate else 0)
+        if validated_data["order_type"] == "redeem":
+            redeem_price = Decimal(Decimal(goldModel.redeem_price))
+
+            price = (
+                redeem_price
+                + (certificateModel.cert_price if certificateModel else 0)
                 + (goldModel.product_cost or 0)
             )
+            total_price = price * validated_data["quantity"]
+            total_price_round = (price) * validated_data["quantity"]
+        else:
+            redeem_price = Decimal(0)
+            price = (
+                (goldPriceModel.gold_price_buy * goldModel.gold_weight)
+                + (certificateModel.cert_price if certificateModel else 0)
+                + (goldModel.product_cost or 0)
+            )
+            total_price = price * validated_data["quantity"]
+            total_price_round = ((price // 100) * 100 + 100) * validated_data[
+                "quantity"
+            ]
 
+        if order_cart_detail_model:
+            order_cart_detail_model.price = price
             order_cart_detail_model.gold_price = goldPriceModel.gold_price_buy
             order_cart_detail_model.product_cost = goldModel.product_cost
             order_cart_detail_model.weight = goldModel.gold_weight
             order_cart_detail_model.cert_price = (
                 certificateModel.cert_price if certificateModel else Decimal("0")
             )
-
             order_cart_detail_model.quantity = validated_data["quantity"]
-            order_cart_detail_model.total_price = (
-                ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
-                + (goldModel.certificate.cert_price if goldModel.certificate else 0)
-                + (goldModel.product_cost or 0)
-            ) * validated_data["quantity"]
-            order_cart_detail_model.total_price_round = (
-                (
-                    ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
-                    // 100
-                    * 100
-                    + 100
-                )
-                + (goldModel.certificate.cert_price if goldModel.certificate else 0)
-                + (goldModel.product_cost or 0)
-            ) * validated_data["quantity"]
-
+            order_cart_detail_model.total_price = total_price
+            order_cart_detail_model.total_price_round = total_price_round
+            order_cart_detail_model.redeem_price = redeem_price
+            order_cart_detail_model.order_type = validated_data["order_type"]
             order_cart_detail_model.save()
             return order_cart_detail_model
 
-        # else if not any then create it
         validated_data.update(
             {
                 "cert": goldModel.certificate,
@@ -87,31 +91,14 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "product_cost": goldModel.product_cost,
                 "gold": goldModel,
                 "user": self.context["request"].user,
-                "price": (
-                    ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
-                    + (goldModel.certificate.cert_price if goldModel.certificate else 0)
-                    + (goldModel.product_cost or 0)
-                ),
+                "price": price,
                 "gold_price": goldPriceModel.gold_price_buy,
                 "weight": goldModel.gold_weight,
-                "total_price": (
-                    ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
-                    + (goldModel.certificate.cert_price if goldModel.certificate else 0)
-                    + (goldModel.product_cost or 0)
-                )
-                * validated_data["quantity"],
-                "total_price_round": (
-                    (
-                        ((goldPriceModel.gold_price_buy) * goldModel.gold_weight)
-                        // 100
-                        * 100
-                        + 100
-                    )
-                    + (goldModel.certificate.cert_price if goldModel.certificate else 0)
-                    + (goldModel.product_cost or 0)
-                )
-                * validated_data["quantity"],
+                "total_price": total_price,
+                "total_price_round": total_price_round,
                 "completed_cart": False,
+                "redeem_price": redeem_price,
+                "order_type": validated_data["order_type"],
             }
         )
         return order_cart_detail.objects.create(**validated_data)
@@ -119,12 +106,16 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
 
 class ProcessCartSerializer(serializers.Serializer):
     # logic for processing the submited cart
+    order_type = serializers.ChoiceField(
+        choices=[("buy", "Buy"), ("redeem", "Redeem")], write_only=True
+    )
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
         order_cart_detail_model = order_cart_detail.objects.filter(
             user=validated_data["user"],
             completed_cart=False,
+            order_type=validated_data.get("order_type"),
         )
         if not order_cart_detail_model:
             raise serializers.ValidationError("Cart is empty")
@@ -132,6 +123,7 @@ class ProcessCartSerializer(serializers.Serializer):
         order_cart_instance, created = order_cart.objects.get_or_create(
             user=validated_data["user"],
             completed_cart=False,
+            order_type=validated_data.get("order_type"),
             defaults={
                 "created_at": datetime.now(),
                 "updated_at": datetime.now(),
@@ -149,6 +141,11 @@ class ProcessCartSerializer(serializers.Serializer):
         )
         order_cart_instance.total_price_round = Decimal(
             sum([item.total_price_round for item in order_cart_detail_model])
+        )
+        order_cart_instance.order_type = validated_data.get("order_type")
+
+        order_cart_instance.total_redeem_price = Decimal(
+            sum([item.redeem_price or 0 for item in order_cart_detail_model])
         )
         if created:
             order_cart_instance.created_at = datetime.now()
@@ -184,6 +181,8 @@ class CartDetailSerializer(serializers.ModelSerializer):
             "total_price_round",
             "created_at",
             "updated_at",
+            "order_type",
+            "redeem_price",
         ]
         read_only_fields = [
             "order_cart_detail_id",
@@ -213,6 +212,8 @@ class CartSerializer(serializers.ModelSerializer):
             "completed_cart",
             "session_key",
             "order_cart_detail",
+            "order_type",
+            "total_redeem_price",
         ]
         depth = 1  # Load related order cart detail with nested serialization
         read_only_fields = [

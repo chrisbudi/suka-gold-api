@@ -22,6 +22,11 @@ class order_cart(models.Model):
     total_price_round = models.DecimalField(max_digits=16, decimal_places=0)
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
+    order_type = models.CharField(max_length=50, null=True, blank=True)
+    total_redeem_price = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True, blank=True
+    )
+
     completed_cart = models.BooleanField(default=False)
     session_key = models.CharField(max_length=40, null=True, blank=True)
 
@@ -78,6 +83,12 @@ class order_cart_detail(models.Model):
     total_price_round = models.DecimalField(
         max_digits=16, decimal_places=0, editable=False
     )
+
+    order_type = models.CharField(max_length=50, null=True, blank=True)
+    redeem_price = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True, blank=True
+    )
+
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
     completed_cart = models.BooleanField(default=False)
