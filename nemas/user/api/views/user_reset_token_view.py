@@ -14,18 +14,7 @@ from user.api.serializers import ResetRequestSerializer, ApplyResetSerializer
 class RequestResetView(viewsets.GenericViewSet):
     serializer_class = ResetRequestSerializer
 
-    # @extend_schema(
-    #     parameters=[
-    #         OpenApiParameter(
-    #             name="token",
-    #             required=True,
-    #             type=str,
-    #             description="The token to be used for password reset.",
-    #         ),
-    #     ]
-    # )
     def get(self, request, token):
-        # get request pin
         request_token = token
         if request_token:
             # Check if the token is valid
