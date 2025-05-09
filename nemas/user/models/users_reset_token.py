@@ -19,8 +19,8 @@ class user_reset_token(models.Model):
         primary_key=True, unique=True, editable=False, default=uuid.uuid4
     )
     TYPE_CHOICES = [
-        ("Password", "Reset Password"),
-        ("Pin", "Reset PIN"),
+        ("reset_password", "Reset Password"),
+        ("reset_pin", "Reset PIN"),
     ]
     type = models.CharField(max_length=100, choices=TYPE_CHOICES, default="Password")
     created_at = models.DateTimeField(auto_now_add=True)
