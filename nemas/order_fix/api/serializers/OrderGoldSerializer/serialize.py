@@ -386,7 +386,6 @@ class OrderGoldSerializer(serializers.ModelSerializer):
             "order_total_price",
             "order_total_price_round",
             "order_tracking_insurance",
-            "order_tracking_insurance_round",
             "order_tracking_packing",
             "order_tracking_insurance_admin",
             "order_tracking_total_amount",
