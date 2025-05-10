@@ -34,7 +34,6 @@ def generate_email(user: User, reset_key: str, email_type: str):
     reset_link = f"{settings.EMAIL_SITE_URL}/{'reset-pin' if email_type == 'PIN' else 'reset-password'}/{reset_key}/"
     mail_props = EmailService().get_email_props()
     try:
-        print(reset_link, "reset link")
         email_html = render_to_string(
             "email/user/reset_pin_password.html",
             {
@@ -44,7 +43,6 @@ def generate_email(user: User, reset_key: str, email_type: str):
                 **mail_props,
             },
         )
-        print(email_html, "email html")
 
         sendGridEmail = settings.SENDGRID_EMAIL
         message = Mail(
@@ -77,6 +75,7 @@ def generate_email_done(user: User, email_type: str):
             "email/user/reset_pin_password_done.html",
             {
                 "NAMA_USER": user.name,
+                "Password_PIN": email_type,
                 **mail_props,
             },
         )
