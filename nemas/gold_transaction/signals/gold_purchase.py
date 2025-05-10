@@ -63,17 +63,17 @@ def handle_purchase(
                 mailService.sendMail(mail)
 
 
-def generate_email(goldSaving: gold_saving_buy, user: User):
+def generate_email(gold: gold_saving_buy, user: User):
     # Format the email body with the reset key
     detail_number = 1
     table_product_data = f"""
         <tr>
         <td>{detail_number}</td>
         <td>Pembelian Emas Digital</td>
-        <td>{goldSaving.weight}</td>
+        <td>{gold.weight}</td>
         <td>grams</td>
-        <td>{goldSaving.price}</td>
-        <td>{goldSaving.total_price}</td>
+        <td>{gold.price:,.2f}</td>
+        <td>{gold.total_price:,.2f}</td>
         </tr>"""
     detail_number += 1
 
@@ -84,9 +84,10 @@ def generate_email(goldSaving: gold_saving_buy, user: User):
             "email/transaction/sale.html",
             {
                 "NAMA_USER": user.name,
-                "NO_TRANSAKSI": goldSaving.gold_transaction_id,
-                "Total": goldSaving.total_price,
-                "table_product": table_product_data,
+                "TANGGAL_WAKTU": gold.transaction_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "ID_PELANGGAN": user.member_number,
+                "NO_TRANSAKSI": gold.gold_buy_number,
+                "GrandTotal": f"{gold.total_price:,.2f}",
                 **mail_props,
             },
         )

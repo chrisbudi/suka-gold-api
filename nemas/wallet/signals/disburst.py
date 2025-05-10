@@ -82,9 +82,7 @@ def generate_email(disburst: disburst_transaction, user: User):
                 **mail_props,
             },
         )
-        print(email_html, "email_html")
         sendGridEmail = settings.SENDGRID_EMAIL
-        print(sendGridEmail, "email setting")
 
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
