@@ -75,19 +75,21 @@ def generate_email(gold: gold_saving_sell, user: User):
         <td>Penjualan Emas Digital</td>
         <td>{gold.weight}</td>
         <td>grams</td>
-        <td>{gold.price}</td>
-        <td>{gold.total_price}</td>
+        <td>{gold.price:,.2f}</td>
+        <td>{gold.total_price:,.2f}</td>
         </tr>"""
 
     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
     mail_props = EmailService().get_email_props()
     try:
         email_html = render_to_string(
-            "email/transaction/purchase.html",
+            "email/transaction/sale.html",
             {
                 "NAMA_USER": user.name,
-                "NO_TRANSAKSI": gold.gold_transaction_id,
-                "Total": gold.total_price,
+                "TANGGAL_WAKTU": gold.transaction_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "ID_PELANGGAN": user.member_number,
+                "NO_TRANSAKSI": gold.gold_sell_number,
+                "GrandTotal": f"{gold.total_price:,.2f}",
                 "table_product": table_product_data,
                 **mail_props,
             },
