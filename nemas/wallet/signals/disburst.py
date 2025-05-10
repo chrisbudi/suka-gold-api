@@ -54,7 +54,9 @@ def generate_email(disburst: disburst_transaction, user: User):
     <tr>
     <td>{detail_number}</td>
     <td>Penarikan Uang</td>
-    <td>{disburst.disburst_amount}</td>
+    <td>{disburst.disburst_amount:,.2f}</td>
+    <td>{disburst.disburst_admin:,.2f}</td>
+    <td>{disburst.disburst_total_amount:,.2f}</td>
     </tr>"""
     detail_number += 1
 
@@ -67,11 +69,15 @@ def generate_email(disburst: disburst_transaction, user: User):
                 "TANGGAL_WAKTU": disburst.disburst_timestamp.strftime(
                     "%Y-%m-%d %H:%M:%S"
                 ),
+                "ID_PELANGGAN": user.member_number,
                 "NAMA_USER": user.name,
-                "NO_TRANSAKSI": disburst.disburst_payment_ref,
-                "JUMLAH_SALDO": disburst.disburst_amount,
-                "ADMIN": disburst.disburst_admin,
-                "TOTAL_AMOUNT": disburst.disburst_total_amount,
+                "NO_TRANSAKSI": disburst.disburst_number,
+                "TANGGAL_WAKTU": (
+                    disburst.disburst_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    if disburst.disburst_timestamp
+                    else "N/A"
+                ),
+                "TOTAL_AMOUNT": f"{disburst.disburst_total_amount:,.2f}",
                 "table_product": table_product_data,
                 **mail_props,
             },
