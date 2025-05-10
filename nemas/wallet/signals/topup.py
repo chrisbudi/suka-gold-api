@@ -16,14 +16,16 @@ from django.conf import settings
 
 
 @receiver(post_save, sender=topup_transaction)
-def handle_disburst(
+def handle_topup(
     sender: type[topup_transaction],
     instance: topup_transaction,
     created,
     **kwargs,
 ):
+    print("Topup transaction saved:", instance)
     if instance.topup_status == "PAID" or created:
         # send email
+        print("Sending email for topup transaction")
         mailService = EmailService()
         mail = generate_email(instance, instance.user)
         if mail:
@@ -41,7 +43,9 @@ def generate_email(topup: topup_transaction, user: User):
     <tr>
     <td>{detail_number}</td>
     <td>Top Up</td>
-    <td>{topup.topup_amount}</td>
+    <td>{topup.topup_amount:,.2f}</td>
+    <td>{topup.topup_admin:,.2f}</td>
+    <td>{topup.topup_total_amount:,.2f}</td>
     </tr>"""
     detail_number += 1
 
@@ -51,9 +55,13 @@ def generate_email(topup: topup_transaction, user: User):
             "email/transaction/topup.html",
             {
                 "NAMA_USER": user.name,
-                "NO_TRANSAKSI": topup.topup_transaction_id,
-                "Total": topup.topup_amount,
+                "ID_PELANGGAN": user.member_number,
+                "NO_TRANSAKSI": topup.topup_payment_number,
+                "Total": f"{topup.topup_amount:,.2f}",
                 "table_product": table_product_data,
+                "TOTAL": f"{topup.topup_total_amount:,.2f}",
+                "STATUS": topup.topup_status,
+                "METODE_PEMBAYARAN": topup.topup_payment_method,
                 **mail_props,
             },
         )
@@ -64,7 +72,7 @@ def generate_email(topup: topup_transaction, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Nemas Invoice",
+            subject="Nemas Topup Transaction",
             html_content=email_html,
         )
         return message
