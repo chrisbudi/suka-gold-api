@@ -98,7 +98,8 @@ def generate_email(gold: gold_saving_buy, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Nemas Invoice",
+            subject="Nemas Gold Purchase Transaction",
+            # subject=f"Pembelian Emas Digital {gold.gold_buy_number}",
             html_content=email_html,
         )
         return message
