@@ -41,11 +41,11 @@ def generate_email(topup: topup_transaction, user: User):
     # for detail in disburst:
     table_product_data += f"""
     <tr>
-    <td>{detail_number}</td>
-    <td>Top Up</td>
-    <td>{topup.topup_amount:,.2f}</td>
-    <td>{topup.topup_admin:,.2f}</td>
-    <td>{topup.topup_total_amount:,.2f}</td>
+    <td style="text-align: right;">{detail_number}</td>
+    <td style="text-align: right;">Top Up</td>
+    <td style="text-align: right;">{topup.topup_amount:,.2f}</td>
+    <td style="text-align: right;">{topup.topup_admin:,.2f}</td>
+    <td style="text-align: right;">{topup.topup_total_amount:,.2f}</td>
     </tr>"""
     detail_number += 1
 
