@@ -103,7 +103,8 @@ def generate_email(transfer: gold_transfer, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Nemas Invoice",
+            subject="Nemas Transfer Gold",
+            # subject="Nemas Invoice",
             html_content=email_html,
         )
         return message
