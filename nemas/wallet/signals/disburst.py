@@ -87,7 +87,7 @@ def generate_email(disburst: disburst_transaction, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Nemas Disburst Transaction",
+            subject="Penarikan Uang",
             html_content=email_html,
         )
         return message

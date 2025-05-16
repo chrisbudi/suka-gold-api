@@ -72,7 +72,7 @@ def generate_email(topup: topup_transaction, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Nemas Topup Transaction",
+            subject="TopUp Saldo",
             html_content=email_html,
         )
         return message
