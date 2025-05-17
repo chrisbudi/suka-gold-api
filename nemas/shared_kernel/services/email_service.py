@@ -18,7 +18,6 @@ class EmailService:
 
     def get_email_props(self):
         mail = settings.MAIL
-        print(mail, "mail")
         return {
             "NAMA_PERUSAHAAN": mail["NAMA_PERUSAHAAN"],
             "ALAMAT_PERUSAHAAN": mail["ALAMAT_PERUSAHAAN"],
