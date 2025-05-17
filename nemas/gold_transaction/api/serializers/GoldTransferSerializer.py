@@ -3,6 +3,7 @@ from gold_transaction.models import gold_transfer
 from django_filters import rest_framework as filters
 from datetime import datetime
 from common.generator import generate_alphanumeric_code
+from core.domain.gold import gold_price
 from user.models import user_props, user
 
 
@@ -15,8 +16,15 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             "transfer_member_gold_weight",
             "transfer_ref_number",
             "transfer_member_notes",
+            "transfer_member_service_option",
+            "transfer_member_amount",
+            "transfer_member_datetime",
         ]
-        read_only_fields = ["gold_transfer_id"]
+        read_only_fields = [
+            "gold_transfer_id",
+            "transfer_member_amount",
+            "transfer_member_datetime",
+        ]
 
     def validate(self, attrs):
         # validate if phone number is valid
@@ -44,20 +52,32 @@ class GoldTransferSerializer(serializers.ModelSerializer):
         validated_data["transfer_member_datetime"] = datetime.now()
         validated_data["user_from"] = self.context["request"].user
 
+        # get current gold price
+        price_instance = gold_price()
+        price = price_instance.get_active_price()
+        if price is None:
+            raise ValueError("Active gold price not found")
+
         # generate number for transaction
         gold_transfer_number = (
             "TM" + datetime.now().strftime("%y%m") + generate_alphanumeric_code()
         )
+
         validated_data["transfer_ref_number"] = (
             gold_transfer_number
             if self.instance is None
             else self.instance.transfer_ref_number
         )
 
+        validated_data["transfer_member_amount"] = (
+            validated_data["transfer_member_gold_weight"] * price.gold_price_buy
+        )
+
         # from user phone number to user
         user_to = user.objects.get(phone_number=validated_data["phone_number"])
         validated_data["user_to"] = user_to
-
+        validated_data["user_to_name"] = user_to.name
+        validated_data["user_from_name"] = self.context["request"].user.name
         # print(validated_data, "validated data")
         return super().create(validated_data)
 

@@ -56,7 +56,7 @@ def generate_email(topup: topup_transaction, user: User):
             {
                 "NAMA_USER": user.name,
                 "ID_PELANGGAN": user.member_number,
-                "NO_TRANSAKSI": topup.topup_payment_number,
+                "NO_TRANSAKSI": topup.topup_number,
                 "Total": f"{topup.topup_amount:,.2f}",
                 "table_product": table_product_data,
                 "TOTAL": f"{topup.topup_total_amount:,.2f}",

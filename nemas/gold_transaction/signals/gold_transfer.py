@@ -61,40 +61,33 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
 
         UserFrom = instance.user_from
         UserTo = instance.user_to
-        mailFrom = generate_email(instance, UserFrom)
-        mailTo = generate_email(instance, UserTo)
+        mailFrom = generate_email_receive(instance, UserFrom, UserTo)
+        mailTo = generate_email_sender(instance, UserTo, UserFrom)
         mailService = EmailService()
         if mailService:
-            if mailFrom:
-                mailService.sendMail(mailFrom)
-            else:
-                print("Failed to generate email for sender. Mail object is None.")
-            if mailTo:
-                mailService.sendMail(mailTo)
-            else:
-                print("Failed to generate email for receiver. Mail object is None.")
+            for mail, role in [(mailFrom, "sender"), (mailTo, "receiver")]:
+                if mail:
+                    mailService.sendMail(mail)
+                else:
+                    print(f"Failed to generate email for {role}. Mail object is None.")
         else:
             print("Failed to create EmailService instance. Mail object is None.")
 
 
-def generate_email(transfer: gold_transfer, user: User):
+def generate_email_sender(transfer: gold_transfer, userTo: User, userFrom: User):
     # Format the email body with the reset key
-    detail_number = 1
-    table_product_data = ""
-    table_product_data += f"""
-    <tr>
-    <td>{detail_number}</td>
-    <td>Transfer Gold</td>
-    <td>{transfer.transfer_member_gold_weight}</td>
-    </tr>"""
-    detail_number += 1
 
     mail_props = EmailService().get_email_props()
     try:
         email_html = render_to_string(
-            "email/transaction/invoice.html",
+            "email/transaction/transfer_sender.html",
             {
-                "table_product": table_product_data,
+                "NAMA_USER": userFrom.name,
+                "NAMA_PENERIMA": userTo.name,
+                "AMOUNT_WEIGHT": f"{transfer.transfer_member_gold_weight:,.4f}",
+                "AMOUNT_VALUE": f"{transfer.transfer_member_amount:,.2f}",
+                "PESAN": transfer.transfer_member_notes,
+                "TUJUAN": transfer.transfer_member_service_option or " ",
                 **mail_props,
             },
         )
@@ -102,8 +95,8 @@ def generate_email(transfer: gold_transfer, user: User):
 
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
-            to_emails=[user.email],
-            subject="Transfer Emas",
+            to_emails=[userFrom.email],
+            subject="Transfer Emas Send",
             # subject="Nemas Invoice",
             html_content=email_html,
         )
@@ -114,55 +107,34 @@ def generate_email(transfer: gold_transfer, user: User):
         print("Failed to render email template:", e)
 
 
-# def generate_email(order: order_gold, order_payment: order_payment, user: User):
-#     # Format the email body with the reset key
-#     order_detail = order_gold_detail.objects.select_related("gold").filter(
-#         order_gold=order
-#     )
-#     detail_number = 1
-#     table_product_data = ""
-#     for detail in order_detail:
-#         table_product_data += f"""
-#         <tr>
-#         <td>{detail_number}</td>
-#         <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
-#         <td>{detail.qty}</td>
-#         <td>grams</td>
-#         <td>{detail.order_price}</td>
-#         <td>{detail.order_detail_total_price_round}</td>
-#         </tr>"""
-#         detail_number += 1
+def generate_email_receive(transfer: gold_transfer, userFrom: User, userTo: User):
+    # Format the email body with the reset key
 
-#     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
-#     mail_props = EmailService().get_email_props()
-#     try:
-#         email_html = render_to_string(
-#             "email/transaction/invoice.html",
-#             {
-#                 "transaction_date": order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-#                 "transaction_number": order.order_number,
-#                 "transaction_account": order.user.id,
-#                 "first_name": order.user.name,
-#                 "table_product": table_product_data,
-#                 "SubTotal": order.order_total_price_round,
-#                 "Pph22": order.order_pph22,
-#                 "GrandTotal": order.order_grand_total_price,
-#                 "Pembayaran": order_payment.order_payment_method_name,
-#                 **mail_props,
-#             },
-#         )
-#         print(email_html, "email_html")
-#         sendGridEmail = settings.SENDGRID_EMAIL
-#         print(sendGridEmail, "email setting")
+    mail_props = EmailService().get_email_props()
+    try:
+        email_html = render_to_string(
+            "email/transaction/transfer_receive.html",
+            {
+                "NAMA_USER": userTo.name,
+                "NAMA_PENGIRIM": userFrom.name,
+                "AMOUNT_WEIGHT": f"{transfer.transfer_member_gold_weight:,.4f}",
+                "AMOUNT_VALUE": f"{transfer.transfer_member_amount:,.2f}",
+                "PESAN": transfer.transfer_member_notes,
+                "TUJUAN": transfer.transfer_member_service_option or " ",
+                **mail_props,
+            },
+        )
+        sendGridEmail = settings.SENDGRID_EMAIL
 
-#         message = Mail(
-#             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
-#             to_emails=[user.email],
-#             subject="Nemas Invoice",
-#             html_content=email_html,
-#         )
-#         return message
-#     except FileNotFoundError as e:
-#         print("Template file not found:", e)
-#     except Exception as e:
-#         print("Failed to render email template:", e)
+        message = Mail(
+            from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
+            to_emails=[userTo.email],
+            subject="Transfer Emas Receive",
+            # subject="Nemas Invoice",
+            html_content=email_html,
+        )
+        return message
+    except FileNotFoundError as e:
+        print("Template file not found:", e)
+    except Exception as e:
+        print("Failed to render email template:", e)
