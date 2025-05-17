@@ -55,9 +55,9 @@ class InformationArticleViewSet(viewsets.ModelViewSet):
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
-    def retreive(self, request, pk=None):
+    def retrieve(self, request, id=None):
         queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk)
+        info = get_object_or_404(queryset, pk=id)
         serializer = infoSerializer(info)
         return response.Response(serializer.data)
 

@@ -23,7 +23,7 @@ def handle_topup(
     **kwargs,
 ):
     print("Topup transaction saved:", instance)
-    if instance.topup_status == "PAID" or created:
+    if instance.topup_status == "SUCCESS" or created:
         # send email
         print("Sending email for topup transaction")
         mailService = EmailService()
