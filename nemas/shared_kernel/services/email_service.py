@@ -21,9 +21,9 @@ class EmailService:
         return {
             "NAMA_PERUSAHAAN": mail["NAMA_PERUSAHAAN"],
             "ALAMAT_PERUSAHAAN": mail["ALAMAT_PERUSAHAAN"],
-            "TELP": mail["TELP"],
-            "TELP_URL": mail["TELP_URL"],
+            "TELPON": mail["TELP"],
+            "WHATSAPP": mail["TELP_URL"],
             "WEBSITE": mail["WEBSITE"],
             "WEBSITE_URL": mail["WEBSITE_URL"],
-            "SUPPORT": mail["SUPPORT"],
+            "EMAIL": mail["SUPPORT"],
         }

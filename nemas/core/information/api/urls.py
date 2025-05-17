@@ -182,7 +182,7 @@ article_url = [
         name="delete_article",
     ),
     path(
-        "<int:id>/",
+        "<int:pk>/",
         views_article.InformationArticleViewSet.as_view({"get": "retrieve"}),
         name="get_article",
     ),

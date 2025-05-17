@@ -35,8 +35,9 @@ class InformationArticleViewSet(viewsets.ModelViewSet):
     )  # Adjust pagination class as needed
 
     def get_permissions(self):
-        print(self.action, "action permission")
-        if self.action in ["list", "get"]:
+        request_method = self.request.method
+        path = self.request.path
+        if request_method == "GET" and (path.endswith("/") or "/article/" in path):
             permission_classes = []
         else:
             permission_classes = [IsAuthenticated]
@@ -54,9 +55,9 @@ class InformationArticleViewSet(viewsets.ModelViewSet):
         serializer = infoSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
-    def get(self, request, id=None):
+    def retreive(self, request, pk=None):
         queryset = modelInfo.objects.all()
-        info = get_object_or_404(queryset, pk=id)
+        info = get_object_or_404(queryset, pk)
         serializer = infoSerializer(info)
         return response.Response(serializer.data)
 
