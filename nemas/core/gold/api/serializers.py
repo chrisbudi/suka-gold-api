@@ -183,6 +183,7 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
             "type",
             "brand",
             "certificate",
+            "redeem_price",
             "certificate_id",
             "certificate_weight",
             "product_cost",

@@ -34,7 +34,7 @@ class DeliveryPartnerServiceViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def list(self, request):
-        queryset = modelInfo.objects.all()
+        queryset = modelInfo.objects.filter(is_deleted=False)
         if request.query_params.get("delivery_partner_id"):
             queryset = queryset.filter(
                 delivery_partner=request.query_params.get("delivery_partner_id")
