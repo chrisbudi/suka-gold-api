@@ -45,7 +45,7 @@ class BankServiceViewSet(viewsets.ModelViewSet):
         ]
     )
     def list(self, request):
-        queryset = modelInfo.objects.all()
+        queryset = modelInfo.objects.filter(is_deleted=False, bank_active=True)
         filter_queryset = self.filter_queryset(queryset)
         ordering = request.query_params.get("ordering")
         if ordering:
