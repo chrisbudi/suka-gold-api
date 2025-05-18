@@ -74,7 +74,7 @@ def generate_email(gold: gold_saving_sell, user: User):
         <td>{detail_number}</td>
         <td>Penjualan Emas Digital</td>
         <td>{gold.weight}</td>
-        <td>grams</td>
+        <td>gram</td>
         <td>{gold.price:,.2f}</td>
         <td>{gold.total_price:,.2f}</td>
         </tr>"""
