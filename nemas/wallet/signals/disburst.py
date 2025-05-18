@@ -52,11 +52,11 @@ def generate_email(disburst: disburst_transaction, user: User):
     # for detail in disburst:
     table_product_data += f"""
     <tr>
-    <td>{detail_number}</td>
-    <td>Penarikan Uang</td>
-    <td>{disburst.disburst_amount:,.2f}</td>
-    <td>{disburst.disburst_admin:,.2f}</td>
-    <td>{disburst.disburst_total_amount:,.2f}</td>
+    <td style="text-align: center;">{detail_number}</td>
+    <td style="text-align: center;">Penarikan Uang</td>
+    <td style="text-align: right;">{disburst.disburst_amount:,.2f}</td>
+    <td style="text-align: right;">{disburst.disburst_admin:,.2f}</td>
+    <td style="text-align: right;">{disburst.disburst_total_amount:,.2f}</td>
     </tr>"""
     detail_number += 1
 

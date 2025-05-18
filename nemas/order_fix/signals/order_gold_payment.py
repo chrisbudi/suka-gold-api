@@ -42,12 +42,12 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
     for detail in order_detail:
         table_product_data += f"""
         <tr>
-        <td>{detail_number}</td>
-        <td>{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
-        <td>{detail.qty:,}</td>
-        <td>gr</td>
-        <td>{detail.order_price_round:,.2f}</td>
-        <td>{detail.order_detail_total_price_round:,.2f}</td>
+        <td style="text-align: center;">{detail_number}</td>
+        <td style="text-align: center;">{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
+        <td style="text-align: right;">{detail.qty:,}</td>
+        <td style="text-align: center;">gram</td>
+        <td style="text-align: right;">{detail.order_price_round:,.2f}</td>
+        <td style="text-align: right;">{detail.order_detail_total_price_round:,.2f}</td>
         </tr>"""
         detail_number += 1
 
