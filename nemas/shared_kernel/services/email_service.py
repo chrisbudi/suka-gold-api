@@ -26,4 +26,8 @@ class EmailService:
             "WEBSITE": mail["WEBSITE"],
             "WEBSITE_URL": mail["WEBSITE_URL"],
             "SUPPORT": mail["SUPPORT"],
+            "WHATSAPP": mail["WHATSAPP"],
+            "WHATSAPP_URL": mail["WHATSAPP_URL"],
+            "MAIL_SUPPORT": mail["MAIL_SUPPORT"],
+            "MAIL_SUPPORT_URL": mail["MAIL_SUPPORT_URL"],
         }

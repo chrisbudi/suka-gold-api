@@ -387,4 +387,8 @@ MAIL = {
     "TELP": os.getenv("MAIL_TELP", "021-12345678"),
     "TELP_URL": os.getenv("MAIL_TELP_URL", "wa.me/6281234567890"),
     "SUPPORT": os.getenv("MAIL_SUPPORT", "mailto:support@nemas.com"),
+    "WHATSAPP": os.getenv("MAIL_WHATSAPP", "6281234567890"),
+    "WHATSAPP_URL": os.getenv("MAIL_WHATSAPP_URL", "wa.me/6281234567890"),
+    "MAIL_SUPPORT": os.getenv("MAIL_SUPPORT", "support@nemas.com"),
+    "MAIL_SUPPORT_URL": os.getenv("MAIL_SUPPORT_URL", "mailto:support@nemas.com"),
 }
