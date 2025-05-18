@@ -7,7 +7,7 @@ from rest_framework import status, viewsets, filters, pagination, response
 from core.domain import bank as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from shared_kernel.services.s3_services import S3Service
 from rest_framework.permissions import IsAuthenticated
 
@@ -23,6 +23,8 @@ class BankServiceViewSet(viewsets.ModelViewSet):
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
+    ordering_fields = "__all__"
+    ordering = ["id"]
 
     def get_permissions(self):
         print(self.action, "action permission")
@@ -32,9 +34,22 @@ class BankServiceViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="ordering",
+                description='Comma-separated list of fields to order by. Use "-" for descending. Example: id,-name',
+                required=False,
+                type=str,
+            )
+        ]
+    )
     def list(self, request):
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
+        ordering = self.request.query_params.get("ordering")
+        if ordering:
+            filter_queryset = filter_queryset.order_by(*ordering.split(","))
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = objectSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)

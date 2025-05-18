@@ -68,7 +68,8 @@ class BankFilter(filters.FilterSet):
         model = Bank
 
         fields = {
-            "bank_code": ["icontains"],
+            "bank_merchant_code": ["icontains"],
+            "bank_name": ["icontains"],
         }
 
 

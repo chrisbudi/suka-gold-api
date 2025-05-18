@@ -2,6 +2,7 @@
 Serializers for user api view
 """
 
+from attr import validate
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import ngettext_lazy as _
 
@@ -31,10 +32,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = (
+        fields = [
             "id",
             "member_number",
             "user_name",
+            "member_number",
             "email",
             "phone_number",
             "password",
@@ -42,6 +44,10 @@ class UserSerializer(serializers.ModelSerializer):
             "income_source",
             "investment_purpose",
             "referal_code",
+        ]
+        read_only_fields = (
+            "id",
+            "member_number",
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 
@@ -56,9 +62,8 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create a new user with encrypted password and return it"""
         member_number = "IDN-" + generate_numeric_code(5)
-        validated_data["member_number"] = (
-            member_number if self.instance is None else self.instance.member_number
-        )
+        validated_data["member_number"] = member_number
+
         if self.context.get("is_superuser", False):
             return get_user_model().objects.create_superuser(**validated_data)
         return get_user_model().objects.create_user(**validated_data)
@@ -66,6 +71,8 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update a user, setting the password correctly and return it"""
         password = validated_data.pop("password", None)
+        if not instance.member_number:
+            validated_data["member_number"] = "IDN-" + generate_numeric_code(5)
         user = super().update(instance, validated_data)
         if password:
             user.set_password(password)
