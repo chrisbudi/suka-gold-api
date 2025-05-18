@@ -68,12 +68,12 @@ def generate_email(gold: gold_saving_buy, user: User):
     detail_number = 1
     table_product_data = f"""
         <tr>
-        <td>{detail_number}</td>
-        <td>Pembelian Emas Digital</td>
-        <td>{gold.weight}</td>
-        <td>gram</td>
-        <td>{gold.price:,.2f}</td>
-        <td>{gold.total_price:,.2f}</td>
+        <td style="text-align: center;">{detail_number}</td>
+        <td style="text-align: center;">Pembelian Emas Digital</td>
+        <td style="text-align: right;">{gold.weight}</td>
+        <td style="text-align: center;">gram</td>
+        <td style="text-align: right;">{gold.price:,.2f}</td>
+        <td style="text-align: right;">{gold.total_price:,.2f}</td>
         </tr>"""
     detail_number += 1
     print(table_product_data, "table_product_data")
