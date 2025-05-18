@@ -84,7 +84,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Nemas Invoice",
+            subject="Pembelian Emas Fisik",
             html_content=email_html,
         )
         return message
