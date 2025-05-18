@@ -51,7 +51,7 @@ class GoldTransactionBuySerializer(serializers.ModelSerializer):
             raise ValueError("Active gold price not found")
 
         gold_buy_number = (
-            "BE" + date.today().strftime("%y%m") + generate_alphanumeric_code()
+            "BE/" + date.today().strftime("%y%m") + "/" + generate_alphanumeric_code()
         )
         validated_data["gold_buy_number"] = (
             gold_buy_number if self.instance is None else self.instance.gold_buy_number

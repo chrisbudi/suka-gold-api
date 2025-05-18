@@ -76,7 +76,7 @@ def generate_email(gold: gold_saving_buy, user: User):
         <td>{gold.total_price:,.2f}</td>
         </tr>"""
     detail_number += 1
-
+    print(table_product_data, "table_product_data")
     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
     mail_props = EmailService().get_email_props()
     try:
@@ -88,12 +88,11 @@ def generate_email(gold: gold_saving_buy, user: User):
                 "ID_PELANGGAN": user.member_number,
                 "NO_TRANSAKSI": gold.gold_buy_number,
                 "GrandTotal": f"{gold.total_price:,.2f}",
+                "table_product": table_product_data,
                 **mail_props,
             },
         )
-        print(email_html, "email_html")
         sendGridEmail = settings.SENDGRID_EMAIL
-        print(sendGridEmail, "email setting")
 
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],

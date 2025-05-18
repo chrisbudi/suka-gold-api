@@ -47,7 +47,7 @@ class BankServiceViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
-        ordering = self.request.query_params.get("ordering")
+        ordering = request.query_params.get("ordering")
         if ordering:
             filter_queryset = filter_queryset.order_by(*ordering.split(","))
         paginated_queryset = self.paginate_queryset(filter_queryset)

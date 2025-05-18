@@ -50,7 +50,7 @@ class GoldTransactionSellSerializer(serializers.ModelSerializer):
 
         # generate number for transaction
         gold_sell_number = (
-            "JE" + date.today().strftime("%y%m") + generate_alphanumeric_code()
+            "JE/" + date.today().strftime("%y%m") + "/" + generate_alphanumeric_code()
         )
         validated_data["gold_sell_number"] = (
             gold_sell_number

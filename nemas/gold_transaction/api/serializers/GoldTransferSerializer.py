@@ -60,7 +60,7 @@ class GoldTransferSerializer(serializers.ModelSerializer):
 
         # generate number for transaction
         gold_transfer_number = (
-            "TM" + datetime.now().strftime("%y%m") + generate_alphanumeric_code()
+            "TM/" + datetime.now().strftime("%y%m") + "/" + generate_alphanumeric_code()
         )
 
         validated_data["transfer_ref_number"] = (
