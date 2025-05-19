@@ -33,7 +33,7 @@
           <table width="700" cellpadding="0" cellspacing="0" border="0"
             style="background-color:#ffffff; border:1px solid #ddd; border-radius:8px; overflow:hidden;">
 
-             <!-- Header -->
+            <!-- Header -->
             <tr>
               <td style="padding:20px; border-bottom:3px solid #F0BF6B;">
                 <table class="company-header-table" width="100%">
@@ -72,15 +72,15 @@
             <tr>
               <td style="padding:20px; font-size:14px; color:#333;">
                 <p><strong>Kepada:</strong> {{NAMA_USER}}</p>
-                <p><strong>ID Nasabah:</strong> {{ID_PELANGGAN}}</p> 
+                <p><strong>ID Nasabah:</strong> {{ID_PELANGGAN}}</p>
               </td>
             </tr>
 
             <tr>
               <td style="padding:0 20px; font-weight:bold; font-size:14px; text-align:right;">
                 <p style="margin:5px 0;">PEMBELIAN</p>
-                <p style="margin:5px 0;">{TANGGAL_WAKTU}</p>
-                <p style="margin:5px 0;">No. Transaksi: {NO_TRANSAKSI}</p>
+                <p style="margin:5px 0;">{{TANGGAL_WAKTU}}</p>
+                <p style="margin:5px 0;">No. Transaksi: {{NO_TRANSAKSI}}</p>
               </td>
             </tr>
 
@@ -96,7 +96,6 @@
                       <th>Jumlah</th>
                       <th>Satuan</th>
                       <th>Harga</th>
-                      <th>Sertifikat</th>
                       <th>Jumlah IDR</th>
                     </tr>
                   </thead>
@@ -116,7 +115,7 @@
                     <td style="text-align:left; font-weight:bold;">Total</td>
                     <td style="text-align:right; font-weight:bold;">{{SubTotal}}</td>
                   </tr>
-                  
+
                   <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
                     <td style="text-align:left;">Metode Pembayaran</td>
                     <td style="text-align:right;">Saldo Nemas</td>
@@ -132,9 +131,9 @@
                 <hr style="border:none; border-top:1px solid #eee; margin:10px 0;">
                 <p>Terima Kasih Telah Bertransaksi di <strong>{{NAMA_PERUSAHAAN}}</strong></p>
                 <p>Transaksi Anda telah diproses dan Saldo Emas telah ditambahkan ke dalam Account Nemas
-                <hr style="border:none; border-top:1px solid #eee; margin:10px 0;">
+                  <hr style="border:none; border-top:1px solid #eee; margin:10px 0;">
 
-                <!-- Dua kolom sejajar -->
+                  <!-- Dua kolom sejajar -->
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px; text-align:left;">
                   <tr>
                     <td width="50%" style="padding-right:10px; font-size:13px; color:#555;">
