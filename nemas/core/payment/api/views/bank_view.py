@@ -45,7 +45,7 @@ class BankServiceViewSet(viewsets.ModelViewSet):
         ]
     )
     def list(self, request):
-        queryset = modelInfo.objects.filter(is_deleted=False, bank_active=True)
+        queryset = modelInfo.objects.filter(is_deleted=False)
         filter_queryset = self.filter_queryset(queryset)
         ordering = request.query_params.get("ordering")
         if ordering:
@@ -61,7 +61,7 @@ class BankServiceViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
     def create(self, request):
-        serializer = objectSerializer(data=request.data)
+        serializer = objectSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save(create_user=request.user)
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -73,9 +73,12 @@ class BankServiceViewSet(viewsets.ModelViewSet):
     def update(self, request, id=None):
         queryset = modelInfo.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        serializer = objectSerializer(info, data=request.data)
+        print(info, "info")
+        serializer = objectSerializer(
+            info, data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
-            serializer.save(create_user=request.user)
+            serializer.save()
             return response.Response(serializer.data)
         else:
             return response.Response(

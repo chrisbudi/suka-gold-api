@@ -6,6 +6,7 @@ from rest_framework import serializers
 from django_filters import rest_framework as filters
 
 from core.domain import bank as Bank
+from datetime import datetime
 from core.domain.payment import payment_method
 
 
@@ -62,6 +63,23 @@ class BankSerializer(serializers.ModelSerializer):
             "upd_user",
         ]
 
+    def create(self, validated_data):
+        validated_data["create_user"] = self.context["request"].user.id
+        validated_data["create_user_email"] = self.context["request"].user.email
+
+        validated_data["upd_user"] = self.context["request"].user.id
+        validated_data["upd_user_email"] = self.context["request"].user.email
+
+        validated_data["create_time"] = datetime.now()
+        validated_data["upd_time"] = datetime.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["upd_user"] = self.context["request"].user.id
+        validated_data["upd_time"] = datetime.now()
+        validated_data["upd_user_email"] = self.context["request"].user.email
+        return super().update(instance, validated_data)
+
 
 class BankFilter(filters.FilterSet):
     class Meta:
@@ -70,6 +88,7 @@ class BankFilter(filters.FilterSet):
         fields = {
             "bank_merchant_code": ["icontains"],
             "bank_name": ["icontains"],
+            "bank_active": ["exact"],
         }
 
 

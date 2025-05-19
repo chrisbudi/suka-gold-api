@@ -110,6 +110,12 @@ class gold_transfer(models.Model):
     transfer_ref_number = models.CharField(max_length=255)
     transfer_member_datetime = models.DateTimeField(auto_created=True)
     transfer_member_gold_weight = models.DecimalField(max_digits=8, decimal_places=4)
+    transfer_member_admin_weight = models.DecimalField(
+        max_digits=8, decimal_places=4, default=Decimal(0)
+    )
+    transfer_member_admin_price = models.DecimalField(
+        max_digits=16, decimal_places=2, default=Decimal(0)
+    )
     transfer_member_amount = models.DecimalField(
         max_digits=16, decimal_places=2, default=Decimal(0)
     )
