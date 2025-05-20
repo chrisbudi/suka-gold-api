@@ -110,11 +110,11 @@ class gold_transfer(models.Model):
     transfer_ref_number = models.CharField(max_length=255)
     transfer_member_datetime = models.DateTimeField(auto_created=True)
     transfer_member_gold_weight = models.DecimalField(max_digits=8, decimal_places=4)
-    transfer_member_admin_weight = models.DecimalField(
+    transfer_member_transfered_weight = models.DecimalField(
         max_digits=8, decimal_places=4, default=Decimal(0)
     )
-    transfer_member_admin_price = models.DecimalField(
-        max_digits=16, decimal_places=2, default=Decimal(0)
+    transfer_member_admin_weight = models.DecimalField(
+        max_digits=8, decimal_places=4, default=Decimal(0)
     )
     transfer_member_amount = models.DecimalField(
         max_digits=16, decimal_places=2, default=Decimal(0)
@@ -123,6 +123,19 @@ class gold_transfer(models.Model):
     transfer_member_service_option = models.CharField(
         max_length=100, blank=True, null=True
     )
+
+    def get_transfer_cost(self, weight: float):
+        weight_cost = 0.0
+        # if weight <= 10 cost 0.1%
+        if weight <= 10:
+            weight_cost = 0.001 * weight
+        # if weight > 10 and weight <= 50 cost 0.08%
+        elif weight > 10 and weight <= 50:
+            weight_cost = 0.0008 * weight
+        # if weight > 50 cost 0.03%
+        elif weight > 50:
+            weight_cost = 0.0003 * weight
+        return weight_cost
 
     def __str__(self):
         return f"Gold Transfer {self.gold_transfer_id} - Type:"

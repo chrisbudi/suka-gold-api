@@ -38,6 +38,11 @@ urlpatterns = [
         name="gold-sale-list",
     ),
     path(
+        "gold-transfer/calculate",
+        views.GoldTransferListCreateAPIView.as_view({"post": "calculate_weight"}),
+        name="gold-sale-list",
+    ),
+    path(
         "gold-transfer/create",
         views.GoldTransferListCreateAPIView.as_view({"post": "perform_create"}),
         name="gold-sale-create",

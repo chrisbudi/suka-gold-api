@@ -54,6 +54,7 @@ class GoldTransferSerializer(serializers.ModelSerializer):
 
         # get current gold price
         price_instance = gold_price()
+        gold_transfer_instance = gold_transfer()
         price = price_instance.get_active_price()
         if price is None:
             raise ValueError("Active gold price not found")
@@ -71,6 +72,17 @@ class GoldTransferSerializer(serializers.ModelSerializer):
 
         validated_data["transfer_member_amount"] = (
             validated_data["transfer_member_gold_weight"] * price.gold_price_buy
+        )
+
+        validated_data["transfer_member_admin_weight"] = (
+            gold_transfer_instance.get_transfer_cost(
+                validated_data["transfer_member_gold_weight"]
+            )
+        )
+
+        validated_data["transfer_member_transfered_weight"] = (
+            validated_data["transfer_member_gold_weight"]
+            - validated_data["transfer_member_admin_weight"]
         )
 
         # from user phone number to user

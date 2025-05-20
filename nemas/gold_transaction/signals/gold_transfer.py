@@ -48,7 +48,7 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
                 user_gold_history(
                     user=instance.user_to,
                     gold_purchase_date=datetime.now(),
-                    gold_weight=instance.transfer_member_gold_weight,
+                    gold_weight=instance.transfer_member_transfered_weight,
                     gold_history_price_base=price.gold_price_base,
                     gold_history_price_buy=price.gold_price_buy,
                     gold_history_price_sell=price.gold_price_sell,
@@ -57,6 +57,7 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
                     gold_history_note="transfer-" + instance.transfer_ref_number,
                 ),
             ]
+            # return admin to main account
         )
 
         UserFrom = instance.user_from

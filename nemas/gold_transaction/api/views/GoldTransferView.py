@@ -7,6 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # Correct model import
 from gold_transaction.models import gold_transfer
 from gold_transaction.api.serializers import GoldTransferSerializer, GoldTransferFilter
+from decimal import Decimal, InvalidOperation
 
 
 @extend_schema(
@@ -34,6 +35,43 @@ class GoldTransferListCreateAPIView(viewsets.ModelViewSet):
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = GoldTransferSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
+
+    @extend_schema(
+        summary="Calculate Gold Transfer Weight",
+        description="Calculate and return the gold transfer weight for the authenticated user.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {"weight": {"type": "number"}},
+                "required": ["weight"],
+            }
+        },
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "weight": {"type": "number"},
+                    "weight_cost": {"type": "number"},
+                },
+            }
+        },
+    )
+    def calculate_weight(self, request):
+        weight = request.data.get("weight")
+        if weight is not None:
+            gold_transfer_instance = gold_transfer()
+            transfer_cost = round(gold_transfer_instance.get_transfer_cost(weight), 4)
+            return response.Response(
+                {
+                    "weight_transfered": round(weight - transfer_cost, 4),
+                    "transfer_cost": round(transfer_cost, 4),
+                }
+            )
+        else:
+            return response.Response(
+                {"error": "Weight must be a valid decimal number."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     @extend_schema(
         summary="Create Gold Transfer",
