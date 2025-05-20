@@ -5,6 +5,7 @@ from datetime import datetime
 from common.generator import generate_alphanumeric_code
 from core.domain.gold import gold_price
 from user.models import user_props, user
+from decimal import Decimal
 
 
 class GoldTransferSerializer(serializers.ModelSerializer):
@@ -76,14 +77,13 @@ class GoldTransferSerializer(serializers.ModelSerializer):
 
         validated_data["transfer_member_admin_weight"] = (
             gold_transfer_instance.get_transfer_cost(
-                validated_data["transfer_member_gold_weight"]
+                float(validated_data["transfer_member_gold_weight"])
             )
         )
 
-        validated_data["transfer_member_transfered_weight"] = (
+        validated_data["transfer_member_transfered_weight"] = Decimal(
             validated_data["transfer_member_gold_weight"]
-            - validated_data["transfer_member_admin_weight"]
-        )
+        ) - Decimal(validated_data["transfer_member_admin_weight"])
 
         # from user phone number to user
         user_to = user.objects.get(phone_number=validated_data["phone_number"])
