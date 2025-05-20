@@ -6,6 +6,7 @@ from core.domain import gold_price_config, gold_price_source
 from asgiref.sync import sync_to_async
 from core.services.price_service import price_service
 from shared_kernel.services.redis_service import redis_service
+import math
 
 
 class HargaEmasSpider(scrapy.Spider):
@@ -62,8 +63,8 @@ class HargaEmasSpider(scrapy.Spider):
             # save new price
             gprice = gold_price(
                 gold_price_source="HE",
-                gold_price_sell=price_sell,
-                gold_price_buy=price_buy,
+                gold_price_sell=math.ceil(price_sell),
+                gold_price_buy=math.ceil(price_buy),
                 gold_price_base=float(idr_price.replace(".", "").replace(",", ".")),
                 gold_price_weight=1,
                 timestamps=datetime.now(),
