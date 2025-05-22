@@ -38,6 +38,9 @@ class GoldTransactionLogView(APIView):
                 required=False,
                 type=str,
                 enum=["gold_buy", "gold_sell", "gold_transfer", "order"],
+                many=True,  # Allow multiple values
+                style="form",
+                explode=True,
             ),
             OpenApiParameter(
                 name="order_direction",
@@ -119,7 +122,9 @@ class GoldTransactionLogView(APIView):
         end_date = request.query_params.get("end_date")
         order_by = request.query_params.get("order_by", "transaction_date")
         order_direction = request.query_params.get("order_direction", "DESC")
-        transaction_type = request.query_params.get("transaction_type")
+        # Accept multiple transaction_type values
+        transaction_types = request.query_params.getlist("transaction_type")
+
         filters = []
         if user_id:
             filters.append(f"uu.id = {user_id}")
@@ -128,8 +133,9 @@ class GoldTransactionLogView(APIView):
         if end_date:
             filters.append(f"gt.transaction_date <= '{end_date}'")
 
-        if transaction_type:
-            filters.append(f"gt.transaction_type = '{transaction_type}'")
+        if transaction_types:
+            types_str = ", ".join(f"'{t}'" for t in transaction_types)
+            filters.append(f"gt.transaction_type IN ({types_str})")
 
         if filters:
             query += " WHERE " + " AND ".join(filters)
