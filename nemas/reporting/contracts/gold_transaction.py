@@ -13,3 +13,4 @@ class GoldTransactionContract:
     price: float
     gold_history_price_base: float
     ref_number: str
+    transaction_type: str

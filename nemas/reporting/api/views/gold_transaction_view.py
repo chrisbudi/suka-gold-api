@@ -34,8 +34,13 @@ class GoldTransactionLogView(APIView):
                 enum=["transaction_date", "user_id", "weight", "price"],
             ),
             OpenApiParameter(
+                name="transaction_type",
+                required=False,
+                type=str,
+                enum=["gold_buy", "gold_sell", "gold_transfer", "order"],
+            ),
+            OpenApiParameter(
                 name="order_direction",
-                # description="Order direction (ASC or DESC, default: DESC)",
                 required=False,
                 type=str,
                 enum=["ASC", "DESC"],
@@ -65,7 +70,8 @@ class GoldTransactionLogView(APIView):
                        gb.weight,
                        gb.price,
                        gb.gold_history_price_base,
-                       gb.gold_buy_number AS ref_number
+                       gb.gold_buy_number AS ref_number,
+                       'gold_buy' AS transaction_type
                 FROM gold_transaction_gold_saving_buy gb
 
                 UNION ALL
@@ -76,7 +82,8 @@ class GoldTransactionLogView(APIView):
                        gs.weight,
                        gs.price,
                        gs.gold_history_price_base,
-                       gs.gold_sell_number AS ref_number
+                       gs.gold_sell_number AS ref_number,
+                       'gold_sell' AS transaction_type
                 FROM gold_transaction_gold_saving_sell gs
 
                 UNION ALL
@@ -87,7 +94,8 @@ class GoldTransactionLogView(APIView):
                        NULL AS weight,
                        NULL AS price,
                        NULL AS gold_history_price_base,
-                       gt.gold_transfer_number AS ref_number
+                       gt.gold_transfer_number AS ref_number,
+                       'gold_transfer' AS transaction_type
                 FROM gold_transaction_gold_transfer gt
 
                 UNION ALL
@@ -98,7 +106,8 @@ class GoldTransactionLogView(APIView):
                        NULL AS weight,
                        NULL AS price,
                        NULL AS gold_history_price_base,
-                       og.order_number AS ref_number
+                       og.order_number AS ref_number,
+                       'order' AS transaction_type
                 FROM order_order_gold og
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id
@@ -110,7 +119,7 @@ class GoldTransactionLogView(APIView):
         end_date = request.query_params.get("end_date")
         order_by = request.query_params.get("order_by", "transaction_date")
         order_direction = request.query_params.get("order_direction", "DESC")
-
+        transaction_type = request.query_params.get("transaction_type")
         filters = []
         if user_id:
             filters.append(f"uu.id = {user_id}")
@@ -118,6 +127,9 @@ class GoldTransactionLogView(APIView):
             filters.append(f"gt.transaction_date >= '{start_date}'")
         if end_date:
             filters.append(f"gt.transaction_date <= '{end_date}'")
+
+        if transaction_type:
+            filters.append(f"gt.transaction_type = '{transaction_type}'")
 
         if filters:
             query += " WHERE " + " AND ".join(filters)
