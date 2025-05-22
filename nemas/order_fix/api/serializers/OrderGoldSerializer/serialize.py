@@ -163,7 +163,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_amount_billed = order_cart_models.total_price_round + shipping_total
         # add calculation for order pph22
         order_total = order_cart_models.total_price_round + shipping_total
-        order_pph22 = order_cart_models.total_price_round * Decimal((25 / 100 / 100))
+        # order_pph22 = order_cart_models.total_price_round * Decimal((25 / 100 / 100))
         order_grand_total_price = order_total
         prefix = "TE/" if order_cart_models.order_type == "redeem" else "BP/"
         order_number = f"{prefix}{datetime.now():%y%m}/{generate_alphanumeric_code()}"
@@ -202,7 +202,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_type": order_cart_models.order_type,
                     "order_total_price": (order_cart_models.total_price),
                     "order_total_price_round": (order_cart_models.total_price_round),
-                    "order_pph22": order_pph22,
+                    # "order_pph22": order_pph22,
                     "order_grand_total_price": order_grand_total_price,
                     "tracking_courier_id": validated_data.get("tracking_courier_id"),
                     "tracking_courier_name": delivery_partner_model.delivery_partner_name,
@@ -239,7 +239,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                 )
 
             # submit order for shipping
-            # process_tracking = TrackingProcess(order_gold_instance)
+            process_tracking = TrackingProcess(order_gold_instance)
             # tracking_ref = process_tracking.submit_tracking(
             #     validated_data, user, shipping_data, delivery_partner_model
             # )
@@ -265,7 +265,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     validated_data, order_amount_billed, user, order_gold_instance
                 )
 
-            print(pay_ref, "pay_ref")
+            # print(pay_ref, "pay_ref")
             if not pay_ref.get("success"):
                 raise serializers.ValidationError(pay_ref)
 

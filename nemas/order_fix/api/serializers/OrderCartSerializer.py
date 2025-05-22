@@ -47,7 +47,12 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         # if order cart detail model any then update the endity
 
         if validated_data["order_type"] == "redeem":
-            redeem_price = Decimal(Decimal(goldModel.redeem_price))
+            gold_price_value = goldPriceModel.gold_price_buy * goldModel.gold_weight
+
+            gold_price_value_round = (
+                goldPriceModel.gold_price_buy * goldModel.gold_weight // 100 * 100 + 100
+            )
+            redeem_price = Decimal(goldModel.redeem_price)
 
             price = (
                 redeem_price
@@ -55,11 +60,12 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 + (goldModel.product_cost or 0)
             )
             price_round = price
-            order_price = price // 100 * 100 + 100
-            order_price_round = order_price
+            order_price = gold_price_value + price
+            order_price_round = (gold_price_value // 100 * 100 + 100) + price
             total_price = price * validated_data["quantity"]
             total_price_round = (price) * validated_data["quantity"]
         else:
+
             redeem_price = Decimal(0)
             price = goldPriceModel.gold_price_buy * goldModel.gold_weight
             price_round = price // 100 * 100 + 100
@@ -73,6 +79,9 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 + goldModel.product_cost
                 + (certificateModel.cert_price if certificateModel else 0)
             )
+
+            gold_price_value = order_price
+            gold_price_value_round = order_price_round
 
             total_price = (
                 price
@@ -88,8 +97,8 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
 
         if order_cart_detail_model:
             order_cart_detail_model.price = price
-            order_cart_detail_model.gold_price = goldPriceModel.gold_price_buy
-            order_cart_detail_model.gold_price_round = price_round
+            order_cart_detail_model.gold_price = gold_price_value
+            order_cart_detail_model.gold_price_round = gold_price_value_round
             order_cart_detail_model.order_price = order_price
             order_cart_detail_model.order_price_round = order_price_round
             order_cart_detail_model.product_cost = goldModel.product_cost
@@ -113,8 +122,8 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
                 "gold": goldModel,
                 "user": self.context["request"].user,
                 "price": price,
-                "gold_price": goldPriceModel.gold_price_buy,
-                "gold_price_round": price_round,
+                "gold_price": gold_price_value,
+                "gold_price_round": gold_price_value_round,
                 "order_price": order_price,
                 "order_price_round": order_price_round,
                 "weight": goldModel.gold_weight,
@@ -192,6 +201,10 @@ class ProcessCartSerializer(serializers.Serializer):
 
 
 class CartDetailSerializer(serializers.ModelSerializer):
+    order_type = serializers.ChoiceField(
+        choices=[("buy", "Buy"), ("redeem", "Redeem")], write_only=True
+    )
+
     gold = GoldSerializer(read_only=True)
 
     class Meta:

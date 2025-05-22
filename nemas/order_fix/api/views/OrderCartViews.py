@@ -33,14 +33,29 @@ class CartItemListAPIView(viewsets.ModelViewSet):
             user_id=self.request.user, completed_cart=False
         ).select_related("gold")
 
+    from drf_spectacular.utils import OpenApiParameter
+
     @extend_schema(
         summary="List Cart Detail",
         description="Retreive all detail data that completed_cart false.",
-        request={200: CartDetailSerializer},
+        parameters=[
+            OpenApiParameter(
+                name="order_type",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Type of the order to filter cart details",
+            ),
+        ],
+        responses={200: CartDetailSerializer},
     )
     def list_cart_detail(self, request):
+        order_type_data = request.query_params.get("order_type")
         queryset = order_cart_detail.objects.filter(
-            user_id=request.user, completed_cart=False, selected=True
+            user_id=request.user,
+            completed_cart=False,
+            selected=True,
+            order_type=order_type_data,
         ).select_related("gold")
 
         filter_queryset = self.filter_queryset(queryset)
@@ -64,9 +79,14 @@ class CartItemListAPIView(viewsets.ModelViewSet):
         )
         if serializer.is_valid():
             serializer.save(user=request.user)
+            order_type = request.data.get("order_type")
+
             # select all data from order cart detail then update show it
             queryset = order_cart_detail.objects.filter(
-                user_id=request.user, completed_cart=False, selected=True
+                user_id=request.user,
+                completed_cart=False,
+                selected=True,
+                order_type=order_type,
             ).select_related("gold")
             updated_serializer = CartDetailSerializer(queryset, many=True)
             return response.Response(
