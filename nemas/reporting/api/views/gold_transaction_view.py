@@ -15,7 +15,7 @@ class GoldTransactionLogView(APIView):
             OpenApiParameter(
                 name="user_id",
                 required=False,
-                type=int,
+                type=str,
             ),
             OpenApiParameter(
                 name="start_date",
@@ -127,7 +127,7 @@ class GoldTransactionLogView(APIView):
 
         filters = []
         if user_id:
-            filters.append(f"uu.id = {user_id}")
+            filters.append(f"uu.id = '{user_id}' ")
         if start_date:
             filters.append(f"gt.transaction_date >= '{start_date}'")
         if end_date:
