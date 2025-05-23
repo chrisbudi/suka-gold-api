@@ -94,8 +94,8 @@ class GoldTransactionLogView(APIView):
                 SELECT gt.transfer_member_datetime AS transaction_date,
                        gt.gold_transfer_id AS transaction_id,
                        gt.user_from_id AS user_id,
-                       NULL AS weight,
-                       NULL AS price,
+                       gt.transfer_member_gold_weight AS weight,
+                       gt.transfer_member_amount AS price,
                        NULL AS gold_history_price_base,
                        gt.gold_transfer_number AS ref_number,
                        'gold_transfer' AS transaction_type
@@ -106,8 +106,8 @@ class GoldTransactionLogView(APIView):
                 SELECT og.order_timestamp AS transaction_date,
                        og.order_gold_id AS transaction_id,
                        og.user_id,
-                       NULL AS weight,
-                       NULL AS price,
+                       og.order_item_weight AS weight,
+                       og.order_amount AS price,
                        NULL AS gold_history_price_base,
                        og.order_number AS ref_number,
                        'order' AS transaction_type
