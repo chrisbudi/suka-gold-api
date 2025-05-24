@@ -43,6 +43,7 @@ class GoldTransactionLogView(APIView):
                     "gold_transfer",
                     "order_buy",
                     "order_redeem",
+                    "disburst",
                 ],
                 many=True,  # Allow multiple values
                 style="form",
@@ -130,6 +131,17 @@ class GoldTransactionLogView(APIView):
                        'order_redeem' AS transaction_type
                 FROM order_order_gold ogr 
                 WHERE ogr.order_type = 'redeem'
+                UNION ALL
+                SELECT 
+                	wdt.disburst_timestamp AS transaction_date,
+                	wdt.disburst_transaction_id AS transaction_id,
+                	wdt.user_id, 
+                	NULL AS weight,
+                	wdt.disburst_amount AS price,
+                	NULL AS gold_history_price_base,
+                	'disburst' AS transaction_type
+                FROM wallet_disburst_transaction wdt 
+                
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id
         """
