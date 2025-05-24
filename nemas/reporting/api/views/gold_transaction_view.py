@@ -37,7 +37,13 @@ class GoldTransactionLogView(APIView):
                 name="transaction_type",
                 required=False,
                 type=str,
-                enum=["gold_buy", "gold_sell", "gold_transfer", "order"],
+                enum=[
+                    "gold_buy",
+                    "gold_sell",
+                    "gold_transfer",
+                    "order_buy",
+                    "order_redeem",
+                ],
                 many=True,  # Allow multiple values
                 style="form",
                 explode=True,
@@ -110,8 +116,20 @@ class GoldTransactionLogView(APIView):
                        og.order_amount AS price,
                        NULL AS gold_history_price_base,
                        og.order_number AS ref_number,
-                       'order' AS transaction_type
+                       'order_buy' AS transaction_type
                 FROM order_order_gold og
+                WHERE og.order_type = 'buy'
+                UNION ALL
+                SELECT ogr.order_timestamp AS transaction_date,
+                       ogr.order_gold_id AS transaction_id,
+                       ogr.user_id,
+                       ogr.order_item_weight AS weight,
+                       ogr.order_amount AS price,
+                       NULL AS gold_history_price_base,
+                       ogr.order_number AS ref_number,
+                       'order_redeem' AS transaction_type
+                FROM order_order_gold ogr 
+                WHERE ogr.order_type = 'redeem'
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id
         """
