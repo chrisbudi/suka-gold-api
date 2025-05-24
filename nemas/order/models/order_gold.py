@@ -139,8 +139,7 @@ class order_gold_detail(models.Model):
         on_delete=models.CASCADE,
     )
     gold = models.ForeignKey(
-        gold,
-        on_delete=models.CASCADE,
+        gold, on_delete=models.CASCADE, related_name="order_gold_detail"
     )
     order_cart_detail = models.ForeignKey(
         order_cart_detail,

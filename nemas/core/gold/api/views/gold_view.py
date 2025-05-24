@@ -5,13 +5,27 @@ from core.gold.api.serializers import (
     GoldProductShowSerializer,
 )
 from rest_framework import status, viewsets, filters, pagination, response
-from core.domain import gold as modelInfo
+from core.domain import gold as modelInfo, gold_price
+from django.core.cache import cache
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from shared_kernel.services.s3_services import S3Service
 import os
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import (
+    F,
+    Value,
+    IntegerField,
+    ExpressionWrapper,
+    Prefetch,
+    Count,
+    Q,
+)
+from core.domain import gold_cert_detail_price as CoreGoldCertDetailPrice
+from order.models import order_gold_detail as OrderOrderGoldDetail
+from django.db.models.functions import Floor
+from django.db import connection
 
 
 @extend_schema(
@@ -20,11 +34,26 @@ from rest_framework.permissions import IsAuthenticated
 class GoldServiceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
     serializer_class = objectSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     filterset_class = objectFilter
     pagination_class = (
         pagination.LimitOffsetPagination
     )  # Adjust pagination class as needed
+
+    ordering_fields = [
+        "gold_id",
+        "create_time",
+        "upd_time",
+        "brand",
+        "gold_weight",
+        "gold_price_summary_roundup",
+        "gold_price_summary",
+    ]
+    ordering = ["-create_time"]
 
     def get_permissions(self):
         print(self.action, "action permission")
@@ -37,20 +66,78 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
     @extend_schema(
         responses=GoldProductShowSerializer(many=True),
         tags=["gold"],
+        parameters=[
+            OpenApiParameter(
+                name="ordering",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Fields to order by, e.g. '-create_time', 'gold_id', etc.",
+                required=False,
+            ),
+        ],
     )
     def list_product_show(self, request):
-        queryset = modelInfo.objects.all()
-        self.pagination_class = (
-            pagination.LimitOffsetPagination
-        )  # Ensure pagination is applied
+        gold_price_buy = cache.get("gold_price_buy")
+        if gold_price_buy is None:
+            gold_price_buy = gold_price().get_active_price().gold_price_buy or 0
+            cache.set("gold_price_buy", gold_price_buy, timeout=60)
+
+        queryset = (
+            modelInfo.objects.all()
+            .select_related("certificate")
+            .prefetch_related(
+                Prefetch(
+                    "gold_cert_detail_price",
+                    queryset=CoreGoldCertDetailPrice.objects.filter(include_stock=True),
+                ),
+                Prefetch(
+                    "order_gold_detail",
+                    queryset=OrderOrderGoldDetail.objects.filter(
+                        order_detail_stock_status="open"
+                    ),
+                ),
+            )
+            .annotate(
+                gold_price_summary=F("gold_weight")
+                * Value(gold_price_buy, output_field=IntegerField()),
+                gold_price_summary_roundup=Floor(
+                    (F("gold_weight") * Value(gold_price_buy)) / 100
+                )
+                * 100
+                + 100
+                + F("product_cost")
+                + F("certificate__cert_price"),
+                cert_detail_count=Count(
+                    "gold_cert_detail_price",
+                    filter=Q(gold_cert_detail_price__include_stock=True),
+                ),
+                open_order_count=Count(
+                    "order_gold_detail",
+                    filter=Q(order_gold_detail__order_detail_stock_status="open"),
+                ),
+            )
+        )
+
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = GoldProductShowSerializer(paginated_queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+        paginated_result = self.get_paginated_response(serializer.data)
+
+        # print(f"Queries executed in my_view:")
+        # for query in connection.queries:
+        #     print(f"  SQL: {query['sql']}")
+        #     print(f"  Time: {query['time']} ms")
+        #     print("-" * 20)
+
+        return paginated_result
 
     def list(self, request):
         queryset = modelInfo.objects.all()
         filter_queryset = self.filter_queryset(queryset)
+
+        ordering_filter = filters.OrderingFilter()
+        queryset = ordering_filter.filter_queryset(request, queryset, self)
+
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = objectSerializer(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)

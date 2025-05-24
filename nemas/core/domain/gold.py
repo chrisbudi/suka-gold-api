@@ -35,7 +35,9 @@ class cert(models.Model):
 
 class gold_cert_detail_price(models.Model):
     id = UUIDv7Field(primary_key=True, unique=True, editable=False)
-    gold = models.ForeignKey("gold", on_delete=models.CASCADE)
+    gold = models.ForeignKey(
+        "gold", on_delete=models.CASCADE, related_name="gold_cert_detail_price"
+    )
     gold_cert = models.ForeignKey(cert, on_delete=models.CASCADE)
     gold_cert_code = models.CharField(max_length=50)
     gold_weight = models.IntegerField()
@@ -62,7 +64,10 @@ class gold_cert_detail_price(models.Model):
 
 class gold(models.Model):
     gold_id = models.AutoField(primary_key=True)
-    gold_weight = models.DecimalField(max_digits=10, decimal_places=4)
+    gold_weight = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+    )
     type = models.CharField(max_length=50)  # bar-mintedbar
     brand = models.CharField(max_length=255)  # marva gold, antam
     # TODO: Remove the certificate weight field

@@ -3,6 +3,7 @@ Serializer for recipe api
 """
 
 from datetime import datetime
+from os import read
 import uuid
 from humanize import activate
 from rest_framework import serializers
@@ -136,44 +137,20 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
 
     certificate = CertSerializer(read_only=True)
     certificate_id = serializers.PrimaryKeyRelatedField(
-        queryset=cert.objects.all(), source="certificate", write_only=True
+        queryset=cert.objects.only("cert_name", "cert_code", "cert_price"),
+        source="certificate",
+        write_only=True,
     )
 
     activate_price = gold_price().get_active_price()
 
-    gold_price_summary = serializers.SerializerMethodField()
-    gold_price_summary_roundup = serializers.SerializerMethodField()
+    gold_price_summary = serializers.IntegerField(read_only=True)
+    gold_price_summary_roundup = serializers.IntegerField(read_only=True)
 
     stock = serializers.SerializerMethodField()
 
-    def get_gold_price_summary(self, obj):
-        return (
-            (
-                (self.activate_price.get_active_price().gold_price_buy or 0)
-                * (obj.gold_weight or 0)
-            )
-            + (obj.product_cost or 0)
-            + (obj.certificate.cert_price or 0)
-        )
-
-    def get_gold_price_summary_roundup(self, obj):
-        return (
-            (
-                (
-                    self.activate_price.get_active_price().gold_price_buy
-                    * obj.gold_weight
-                )
-                // 100
-                * 100
-                + 100
-            )
-            + obj.product_cost
-            + obj.certificate.cert_price
-        )
-
     def get_stock(self, obj):
-        goldModel = gold.objects.get(gold_id=obj.gold_id)
-        return obj.get_stock() - order_gold_detail().get_sum_status_open(goldModel)
+        return obj.cert_detail_count - obj.open_order_count
 
     class Meta:
         model = gold
@@ -207,6 +184,7 @@ class GoldServiceFilter(filters.FilterSet):
 
         fields = {
             "type": ["icontains"],
+            # "brand": ["icontains"],
         }
 
 
