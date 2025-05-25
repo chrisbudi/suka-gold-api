@@ -15,16 +15,23 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             "gold_transfer_id",
             "phone_number",
             "transfer_member_gold_weight",
+            "transfer_member_admin_weight",
+            "transfer_member_admin_percentage",
+            "transfer_member_transfered_weight",
             "transfer_ref_number",
             "transfer_member_notes",
             "transfer_member_service_option",
-            "transfer_member_amount",
+            "transfer_member_amount_received",
             "transfer_member_datetime",
         ]
         read_only_fields = [
             "gold_transfer_id",
-            "transfer_member_amount",
+            "transfer_member_amount_received",
             "transfer_member_datetime",
+            "transfer_member_admin_weight",
+            "transfer_member_admin_percentage",
+            "transfer_member_transfered_weight",
+            "transfer_member_amount_received",
         ]
 
     def validate(self, attrs):
@@ -71,12 +78,14 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             else self.instance.transfer_ref_number
         )
 
-        validated_data["transfer_member_amount"] = (
-            validated_data["transfer_member_gold_weight"] * price.gold_price_buy
-        )
-
         validated_data["transfer_member_admin_weight"] = (
             gold_transfer_instance.get_transfer_cost(
+                float(validated_data["transfer_member_gold_weight"])
+            )
+        )
+
+        validated_data["transfer_member_admin_percentage"] = (
+            gold_transfer_instance.get_transfer_cost_percentage(
                 float(validated_data["transfer_member_gold_weight"])
             )
         )
@@ -84,6 +93,10 @@ class GoldTransferSerializer(serializers.ModelSerializer):
         validated_data["transfer_member_transfered_weight"] = Decimal(
             validated_data["transfer_member_gold_weight"]
         ) - Decimal(validated_data["transfer_member_admin_weight"])
+
+        validated_data["transfer_member_amount_received"] = (
+            validated_data["transfer_member_transfered_weight"] * price.gold_price_buy
+        )
 
         # from user phone number to user
         user_to = user.objects.get(phone_number=validated_data["phone_number"])

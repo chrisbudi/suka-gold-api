@@ -1,4 +1,5 @@
 from decimal import Decimal
+from logging import PercentStyle
 from django.conf import settings
 
 from django.db import models
@@ -113,10 +114,13 @@ class gold_transfer(models.Model):
     transfer_member_transfered_weight = models.DecimalField(
         max_digits=8, decimal_places=4, default=Decimal(0)
     )
+    transfer_member_admin_percentage = models.DecimalField(
+        max_digits=5, decimal_places=2, default=Decimal(0)
+    )
     transfer_member_admin_weight = models.DecimalField(
         max_digits=8, decimal_places=4, default=Decimal(0)
     )
-    transfer_member_amount = models.DecimalField(
+    transfer_member_amount_received = models.DecimalField(
         max_digits=16, decimal_places=2, default=Decimal(0)
     )
     transfer_member_notes = models.TextField()
@@ -126,16 +130,23 @@ class gold_transfer(models.Model):
 
     def get_transfer_cost(self, weight: float):
         weight_cost = 0.0
-        # if weight <= 10 cost 0.1%
         if weight <= 10:
             weight_cost = 0.001 * weight
-        # if weight > 10 and weight <= 50 cost 0.08%
         elif weight > 10 and weight <= 50:
             weight_cost = 0.0008 * weight
-        # if weight > 50 cost 0.03%
         elif weight > 50:
             weight_cost = 0.0003 * weight
         return weight_cost
+
+    def get_transfer_cost_percentage(self, weight: float):
+        percentage = 0.0
+        if weight <= 10:
+            percentage = 0.1
+        elif weight > 10 and weight <= 50:
+            percentage = 0.08
+        elif weight > 50:
+            percentage = 0.03
+        return percentage
 
     def __str__(self):
         return f"Gold Transfer {self.gold_transfer_id} - Type:"
