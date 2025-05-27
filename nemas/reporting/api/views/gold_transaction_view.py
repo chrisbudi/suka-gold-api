@@ -102,7 +102,7 @@ class GoldTransactionLogView(APIView):
                        gt.gold_transfer_id AS transaction_id,
                        gt.user_from_id AS user_id,
                        gt.transfer_member_gold_weight AS weight,
-                       gt.transfer_member_amount AS price,
+                       gt.transfer_member_amount_received AS price,
                        NULL AS gold_history_price_base,
                        gt.gold_transfer_number AS ref_number,
                        'gold_transfer' AS transaction_type
@@ -132,15 +132,17 @@ class GoldTransactionLogView(APIView):
                 FROM order_order_gold ogr 
                 WHERE ogr.order_type = 'redeem'
                 UNION ALL
-                SELECT 
+              SELECT 
                 	wdt.disburst_timestamp AS transaction_date,
                 	wdt.disburst_transaction_id AS transaction_id,
                 	wdt.user_id, 
                 	NULL AS weight,
                 	wdt.disburst_amount AS price,
                 	NULL AS gold_history_price_base,
+                	wdt.disburst_number AS ref_number,
                 	'disburst' AS transaction_type
-                FROM wallet_disburst_transaction wdt 
+                FROM wallet_disburst_transaction wdt  
+                WHERE 1=1
                 
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id
