@@ -39,12 +39,12 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                 payload = {
                     "origin": "JK07",
                     "destination": "JI28",
-                    "weight": serializer.data.get("weight"),
+                    "weight": str(serializer.data.get("weight")),
                     "customer_code": "DEV000",
                     "packing_type_code": "ACH06",
                     "volumetric": "1x1x1",
                     "insurance_type_code": "INS02",
-                    "item_value": serializer.data.get("amount"),
+                    "item_value": str(serializer.data.get("amount")),
                 }
                 payload_data = json.dumps(payload)
                 data = sapx_service.get_price(payload_data)
@@ -56,19 +56,18 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                     item_show.append(
                         {
                             "weight": item["weight"],
-                            "insurance_cost": item["insurance_cost"],
+                            "insurance_cost": item["insurance_cost"]
+                            + item["insurance_admin_cost"],
                             "insurance_cost_round": round_value.round_up_to_100(
                                 item["insurance_cost"]
-                            ),
+                            )
+                            + item["insurance_admin_cost"],
                             "total_cost": item["total_cost"],
                             "total_cost_round": round_value.round_up_to_100(
                                 item["total_cost"]
                             ),
                             "service_type_code": item["service_type_code"],
                             "service_type_name": item["service_type_name"],
-                            "insurance_admin_cost": item["insurance_admin_cost"],
-                            "packing_cost": item["packing_cost"],
-                            "cost": item["cost"],
                             "sla": item["sla"],
                         }
                     )
