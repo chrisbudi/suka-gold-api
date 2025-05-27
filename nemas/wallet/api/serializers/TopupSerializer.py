@@ -135,7 +135,7 @@ class TopupQrisSerializer(serializers.ModelSerializer):
         # Generate static VA
 
         payload = service.generate_payload(
-            validated_data["topup_total_amount"],
+            float(validated_data["topup_total_amount"]),
             f"qris_generated_user_{user.id}_{str(uuid4())}",
         )
         payload_json = json.dumps(payload)
