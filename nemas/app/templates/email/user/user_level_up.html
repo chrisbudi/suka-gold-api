@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Level UP User NEMAS</title>
+  <style>
+    @media only screen and (min-width: 600px) {
+      .company-header-table td {
+        vertical-align: top;
+      }
+
+      .company-logo {
+        text-align: left !important;
+      }
+
+      .company-center {
+        text-align: right !important;
+      }
+
+      .company-right {
+        text-align: right !important;
+      }
+    }
+  </style>
+</head>
+
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family:Arial, sans-serif;">
+  <center>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f4f4;">
+      <tr>
+        <td align="center">
+          <table width="700" cellpadding="0" cellspacing="0" border="0"
+            style="background-color:#ffffff; border:1px solid #ddd; border-radius:8px; overflow:hidden;">
+
+
+            <!-- Header -->
+            <tr>
+              <td style="padding:20px; border-bottom:3px solid #F0BF6B;">
+                <table class="company-header-table" width="100%">
+                  <tr>
+                    <td width="20%" class="company-logo" style="text-align:left;">
+                      <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/172e4f51-ad65-40c2-9e36-8848a1c644c7/1490x792.jpg"
+                        alt="Logo" style="max-height:50px; display:block; margin-left:0;" />
+                    </td>
+                    <td width="33%" class="company-center" style="font-size:13px; color:#333; text-align:right;">
+                      <strong>{{NAMA_PERUSAHAAN}}</strong><br>
+                      {{ALAMAT_PERUSAHAAN}} <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c9382236-60e7-4678-9836-9dfb584fa787/40x40.png"
+                        width="14" height="14" alt="Alamat" /><br>
+                      <a href="{{WEBSITE_URL}}" style="color:#333;">{{WEBSITE}}</a> <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/6aedb94c-0352-4064-9af8-90f5d18f0b9c/40x40.png"
+                        width="14" height="14" alt="Website" />
+                    </td>
+                    <td width="36%" class="company-right" style="font-size:13px; color:#333; text-align:right;">
+                      {{TELP}} <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4138bb6a-9c21-4f6e-8511-c0c9b79642d7/40x40.png"
+                        width="14" height="14" alt="Telepon" /><br>
+                      <a href="{{WHATSAPP_URL}}" style="color:#333;">{{WHATSAPP}}</a> <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/2f942479-b182-4197-bf6b-a6e4541a3701/40x40.png"
+                        width="14" height="14" alt="WhatsApp" /><br>
+                      <a href="{{MAIL_SUPPORT_URL}}" style="color:#333;">{{MAIL_SUPPORT}}</a> <img
+                        src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/4a466397-769d-47f1-a147-3fefb43fd189/40x40.png"
+                        width="14" height="14" alt="Email" />
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+ 
+
+            <!-- Konten utama -->
+            <tr>
+              <TD style="text-align: center; padding:20px;">
+
+                <img
+                  src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/5a3cfb9a-dedb-4e2c-92dc-32f9999759d1/255x233.png"
+                  height="150" alt="Konfirmasi Email">
+
+              </TD>
+            </tr>
+ 
+ 
+            <!-- Pesan Utama -->
+            <tr>
+              <td style="text-align:center; padding: 20px;">
+                <h2 style="color: #d4af37;">Selamat, {{NAMA_USER}}!</h2>
+                <p style="font-size:16px; color:#333;">Level Anda telah <strong>naik</strong> dari</p>
+                <p style="font-size:20px; color:#00796b; margin:4px 0;"><strong>{{LEVEL_SEBELUM}}</strong></p>
+                <p style="font-size:16px; color:#333;">menjadi</p>
+                <p style="font-size:24px; font-weight:bold; color:#2e7d32; margin:4px 0;"><strong>{{LEVEL_BARU}}</strong></p>
+              </td>
+            </tr>
+
+            <!-- Penjelasan -->
+            <tr>
+              <td style="padding: 0 30px 20px 30px; font-size:14px; color:#555;">
+                <p>Terima kasih atas aktivitas Anda yang luar biasa di platform <strong>Nemas</strong>. Dengan level baru ini, Anda mendapatkan berbagai keuntungan seperti:</p>
+                <ul style="text-align:left; padding-left:20px;">
+                  <li><strong>{{KEUNTUNGAN_1}}</strong></li>
+                  <li><strong>{{KEUNTUNGAN_2}}</strong></li>
+                  <li><strong>{{KEUNTUNGAN_3}}</strong></li>
+                </ul>
+                <p>Jangan lupa terus tingkatkan aktivitas Anda untuk naik ke level selanjutnya!</p>
+              </td>
+            </tr>
+
+            <!-- CTA -->
+            <tr>
+              <td style="text-align: center; padding: 20px;">
+                <a href="{{LINK_DASHBOARD}}" style="background-color:#F0BF6B; color:white; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">Lihat Detail Level</a>
+              </td>
+            </tr>
+
+            <!-- Ringkasan -->
+
+            <!-- Footer -->
+            <tr>
+              <td style="padding:10px; font-size:14px; color:#777; text-align:center;">
+
+               
+                <p>Terima kasih telah menggunakan layanan emas dari Nemas!</p>
+
+                <hr style="border: none; border-top: 1px solid #eee; margin:0; width: 100%;">
+
+
+                <p style="font-size:12px; color:#999;">Jika Anda tidak seharusnya menerima email ini, mohon informasikan
+                  kepada kami dan hapus dari inbox Anda. Setiap sanggahan akan dicocokkan dengan sistem dan rekening
+                  kami.</p>
+              </td>
+              <td></td>
+            </tr>
+
+            <!-- Social Media -->
+            <tr>
+              <td style="background-color:#F0BF6B; text-align:center; padding:10px;">
+                <img
+                  src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/d3692620-c32b-40e9-b9ac-065a15ad749a/40x40.png"
+                  alt="Instagram" style="height:30px; width:30px; margin:0 10px;">
+                <img
+                  src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/448ff3ba-5c6c-4d80-bc4e-a81bd502927e/40x40.png"
+                  alt="Facebook" style="height:30px; width:30px; margin:0 10px;">
+                <img
+                  src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/399f17f2-bea6-46fb-ae43-411a8c589a6e/40x40.png"
+                  alt="X" style="height:30px; width:30px; margin:0 10px;">
+                <img
+                  src="http://cdn.mcauto-images-production.sendgrid.net/fc2c592a843021e2/c89e3852-20c5-40d1-bb52-0e3650faf75c/40x40.png"
+                  alt="Line" style="height:30px; width:30px; margin:0 10px;">
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+
+</html>
