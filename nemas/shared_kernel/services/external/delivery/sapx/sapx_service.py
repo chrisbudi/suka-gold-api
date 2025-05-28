@@ -5,6 +5,7 @@ import requests
 
 from common.responses import NemasReponses, ServicesResponse, SuccessResponse
 from common.round_value import round_up_to_100
+from .service_payload import generate_price_payload, generate_submit_payload
 
 
 class SapxService:
@@ -16,20 +17,6 @@ class SapxService:
             "Content-Type": "application/json",
             "API_Key": sapx_conf["API_KEY"],
         }
-
-    def generate_payload(
-        self, amount: Decimal, weight: Decimal, origin: str, destination: str
-    ):
-        payload = {
-            "origin": "JK07",
-            "destination": "JI28",
-            "weight": float(weight),
-            "customer_code": "DEV000",
-            "volumetric": "1x1x1",
-            "insurance_type_code": "INS02",
-            "item_value": float(amount),
-        }
-        return payload
 
     def get_district(self, payload=None):
         """ """
@@ -96,12 +83,13 @@ class SapxService:
     ) -> ServicesResponse:
         # Get the shipping details based on the provided data
 
-        payload = self.generate_payload(
+        payload = generate_price_payload(
             order_amount,
             shipping_weight,
             "",
             "",
         )
+
         payload_data = json.dumps(payload)
         shipping_data = self.get_price(payload_data)
         print(shipping_data, "shipping_data")

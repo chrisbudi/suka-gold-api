@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from shared_kernel.services.external.sapx_service import SapxService
 
 
 # Correct model import

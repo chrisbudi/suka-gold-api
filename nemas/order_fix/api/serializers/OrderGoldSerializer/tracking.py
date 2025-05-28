@@ -2,7 +2,7 @@ import decimal
 from common.responses import NemasReponses
 from core import address
 from core.domain.delivery import delivery_partner
-from shared_kernel.services.external.sapx_service import SapxService
+from shared_kernel.services.external.delivery.sapx.sapx_service import SapxService
 from order_fix.api.serializers.OrderCartSerializer import User
 from order_fix.type.shipping_details import ShippingDetails
 from user.models.users import user_address
