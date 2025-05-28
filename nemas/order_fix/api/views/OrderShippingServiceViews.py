@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from shared_kernel.services.external.sapx_service import SapxService
-from shared_kernel.utils import round_value
+from common import round_value
 
 # Correct model import
 from order_fix.api.serializers import OrderShippingSerializer

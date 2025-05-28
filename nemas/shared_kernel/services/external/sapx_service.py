@@ -4,7 +4,7 @@ from django.conf import settings
 import requests
 
 from common.responses import NemasReponses, ServicesResponse, SuccessResponse
-from shared_kernel.utils.round_value import round_up_to_100
+from common.round_value import round_up_to_100
 
 
 class SapxService:
@@ -25,7 +25,6 @@ class SapxService:
             "destination": "JI28",
             "weight": float(weight),
             "customer_code": "DEV000",
-            "packing_type_code": "ACH06",
             "volumetric": "1x1x1",
             "insurance_type_code": "INS02",
             "item_value": float(amount),
@@ -66,7 +65,6 @@ class SapxService:
                 headers=self.headers,
                 data=payload,
             )
-            print(response.json(), "response")
             if response.status_code not in (200, 201):
                 return {
                     "success": False,
@@ -161,5 +159,25 @@ class SapxService:
                 "cost": cost,
                 "shipping_total": shipping_total,
                 "shipping_total_rounded": shipping_total_rounded,
+            },
+        }
+
+    def submit_order(
+        self,
+        order_gold_instance,
+        user,
+        shipping_data,
+        delivery_partner,
+    ):
+        """Generate Payload for order submission to the external service."""
+        # Prepare the payload for the order submission
+
+        # Submit the tracking information to the external service
+        # This is a placeholder implementation and should be replaced with actual logic
+        return {
+            "success": True,
+            "data": {
+                "tracking_number": "123456789",
+                "status": "Tracking submitted successfully",
             },
         }

@@ -67,8 +67,9 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
                 "NO_TRANSAKSI": order.order_number,
                 "table_product": table_product_data,
                 "Expedisi": order.tracking_courier_name,
-                "Expedisi_Cost": f"{((order.order_tracking_amount or 0) + (order.order_tracking_packing or 0)):,.2f}",
-                "Insurance_Cost": f"{(order.order_tracking_insurance_total or 0.0):,.2f}",
+                "Expedisi_Cost": f"{((order.order_tracking_amount or 0)):,.2f}",
+                "Admin_Cost": f"{((order.order_admin_amount or 0)):,.2f}",
+                "Insurance_Cost": f"{(order.order_tracking_insurance_total_round or 0.0):,.2f}",
                 "SubTotal": f"{order.order_total_price_round:,.2f}",
                 "GrandTotal": f"{order.order_grand_total_price:,.2f}",
                 "Pembayaran": (order_payment.order_payment_method_name or "")
@@ -77,9 +78,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
                 **mail_props,
             },
         )
-        print(email_html, "email_html")
         sendGridEmail = settings.SENDGRID_EMAIL
-        print(sendGridEmail, "email setting")
 
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
