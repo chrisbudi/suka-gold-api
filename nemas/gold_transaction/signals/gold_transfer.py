@@ -99,8 +99,8 @@ def generate_email_sender(transfer: gold_transfer, userTo: User, userFrom: User)
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[userFrom.email],
-            subject="Transfer Emas Send",
-            # subject="Nemas Invoice",
+            subject="Kirim Emas Ke Member",
+            # subject="Transfer Emas Send",
             html_content=email_html,
         )
         return message
@@ -134,8 +134,8 @@ def generate_email_receive(transfer: gold_transfer, userFrom: User, userTo: User
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[userTo.email],
-            subject="Transfer Emas Receive",
-            # subject="Nemas Invoice",
+            subject="Terima Emas Dari Member",
+            # subject="Transfer Emas Receive",
             html_content=email_html,
         )
         return message
