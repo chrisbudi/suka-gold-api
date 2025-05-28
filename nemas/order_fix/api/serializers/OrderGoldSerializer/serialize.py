@@ -5,6 +5,7 @@ from rest_framework import serializers
 from core.domain.delivery import delivery_partner, delivery_partner_service
 from common.responses import NemasReponses, ServicesResponse
 from common.generator import generate_alphanumeric_code
+from common.round_value import round_up_to_100
 from order_fix.api.serializers.OrderGoldSerializer.tracking import TrackingProcess
 from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from shared_kernel.services.external.sapx_service import SapxService
@@ -120,7 +121,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     + (certificateModel.cert_price if certificateModel else 0)
                     + (goldModel.product_cost or 0)
                 )
-                * order_cart_models.total_weight
+                * cart_detail.quantity
             )
 
         # get shipping id
@@ -129,6 +130,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             delivery_partner_id=validated_data.get("tracking_courier_id"),
             is_deleted=False,
         ).first()
+
         print(delivery_partner_model, "delivery_partner_model")
         if not delivery_partner_model:
             raise serializers.ValidationError("Delivery partner not found")
@@ -154,7 +156,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             )
 
         shipping_data = cast(ShippingDetails, shipping_details.get("data"))
-        print(shipping_data, "shipping_data")
+        print(shipping_data, "shipping_data list")
         # calculate shipping data
 
         insurance = shipping_data["insurance"]
@@ -163,14 +165,25 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         packing = shipping_data["packing"]
         cost = shipping_data["cost"]
         shipping_total = shipping_data["shipping_total"]
-
-        order_amount_billed = order_cart_models.total_price_round + shipping_total
+        shipping_total_rounded = shipping_data["shipping_total_rounded"]
+        order_amount_billed = (
+            order_cart_models.total_price_round + shipping_total_rounded
+        )
         # add calculation for order pph22
-        order_total = order_cart_models.total_price_round + shipping_total
+        order_total = order_cart_models.total_price_round + shipping_total_rounded
         # order_pph22 = order_cart_models.total_price_round * Decimal((25 / 100 / 100))
-        order_grand_total_price = order_total
         prefix = "TE/" if order_cart_models.order_type == "redeem" else "BP/"
         order_number = f"{prefix}{datetime.now():%y%m}/{generate_alphanumeric_code()}"
+
+        order_admin_amount = 0
+        if validated_data.get("order_payment_method_name") == "QRIS":
+            order_admin_amount = shipping_total_rounded * Decimal(0.7 / 100)
+        elif validated_data.get("order_payment_method_name") == "VA":
+            order_admin_amount = 4500
+        elif validated_data.get("order_payment_method_name") == "SALDO":
+            order_admin_amount = 0
+
+        order_grand_total_price = order_total + order_admin_amount
 
         with transaction.atomic():
             validated_data.update(
@@ -192,7 +205,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_phone_number": user.phone_number,
                     "order_item_weight": order_cart_models.total_weight,
                     "order_amount": order_amount,
-                    "order_admin_amount": 0,
+                    "order_admin_amount": order_admin_amount,
                     "order_pickup_address": None,
                     "order_pickup_customer_datetime": None,
                     "order_tracking_amount": cost,
@@ -200,8 +213,14 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     "order_tracking_packing": packing,
                     "order_tracking_insurance_admin": insurance_admin,
                     "order_tracking_insurance_total": insurance_total,
+                    "order_tracking_insurance_total_round": round_up_to_100(
+                        insurance_total
+                    ),
                     "order_tracking_item_insurance_amount": order_shipping_item_amount,
                     "order_tracking_total_amount": shipping_total,
+                    "order_tracking_total_amount_round": round_up_to_100(
+                        shipping_total
+                    ),
                     "order_promo_code": None,
                     "order_discount": 0,
                     "order_type": order_cart_models.order_type,

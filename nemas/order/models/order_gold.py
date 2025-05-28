@@ -67,6 +67,9 @@ class order_gold(models.Model):
     order_tracking_insurance_total = models.DecimalField(
         max_digits=10, decimal_places=0, null=True
     )
+    order_tracking_insurance_total_round = models.DecimalField(
+        max_digits=10, decimal_places=0, null=True
+    )
     # end of insurance property
 
     # tracking
@@ -75,6 +78,9 @@ class order_gold(models.Model):
     )
     order_tracking_total_amount = models.DecimalField(
         max_digits=10, decimal_places=2, null=True
+    )
+    order_tracking_total_amount_round = models.DecimalField(
+        max_digits=10, decimal_places=0, null=True
     )
 
     # tracking status
