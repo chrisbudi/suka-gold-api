@@ -177,7 +177,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         order_admin_amount = 0
         if validated_data.get("order_payment_method_name") == "QRIS":
-            order_admin_amount = shipping_total_rounded * Decimal(0.7 / 100)
+            order_admin_amount = round_up_to_100(order_total * Decimal(0.7 / 100))
         elif validated_data.get("order_payment_method_name") == "VA":
             order_admin_amount = 4500
         elif validated_data.get("order_payment_method_name") == "SALDO":
