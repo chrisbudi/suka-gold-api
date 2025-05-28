@@ -44,6 +44,7 @@ class GoldTransactionLogView(APIView):
                     "order_buy",
                     "order_redeem",
                     "disburst",
+                    "topup",
                 ],
                 many=True,  # Allow multiple values
                 style="form",
@@ -143,7 +144,17 @@ class GoldTransactionLogView(APIView):
                 	'disburst' AS transaction_type
                 FROM wallet_disburst_transaction wdt  
                 WHERE 1=1
-                
+               UNION ALL
+                SELECT 
+	            	wtt.topup_timestamp  AS transaction_date,
+	            	wtt.topup_transaction_id  AS transaction_id ,
+	            	wtt.user_id ,
+	            	NULL AS weight,
+	            	wtt.topup_amount AS price,
+	            	NULL AS gold_history_price_base,
+	            	wtt.topup_number AS ref_number,
+	            	'topup' AS transaction_type
+	            FROM wallet_topup_transaction wtt   
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id
         """
