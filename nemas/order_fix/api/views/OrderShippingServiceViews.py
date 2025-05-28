@@ -41,7 +41,6 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                     "destination": "JI28",
                     "weight": str(serializer.data.get("weight")),
                     "customer_code": "DEV000",
-                    "packing_type_code": "ACH06",
                     "volumetric": "1x1x1",
                     "insurance_type_code": "INS02",
                     "item_value": str(serializer.data.get("amount")),
