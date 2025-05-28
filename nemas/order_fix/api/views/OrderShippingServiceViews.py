@@ -36,14 +36,16 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 sapx_service = SapxService()
+                item_weight = request.data.get("weight")
+                item_amount = request.data.get("amount")
                 payload = {
                     "origin": "JK07",
                     "destination": "JI28",
-                    "weight": str(serializer.data.get("weight")),
+                    "weight": float(item_weight),
                     "customer_code": "DEV000",
                     "volumetric": "1x1x1",
                     "insurance_type_code": "INS02",
-                    "item_value": str(serializer.data.get("amount")),
+                    "item_value": float(item_amount),
                 }
                 payload_data = json.dumps(payload)
                 data = sapx_service.get_price(payload_data)
