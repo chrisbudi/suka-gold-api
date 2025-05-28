@@ -13,19 +13,12 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from shared_kernel.services.s3_services import S3Service
 import os
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import (
-    F,
-    Value,
-    IntegerField,
-    ExpressionWrapper,
-    Prefetch,
-    Count,
-    Q,
-)
+from django.db.models import F, Value, IntegerField, Prefetch, Count, Q, Sum
 from core.domain import gold_cert_detail_price as CoreGoldCertDetailPrice
 from order.models import order_gold_detail as OrderOrderGoldDetail
 from django.db.models.functions import Floor
 from django.db import connection
+from django.db.models import Subquery, OuterRef
 
 
 @extend_schema(
@@ -82,21 +75,29 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
             gold_price_buy = gold_price().get_active_price().gold_price_buy or 0
             cache.set("gold_price_buy", gold_price_buy, timeout=60)
 
+        # Subquery for gold_cert_detail_price count
+        cert_detail_count_subquery = (
+            CoreGoldCertDetailPrice.objects.filter(
+                gold_id=OuterRef("pk"), include_stock=True
+            )
+            .values("gold_id")
+            .annotate(count=Count("id"))
+            .values("count")[:1]
+        )
+
+        # Subquery for open order_gold_detail count
+        open_order_count_subquery = (
+            OrderOrderGoldDetail.objects.filter(
+                gold_id=OuterRef("pk"), order_detail_stock_status="open"
+            )
+            .values("gold_id")
+            .annotate(count=Sum("qty"))
+            .values("count")[:1]
+        )
+
         queryset = (
             modelInfo.objects.all()
             .select_related("certificate")
-            .prefetch_related(
-                Prefetch(
-                    "gold_cert_detail_price",
-                    queryset=CoreGoldCertDetailPrice.objects.filter(include_stock=True),
-                ),
-                Prefetch(
-                    "order_gold_detail",
-                    queryset=OrderOrderGoldDetail.objects.filter(
-                        order_detail_stock_status="open"
-                    ),
-                ),
-            )
             .annotate(
                 gold_price_summary=F("gold_weight")
                 * Value(gold_price_buy, output_field=IntegerField()),
@@ -107,13 +108,11 @@ class GoldServiceViewSet(viewsets.ModelViewSet):
                 + 100
                 + F("product_cost")
                 + F("certificate__cert_price"),
-                cert_detail_count=Count(
-                    "gold_cert_detail_price",
-                    filter=Q(gold_cert_detail_price__include_stock=True),
+                cert_detail_count=Subquery(
+                    cert_detail_count_subquery, output_field=IntegerField()
                 ),
-                open_order_count=Count(
-                    "order_gold_detail",
-                    filter=Q(order_gold_detail__order_detail_stock_status="open"),
+                open_order_count=Subquery(
+                    open_order_count_subquery, output_field=IntegerField()
                 ),
             )
         )

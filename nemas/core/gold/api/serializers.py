@@ -184,7 +184,7 @@ class GoldServiceFilter(filters.FilterSet):
 
         fields = {
             "type": ["icontains"],
-            # "brand": ["icontains"],
+            "brand": ["icontains"],
         }
 
 

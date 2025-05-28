@@ -154,12 +154,16 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             )
 
         shipping_data = cast(ShippingDetails, shipping_details.get("data"))
+        print(shipping_data, "shipping_data")
+        # calculate shipping data
+
         insurance = shipping_data["insurance"]
         insurance_admin = shipping_data["insurance_admin"]
         insurance_total = insurance_admin + insurance
         packing = shipping_data["packing"]
         cost = shipping_data["cost"]
         shipping_total = shipping_data["shipping_total"]
+
         order_amount_billed = order_cart_models.total_price_round + shipping_total
         # add calculation for order pph22
         order_total = order_cart_models.total_price_round + shipping_total
@@ -167,6 +171,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_grand_total_price = order_total
         prefix = "TE/" if order_cart_models.order_type == "redeem" else "BP/"
         order_number = f"{prefix}{datetime.now():%y%m}/{generate_alphanumeric_code()}"
+
         with transaction.atomic():
             validated_data.update(
                 {
