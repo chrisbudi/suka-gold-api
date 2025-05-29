@@ -9,6 +9,8 @@ from gold_transaction.models import gold_transfer
 from gold_transaction.api.serializers import GoldTransferSerializer, GoldTransferFilter
 from decimal import Decimal, InvalidOperation
 
+from core.domain.gold import gold_price
+
 
 @extend_schema(
     tags=["gold transaction - Gold Transfer"],
@@ -60,11 +62,17 @@ class GoldTransferListCreateAPIView(viewsets.ModelViewSet):
         weight = request.data.get("weight")
         if weight is not None:
             gold_transfer_instance = gold_transfer()
+            gold_price_instance = gold_price().get_active_price()
             transfer_cost = round(gold_transfer_instance.get_transfer_cost(weight), 4)
+            weight_transfered = round(weight - transfer_cost, 4)
+
             return response.Response(
                 {
-                    "weight_transfered": round(weight - transfer_cost, 4),
+                    "weight_transfered": weight_transfered,
                     "transfer_cost": round(transfer_cost, 4),
+                    "amount_transfered": round(
+                        weight_transfered * float(gold_price_instance.gold_price_buy), 2
+                    ),
                 }
             )
         else:

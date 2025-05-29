@@ -42,6 +42,9 @@ class order_cart(models.Model):
         self.completed_cart = True
         self.save()
 
+    def remove_all_uncompleted(self, type: str = "redeem"):
+        order_cart.objects.filter(completed_cart=False, order_type=type).delete()
+
 
 class order_cart_detail(models.Model):
     order_cart_detail_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
@@ -112,3 +115,6 @@ class order_cart_detail(models.Model):
     def complete_cart(self, *args, **kwargs):
         self.completed_cart = True
         self.save()
+
+    def remove_all_uncompleted(self, type: str = "redeem"):
+        order_cart_detail.objects.filter(completed_cart=False, order_type=type).delete()

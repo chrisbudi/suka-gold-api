@@ -47,6 +47,9 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
         # if order cart detail model any then update the endity
 
         if validated_data["order_type"] == "redeem":
+            order_cart().remove_all_uncompleted()
+            order_cart_detail().remove_all_uncompleted()
+
             gold_price_value = goldPriceModel.gold_price_buy * goldModel.gold_weight
 
             gold_price_value_round = (
