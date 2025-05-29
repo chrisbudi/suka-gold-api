@@ -85,7 +85,7 @@ def generate_email_sender(transfer: gold_transfer, userTo: User, userFrom: User)
             {
                 "NAMA_USER": userFrom.name,
                 "NAMA_PENERIMA": userTo.name,
-                "AMOUNT_WEIGHT": f"{transfer.transfer_member_gold_weight:,.4f}",
+                "AMOUNT_WEIGHT_SEND": f"{transfer.transfer_member_gold_weight:,.4f}",
                 "AMOUNT_VALUE": f"{transfer.transfer_member_amount_received:,.2f}",
                 "AMOUNT_WEIGHT_RECEIVE": f"{transfer.transfer_member_transfered_weight:,.4f}",
                 "NILAI_POTONGAN_GRAM": f"{transfer.transfer_member_admin_weight:,.4f}",
@@ -120,7 +120,7 @@ def generate_email_receive(transfer: gold_transfer, userFrom: User, userTo: User
             {
                 "NAMA_USER": userTo.name,
                 "NAMA_PENGIRIM": userFrom.name,
-                "AMOUNT_WEIGHT": f"{transfer.transfer_member_gold_weight:,.4f}",
+                "AMOUNT_WEIGHT_SEND": f"{transfer.transfer_member_gold_weight:,.4f}",
                 "AMOUNT_VALUE": f"{transfer.transfer_member_amount_received:,.2f}",
                 "AMOUNT_WEIGHT_RECEIVE": f"{transfer.transfer_member_transfered_weight:,.4f}",
                 "NILAI_POTONGAN_GRAM": f"{transfer.transfer_member_admin_weight:,.4f}",
