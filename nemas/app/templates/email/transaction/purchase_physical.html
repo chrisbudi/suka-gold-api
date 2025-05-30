@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Konfirmasi Pembelian Emas Digital</title>
+  <title>Konfirmasi Pembelian Emas Fisik</title>
   <style>
     @media only screen and (min-width: 600px) {
       .company-header-table td {
@@ -33,6 +33,7 @@
           <table width="700" cellpadding="0" cellspacing="0" border="0"
             style="background-color:#ffffff; border:1px solid #ddd; border-radius:8px; overflow:hidden;">
 
+            
             <!-- Header -->
             <tr>
               <td style="padding:20px; border-bottom:3px solid #F0BF6B;">
@@ -68,6 +69,7 @@
               </td>
             </tr>
 
+
             <!-- Konten utama -->
             <tr>
               <td style="padding:20px; font-size:14px; color:#333;">
@@ -95,6 +97,7 @@
                       <th>Keterangan</th>
                       <th>Berat</th>
                       <th>Satuan</th>
+                      <th>Qty</th>
                       <th>Harga</th>
                       <th>Jumlah IDR</th>
                     </tr>
@@ -112,18 +115,34 @@
                 <table width="100%" cellpadding="10" cellspacing="0" style="font-size:14px; border-collapse:collapse;">
 
                   <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
-                    <td style="text-align:left; font-weight:bold;">Total</td>
+                    <td style="text-align:left; font-weight:bold;">Sub Total</td>
                     <td style="text-align:right; font-weight:bold;">{{SubTotal}}</td>
+                  </tr> 
+                  <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                    <td style="text-align:left;">Insurance</td>
+                    <td style="text-align:right;">{{Insurance_Cost}}</td>
+                  </tr> 
+                  <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                    <td style="text-align:left;">{{Expedisi}}</td>
+                    <td style="text-align:right;">{{Expedisi_Cost}}</td>
                   </tr>
-
+                  <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                    <td style="text-align:left;">Admin</td>
+                    <td style="text-align:right;">{{Admin_Cost}}</td>
+                  </tr>
+                  <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                    <td style="text-align:left; font-weight:bold;">Grand Total</td>
+                    <td style="text-align:right; font-weight:bold;">{{GrandTotal}}</td>
+                  </tr>
                   <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
                     <td style="text-align:left;">Metode Pembayaran</td>
-                    <td style="text-align:right;">Saldo Nemas</td>
-                  </tr>
-                  <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                    <td style="text-align:right;">{{Pembayaran}}</td>
+                  </tr> 
+                                    <tr style="border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
                     <td style="text-align:left;">Status</td>
                     <td style="text-align:right;">{{STATUS}}</td>
                   </tr>
+                    
                 </table>
               </td>
             </tr>
@@ -133,10 +152,9 @@
               <td style="padding:20px; font-size:13px; color:#777; text-align:center;">
                 <hr style="border:none; border-top:1px solid #eee; margin:10px 0;">
                 <p>Terima Kasih Telah Bertransaksi di <strong>{{NAMA_PERUSAHAAN}}</strong></p>
-                <p>Transaksi Anda telah diproses dan Saldo Emas telah ditambahkan ke dalam Account Nemas
-                  <hr style="border:none; border-top:1px solid #eee; margin:10px 0;">
+                <hr style="border:none; border-top:1px solid #eee; margin:10px 0;">
 
-                  <!-- Dua kolom sejajar -->
+                <!-- Dua kolom sejajar -->
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px; text-align:left;">
                   <tr>
                     <td width="50%" style="padding-right:10px; font-size:13px; color:#555;">
