@@ -4,7 +4,7 @@ URL mapping for wallet app
 
 from django.urls import path
 from .views import TopupTransactionView, SimulatePaymentViews, DisburstmentViews
-from .webhook import TopupQrisWebhookViews
+from .webhook import qris_webhook_view, va_webhook_view
 
 app_name = "wallet"
 
@@ -36,11 +36,8 @@ urlpatterns = [
         ),
         name="simulate_payment_va",
     ),
-    path(
-        "webhook/qris/",
-        TopupQrisWebhookViews.TopupQrisWebhookView.as_view({"post": "post"}),
-        name="webhook_qris",
-    ),
+    path("webhooks/qris/", qris_webhook_view, name="qris_webhook"),
+    path("webhooks/va/", va_webhook_view, name="va_webhook"),
     path(
         "disburst/",
         DisburstmentViews.DisburstTransactionView.as_view({"post": "generate"}),
