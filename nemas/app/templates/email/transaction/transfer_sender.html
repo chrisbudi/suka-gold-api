@@ -86,11 +86,11 @@
 
             <!-- Tabel Transaksi -->
             <tr>
-              <td style="padding:20px;">
+              <td style="padding:10px;">
                 <table width="100%" cellpadding="0" cellspacing="0"
                   style="background-color: #fff9e6; border: 1px solid #f2cf84; border-radius: 10px; padding: 20px; margin: 20px auto; max-width: 500px; text-align: center"">
             <tr>
-              <td style=" font-size: 14px; margin-bottom: 6px; color: #666;">Penerima
+              <td style=" font-size: 14px; margin-bottom: 6px; color: #666; padding-bottom: 3px;">Penerima
               </td>
             </tr>
             <tr>
@@ -102,17 +102,16 @@
               </td>
             </tr>
             <tr>
-              <td style="font-size: 14px; margin-bottom: 6px; color: #666;">Jumlah Emas Dikirim</td>
+              <td style="font-size: 14px; margin-bottom: 6px; color: #666; padding-bottom: 3px;">Jumlah Emas Dikirim</td>
             </tr>
             <tr>
               <td colspan="2" style="font-size: 24px; font-weight: bold; color: #d4af37;">
-                {{AMOUNT_WEIGHT_SEND}}
+                {{AMOUNT_WEIGHT_SEND}} gram
               </td>
             </tr>
             <tr>
               <td colspan="2" style="font-size: 7px; font-weight: bold; color: gray; padding-top: 8px;">
-                Nilai yang diterima oleh penerima sebesar {{AMOUNT_WEIGHT_RECEIVE}} gram sudah terpotong
-                {{NILAI_POTONGAN_GRAM}} sebagai potongan admin, dibebankan ke penerima.
+                
               </td>
             </tr>
             <tr>
@@ -122,7 +121,7 @@
               </td>
             </tr>
             <tr>
-              <td style="font-size: 14px; margin-bottom: 6px; color: #666;">Setara dengan Rupiah</td>
+              <td style="font-size: 14px; margin-bottom: 6px; color: #666; padding-bottom: 3px;">Setara dengan Rupiah</td>
             </tr>
             <tr>
               <td style="font-size: 24px; font-weight: bold; color: #2e7d32; margin: 0;">Rp {{AMOUNT_VALUE}}</td>
@@ -133,7 +132,7 @@
               </td>
             </tr>
             <tr>
-              <td style="font-size: 14px; margin-bottom: 6px; color: #666;">Pesan</td>
+              <td style="font-size: 14px; margin-bottom: 6px; color: #666;padding-bottom: 3px;">Pesan</td>
             </tr>
             <tr>
               <td style="font-size: 18px; font-weight: bold; color: #555; margin: 0;">{{PESAN}}</td>
@@ -144,10 +143,21 @@
               </td>
             </tr>
             <tr>
-              <td style="font-size: 14px; margin-bottom: 6px; color: #666;">Tujuan</td>
+              <td style="font-size: 14px; margin-bottom: 6px; color: #666; padding-bottom: 3px;">Tujuan</td>
             </tr>
             <tr>
               <td style="font-size: 18px; font-weight: bold; color: #00796b; margin: 0;">{{TUJUAN}}</td>
+            </tr>
+             <tr>
+              <td>
+                <hr style="border: none; border-top: 1px dashed #e0c27b; margin: 16px 0;">
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size: 14px; margin-bottom: 9px; color: #666;"></td>
+            </tr>
+            <tr>
+              <td style="font-size: 10px;  color: #00796b; margin: 0;">Nilai yang diterima oleh penerima sebesar {{AMOUNT_WEIGHT_RECEIVE}} gram sudah terpotong {{NILAI_POTONGAN_GRAM}} sebagai potongan admin, dibebankan ke penerima., <br> Nilai {{AMOUNT_WEIGHT_RECEIVE}} gram = Rp. {{AMOUNT_VALUE_RECEIVE}}</td>
             </tr>
           </table>
         </td>
