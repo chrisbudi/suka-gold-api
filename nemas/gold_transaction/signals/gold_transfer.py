@@ -87,8 +87,10 @@ def generate_email_sender(transfer: gold_transfer, userTo: User, userFrom: User)
                 "NAMA_PENERIMA": userTo.name,
                 "AMOUNT_WEIGHT_SEND": f"{transfer.transfer_member_gold_weight:,.4f}",
                 "AMOUNT_VALUE": f"{transfer.transfer_member_amount_received:,.2f}",
+                "AMOUNT_VALUE_RECEIVE": f"{transfer.transfer_member_amount_received:,.2f}",
                 "AMOUNT_WEIGHT_RECEIVE": f"{transfer.transfer_member_transfered_weight:,.4f}",
                 "NILAI_POTONGAN_GRAM": f"{transfer.transfer_member_admin_weight:,.4f}",
+                "NILAI_POTONGAN_PERSEN": f"{transfer.transfer_member_admin_percentage:,.2f}",
                 "PESAN": transfer.transfer_member_notes,
                 "TUJUAN": transfer.transfer_member_service_option or " ",
                 **mail_props,
@@ -100,7 +102,6 @@ def generate_email_sender(transfer: gold_transfer, userTo: User, userFrom: User)
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[userFrom.email],
             subject="Kirim Emas Ke Member",
-            # subject="Transfer Emas Send",
             html_content=email_html,
         )
         return message
@@ -124,6 +125,7 @@ def generate_email_receive(transfer: gold_transfer, userFrom: User, userTo: User
                 "AMOUNT_VALUE": f"{transfer.transfer_member_amount_received:,.2f}",
                 "AMOUNT_WEIGHT_RECEIVE": f"{transfer.transfer_member_transfered_weight:,.4f}",
                 "NILAI_POTONGAN_GRAM": f"{transfer.transfer_member_admin_weight:,.4f}",
+                "NILAI_POTONGAN_PERSEN": f"{transfer.transfer_member_admin_percentage:,.2f}",
                 "PESAN": transfer.transfer_member_notes,
                 "TUJUAN": transfer.transfer_member_service_option or " ",
                 **mail_props,

@@ -40,12 +40,18 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
     detail_number = 1
     table_product_data = ""
     for detail in order_detail:
+        order_qty_html = (
+            f"<td style='text-align: center;'>{detail.qty:,.0f}</td> "
+            if order.order_type == "buy"
+            else ""
+        )
         table_product_data += f"""
         <tr>
         <td style="text-align: center;">{detail_number}</td>
-        <td style="text-align: center;">{detail.gold.brand} {detail.gold.type} {detail.gold.gold_weight}</td>
-        <td style="text-align: right;">{detail.qty:,}</td>
+        <td style="text-align: left;">{detail.gold.brand} - {detail.gold.type}</td>
+        <td style="text-align: center;">{detail.weight:,.0f}</td>
         <td style="text-align: center;">gram</td>
+        {order_qty_html}
         <td style="text-align: right;">{detail.order_price_round:,.2f}</td>
         <td style="text-align: right;">{detail.order_detail_total_price_round:,.2f}</td>
         </tr>"""
@@ -53,16 +59,24 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
 
     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
     mail_props = EmailService().get_email_props()
+    email_template = (
+        "email/transaction/invoice.html"
+        if order.order_type == "buy"
+        else "email/transaction/invoice_emas.html"
+    )
     try:
         email_html = render_to_string(
-            "email/transaction/invoice.html",
+            email_template,
             {
                 "NAMA_USER": user.name,
                 "ID_PELANGGAN": user.member_number,
                 "TANGGAL_WAKTU": (
-                    order.order_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    order.order_timestamp.strftime("%d/%m/%Y")
                     if order.order_timestamp
                     else "N/A"
+                ),
+                "DESC_TRANSAKSI": (
+                    "Beli Emas" if order.order_type == "buy" else "Tarik Emas"
                 ),
                 "NO_TRANSAKSI": order.order_number,
                 "table_product": table_product_data,
@@ -72,6 +86,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
                 "Insurance_Cost": f"{(order.order_tracking_insurance_total_round or 0.0):,.2f}",
                 "SubTotal": f"{order.order_total_price_round:,.2f}",
                 "GrandTotal": f"{order.order_grand_total_price:,.2f}",
+                "STATUS": order_payment.order_payment_status,
                 "Pembayaran": (order_payment.order_payment_method_name or "")
                 + " - "
                 + (order_payment.order_payment_number or ""),
@@ -83,7 +98,11 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         message = Mail(
             from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
             to_emails=[user.email],
-            subject="Pembelian Emas Fisik",
+            subject=(
+                "Pembelian Produk Emas"
+                if order.order_type == "buy"
+                else "Penarikan Emas"
+            ),
             html_content=email_html,
         )
         return message
