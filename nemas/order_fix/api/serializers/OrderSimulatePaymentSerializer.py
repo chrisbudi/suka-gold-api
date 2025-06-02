@@ -141,9 +141,7 @@ class orderMailService:
             email_html = render_to_string(
                 "invoice/nemas-invoice.html",
                 {
-                    "transaction_date": order.order_timestamp.strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),
+                    "transaction_date": order.order_timestamp.strftime("%d/%m/%Y"),
                     "transaction_number": order.order_number,
                     "transaction_account": order.user.id,
                     "first_name": order.user.name,

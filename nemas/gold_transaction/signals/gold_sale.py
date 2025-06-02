@@ -87,7 +87,7 @@ def generate_email(gold: gold_saving_sell, user: User):
             "email/transaction/sale.html",
             {
                 "NAMA_USER": user.name,
-                "TANGGAL_WAKTU": gold.transaction_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "TANGGAL_WAKTU": gold.transaction_date.strftime("%d/%m/%Y"),
                 "ID_PELANGGAN": user.member_number,
                 "NO_TRANSAKSI": gold.gold_sell_number,
                 "GrandTotal": f"{gold.total_price:,.2f}",

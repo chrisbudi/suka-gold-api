@@ -66,14 +66,11 @@ def generate_email(disburst: disburst_transaction, user: User):
         email_html = render_to_string(
             "email/transaction/withdraw.html",
             {
-                "TANGGAL_WAKTU": disburst.disburst_timestamp.strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
                 "ID_PELANGGAN": user.member_number,
                 "NAMA_USER": user.name,
                 "NO_TRANSAKSI": disburst.disburst_number,
                 "TANGGAL_WAKTU": (
-                    disburst.disburst_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    disburst.disburst_timestamp.strftime("%d/%m/%Y")
                     if disburst.disburst_timestamp
                     else "N/A"
                 ),

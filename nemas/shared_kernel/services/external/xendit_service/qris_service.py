@@ -18,9 +18,7 @@ class QRISPaymentService(XenditService):
             "type": "DYNAMIC",
             "currency": "IDR",
             "amount": float(amount),
-            "expired_at": (datetime.now() + timedelta(hours=2)).strftime(
-                "%Y-%m-%dT%H:%M:%S"
-            ),
+            "expired_at": (datetime.now() + timedelta(hours=2)).strftime("%d/%m/%Y"),
             "channel_code": "ID_DANA",
             "is_closed": True,
         }
