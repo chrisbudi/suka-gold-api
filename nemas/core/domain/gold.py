@@ -13,7 +13,7 @@ import random
 
 class cert(models.Model):
     cert_id = models.AutoField(primary_key=True)
-    cert_name = models.CharField(max_length=255)
+    cert_brand = models.CharField(max_length=255)
     cert_code = models.CharField(max_length=50)
     gold_weight = models.IntegerField()
     cert_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -26,7 +26,7 @@ class cert(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Cert {self.cert_id} - Name: {self.cert_name}"
+        return f"Cert {self.cert_id} - Name: {self.cert_brand}"
 
     def delete(self):
         self.is_deleted = True

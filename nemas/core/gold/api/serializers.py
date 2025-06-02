@@ -27,7 +27,7 @@ class CertSerializer(serializers.ModelSerializer):
         model = cert
         fields = [
             "cert_id",
-            "cert_name",
+            "cert_brand",
             "cert_code",
             "gold_weight",
             "cert_price",
@@ -69,7 +69,7 @@ class CertFilterSerializer(filters.FilterSet):
         model = cert
 
         fields = {
-            "cert_name": ["icontains"],
+            "cert_brand": ["icontains"],
             "cert_code": ["icontains"],
         }
 
