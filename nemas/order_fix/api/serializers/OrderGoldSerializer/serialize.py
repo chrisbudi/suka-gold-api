@@ -13,7 +13,12 @@ from order.models.order_cart import order_cart_detail
 from order.models import order_cart
 from order.models import order_gold, order_gold_detail
 from django.contrib.auth import get_user_model
-from core.domain.gold import gold as GoldModel, gold_price
+from core.domain.gold import (
+    gold as GoldModel,
+    gold_price,
+    cert as certModel,
+    gold_cert_detail_price as GoldCertDetail,
+)
 from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
 from django.db import transaction
@@ -255,6 +260,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     gold_price_round=cart_detail.gold_price_round,
                     qty=cart_detail.quantity,
                     cert=cart_detail.cert,
+                    cert_brand=cart_detail.cert.cert_brand,
+                    cert_code=cart_detail.cert.cert_code,
                     cert_price=cart_detail.cert_price,
                     product_cost=cart_detail.product_cost,
                     order_detail_total_price=cart_detail.total_price,

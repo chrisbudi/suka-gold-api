@@ -54,7 +54,6 @@ class OrderGoldAPIView(viewsets.ModelViewSet):
         )
         if serializer.is_valid():
             result = serializer.save()
-            print(result, "result serializer")
             return response.Response(result, status=status.HTTP_201_CREATED)
         return response.Response(
             NemasReponses.failure("Validation Failed", serializer.errors),

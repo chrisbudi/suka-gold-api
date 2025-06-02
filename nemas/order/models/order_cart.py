@@ -70,8 +70,6 @@ class order_cart_detail(models.Model):
     cert = models.ForeignKey(
         cert,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
     cert_price = models.DecimalField(
         max_digits=16, decimal_places=2, null=True, blank=True

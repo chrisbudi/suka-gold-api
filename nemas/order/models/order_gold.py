@@ -158,6 +158,8 @@ class order_gold_detail(models.Model):
         gold_price_config, on_delete=models.CASCADE, null=True
     )
     cert = models.ForeignKey(cert, on_delete=models.CASCADE, null=True)
+    cert_brand = models.CharField(max_length=255, null=True)
+    cert_code = models.CharField(max_length=50, null=True)
     gold_price = models.DecimalField(max_digits=16, decimal_places=2, null=True)
     gold_price_round = models.DecimalField(max_digits=16, decimal_places=2, null=True)
     order_price = models.DecimalField(max_digits=16, decimal_places=2, null=True)
