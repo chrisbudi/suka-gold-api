@@ -2,6 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
+from reporting.contracts.gold_transaction_avg import GoldTransactionAVGContract
 from reporting.contracts.gold_transaction import GoldTransactionContract
 from ..serializers.gold_transaction_serializer import (
     GoldTransactionContractSerializer,
@@ -201,7 +202,8 @@ class GoldTransactionLogView(APIView):
         paginated_rows = rows[offset : offset + fetch]
 
         contracts = [
-            GoldTransactionContract(**dict(zip(columns, row))) for row in paginated_rows
+            GoldTransactionAVGContract(**dict(zip(columns, row)))
+            for row in paginated_rows
         ]
 
         serializer = GoldTransactionContractSerializer(contracts, many=True)
