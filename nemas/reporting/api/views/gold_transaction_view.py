@@ -202,8 +202,7 @@ class GoldTransactionLogView(APIView):
         paginated_rows = rows[offset : offset + fetch]
 
         contracts = [
-            GoldTransactionAVGContract(**dict(zip(columns, row)))
-            for row in paginated_rows
+            GoldTransactionContract(**dict(zip(columns, row))) for row in paginated_rows
         ]
 
         serializer = GoldTransactionContractSerializer(contracts, many=True)
