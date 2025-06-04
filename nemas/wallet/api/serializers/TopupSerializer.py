@@ -151,6 +151,12 @@ class TopupQrisSerializer(serializers.ModelSerializer):
         validated_data["topup_payment_ref"] = qris["data"].get("reference_id")
         validated_data["topup_payment_ref_code"] = qris["data"].get("qr_string")
 
+        topup_number = (
+            "TS/" + datetime.now().strftime("%y%m") + "/" + generate_alphanumeric_code()
+        )
+        validated_data["topup_number"] = (
+            topup_number if self.instance is None else self.instance.topup_number
+        )
         # topup_transaction.objects.create(**validated_data)
 
         self.context["response"] = {

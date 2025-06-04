@@ -55,6 +55,7 @@ def generate_email(topup: topup_transaction, user: User):
             "email/transaction/topup.html",
             {
                 "NAMA_USER": user.name,
+                "TANGGAL_WAKTU": topup.topup_timestamp.strftime("%d/%m/%Y"),
                 "ID_PELANGGAN": user.member_number,
                 "NO_TRANSAKSI": topup.topup_number,
                 "Total": f"{topup.topup_amount:,.2f}",
