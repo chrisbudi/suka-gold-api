@@ -132,6 +132,9 @@ class gold_transfer(models.Model):
         weight_cost = 0.0
         if weight <= 10:
             weight_cost = 0.001 * weight
+            if weight_cost < 0.0001:
+                weight_cost = 0.0001
+
         elif weight > 10 and weight <= 50:
             weight_cost = 0.0008 * weight
         elif weight > 50:
