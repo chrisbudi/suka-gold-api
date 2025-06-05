@@ -40,21 +40,34 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
     detail_number = 1
     table_product_data = ""
     for detail in order_detail:
-        order_qty_html = (
-            f"<td style='text-align: center;'>{detail.qty:,.0f}</td> "
-            if order.order_type == "buy"
-            else ""
-        )
+        order_qty_html = f"<td style='text-align: center;'>{detail.qty:,.0f}</td> "
         table_product_data += f"""
         <tr>
         <td style="text-align: center;">{detail_number}</td>
         <td style="text-align: left;">{detail.gold.brand} - {detail.gold.type}</td>
-        <td style="text-align: center;">{detail.weight:,.0f}</td>
-        <td style="text-align: center;">gram</td>
+        <td style="text-align: center;">{detail.weight:,.4f}</td>
+        <td style="text-align: center;">gram</td> 
         {order_qty_html}
-        <td style="text-align: right;">{detail.order_price_round:,.2f}</td>
-        <td style="text-align: right;">{detail.order_detail_total_price_round:,.2f}</td>
+        <td style="text-align: center;">{(detail.weight * detail.qty):,.0f}</td>
+        <td style="text-align: right;">{(detail.order_price_round if detail.order_type == "buy" else 0):,.2f}</td>
+        <td style="text-align: right;">{(detail.order_detail_total_price_round if detail.order_type == "buy" else 0):,.2f}</td>
         </tr>"""
+
+        if order.order_type == "redeem":
+            detail_number += 1
+
+            table_product_data += f"""
+            <tr>
+            <td style="text-align: center;">{detail_number}</td>
+            <td style="text-align: left;">{detail.cert_brand}</td>
+            <td style="text-align: center;">{1}</td>
+            <td style="text-align: center;">Pcs</td>
+            {order_qty_html}
+            <td style="text-align: center;">{1}</td>
+            <td style="text-align: right;">{detail.cert_price:,.2f}</td>
+            <td style="text-align: right;">{detail.order_detail_total_price_round:,.2f}</td>
+            </tr>"""
+
         detail_number += 1
 
     # email_body = email_body.replace(f"{{table_product}}", table_product_data)
