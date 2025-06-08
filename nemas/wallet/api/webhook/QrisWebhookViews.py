@@ -11,7 +11,7 @@ from wallet.api.serializers.WebhookQrisSerializer import (
 @api_view(["POST"])
 def qris_webhook_view(request):
     # Get token from header
-    token = request.headers.get("X-Webhook-Token")
+    token = request.headers.get("X-CALLBACK-TOKEN")
 
     # Validate token
     xendit_settings = settings.XENDIT

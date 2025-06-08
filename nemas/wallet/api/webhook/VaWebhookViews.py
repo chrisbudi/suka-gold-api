@@ -10,7 +10,7 @@ from wallet.api.serializers.WebhookVASerializer import (
 
 @api_view(["POST"])
 def va_webhook_view(request):
-    token = request.headers.get("X-Webhook-Token")
+    token = request.headers.get("X-CALLBACK-TOKEN")
     xendit_settings = settings.XENDIT
     if token != xendit_settings.get("WEBHOOK_KEY"):
         return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
