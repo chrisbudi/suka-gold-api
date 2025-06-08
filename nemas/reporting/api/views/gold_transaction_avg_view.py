@@ -1,4 +1,5 @@
 # views.py
+from decimal import Decimal
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
@@ -29,37 +30,51 @@ class GoldTransactionAvgView(APIView):
 
         # Use SQL parameters to prevent SQL injection
         query = """
-            WITH
-            avg_buy AS (
-                SELECT
-                    SUM(gb.weight * gb.gold_history_price_buy)::decimal / NULLIF(SUM(gb.weight), 0) AS avg_buy_price
-                FROM gold_transaction_gold_saving_buy gb
-                WHERE (%(user_id)s IS NULL OR gb.user_id = %(user_id)s)
+            WITH ordered_tx AS (
+            SELECT
+                    gold_transaction_id,
+                    TYPE AS tr_type,
+                    weight,
+                    price,
+                    transaction_date,
+                    user_id,
+                    CASE WHEN type = 'buy' THEN weight ELSE weight * -1 END AS qty,
+                    CASE WHEN TYPE = 'buy' THEN weight * price ELSE (weight * price * -1) END AS cost
+                FROM gold_transactions
+                WHERE user_id = %(user_id)s
+                ORDER BY transaction_date
             ),
-            avg_sell AS (
+            cumulative AS (
                 SELECT
-                    SUM(weight * gs.gold_history_price_sell)::decimal / NULLIF(SUM(gs.weight), 0) AS avg_sell_price
-                FROM gold_transaction_gold_saving_sell gs
-                WHERE (%(user_id)s IS NULL OR gs.user_id = %(user_id)s)
+                    transaction_date,
+                    SUM(qty) OVER (ORDER BY transaction_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_qty,
+                    SUM(cost) OVER (ORDER BY transaction_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_cost
+                FROM ordered_tx
             ),
-            latest_price AS (
-                SELECT gold_price_buy AS current_gold_price_buy,
-                    gold_price_sell AS current_gold_price_sell
-                FROM core_gold_price cgp 
-                ORDER BY cgp.timestamps DESC
-                LIMIT 1
+            stock_avg AS (
+                SELECT
+                    *,
+                    CASE
+                        WHEN cum_qty > 0 THEN cum_cost / cum_qty
+                        ELSE NULL
+                    END AS avg_price
+                FROM cumulative
             )
             SELECT
-                %(user_id)s AS user_id,
-                lp.current_gold_price_buy, 
-                lp.current_gold_price_sell,
-                ab.avg_buy_price,
-                asell.avg_sell_price,
-                lp.current_gold_price_sell / asell.avg_sell_price * 100 AS percentage_from_sell,
-                lp.current_gold_price_buy / ab.avg_buy_price * 100 AS percentage_from_buy
-            FROM latest_price lp
-            CROSS JOIN avg_buy ab
-            CROSS JOIN avg_sell asell
+                current_gold_price.price AS current_gold_price,
+                stock_avg.avg_price AS avg_saving_price,
+                current_gold_price.price - stock_avg.avg_price AS diff,
+                ((current_gold_price.price - stock_avg.avg_price) / stock_avg.avg_price) * 100 AS avg_pct
+            FROM stock_avg
+            JOIN (
+                SELECT gold_price_buy AS price
+                FROM core_gold_price 
+                ORDER BY timestamps DESC
+                LIMIT 1
+                ) current_gold_price ON true
+            ORDER BY stock_avg.transaction_date DESC
+            LIMIT 1;
+
         """
         query_params = {"user_id": user_id}
 
@@ -79,17 +94,9 @@ class GoldTransactionAvgView(APIView):
         else:
             # If no rows are returned, create an empty contract
             contract = GoldTransactionAVGContract(
-                user_id=user_id or "",
-                current_gold_price_buy=0,
-                current_gold_price_sell=0,
-                avg_buy_price=0,
-                avg_sell_price=0,
-                percentage_from_sell=0,
-                percentage_from_buy=0,
+                avg_pct=Decimal(0),
             )
         contracts = contract
-
-        print(contracts)
 
         serializer = GoldTransactionAvgContractSerializer(contracts, many=False)
         return Response(serializer.data, status=200)

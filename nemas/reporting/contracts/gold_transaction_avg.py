@@ -1,13 +1,11 @@
 # contracts.py
 from dataclasses import dataclass
+from decimal import Decimal
 
 
 @dataclass
 class GoldTransactionAVGContract:
-    user_id: str
-    current_gold_price_buy: float
-    current_gold_price_sell: float
-    avg_buy_price: float
-    avg_sell_price: float
-    percentage_from_sell: float
-    percentage_from_buy: float
+    avg_pct: Decimal
+    current_gold_price: Decimal
+    avg_saving_price: Decimal
+    diff: Decimal
