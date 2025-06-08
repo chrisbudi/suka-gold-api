@@ -98,6 +98,10 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             validated_data["transfer_member_transfered_weight"] * price.gold_price_buy
         )
 
+        validated_data["transfer_member_admin_price"] = (
+            validated_data["transfer_member_admin_weight"] * price.gold_price_buy
+        )
+
         # from user phone number to user
         user_to = user.objects.get(phone_number=validated_data["phone_number"])
         validated_data["user_to"] = user_to

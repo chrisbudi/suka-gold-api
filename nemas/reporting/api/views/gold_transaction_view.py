@@ -41,13 +41,14 @@ class GoldTransactionLogView(APIView):
                 enum=[
                     "gold_buy",
                     "gold_sell",
-                    "gold_transfer",
+                    "gold_transfer_send",
+                    "gold_transfer_receive",
                     "order_buy",
                     "order_redeem",
                     "disburst",
                     "topup",
                 ],
-                many=True,  # Allow multiple values
+                many=True,
                 style="form",
                 explode=True,
             ),
@@ -81,42 +82,56 @@ class GoldTransactionLogView(APIView):
                        gb.user_id,
                        gb.weight,
                        gb.price,
+                       0 AS admin_price,
+                       0 AS admin_weight,
                        gb.gold_history_price_base,
                        gb.gold_buy_number AS ref_number,
                        'gold_buy' AS transaction_type
                 FROM gold_transaction_gold_saving_buy gb
-
                 UNION ALL
-
                 SELECT gs.transaction_date,
                        gs.gold_transaction_id AS transaction_id,
                        gs.user_id,
                        gs.weight,
                        gs.price,
+                       0 AS admin_price,
+                       0 AS admin_weight,
                        gs.gold_history_price_base,
                        gs.gold_sell_number AS ref_number,
                        'gold_sell' AS transaction_type
                 FROM gold_transaction_gold_saving_sell gs
-
                 UNION ALL
-
                 SELECT gt.transfer_member_datetime AS transaction_date,
                        gt.gold_transfer_id AS transaction_id,
                        gt.user_from_id AS user_id,
-                       gt.transfer_member_gold_weight AS weight,
+					   gt.transfer_member_gold_weight AS weight,
                        gt.transfer_member_amount_received AS price,
+                       0 AS admin_price,
+                       gt.transfer_member_admin_weight AS admin_weight,
                        NULL AS gold_history_price_base,
                        gt.gold_transfer_number AS ref_number,
-                       'gold_transfer' AS transaction_type
+                       'gold_transfer_send' AS transaction_type
                 FROM gold_transaction_gold_transfer gt
-
                 UNION ALL
-
+                SELECT gt.transfer_member_datetime AS transaction_date,
+                       gt.gold_transfer_id AS transaction_id,
+                       gt.user_to_id AS user_id,
+                       gt.transfer_member_gold_weight AS weight,
+                       gt.transfer_member_amount_received AS price,
+                       0 AS admin_price,
+                       gt.transfer_member_admin_weight AS admin_weight,
+                       NULL AS gold_history_price_base,
+                       gt.gold_transfer_number AS ref_number,
+                       'gold_transfer_receive' AS transaction_type
+                FROM gold_transaction_gold_transfer gt
+                UNION ALL
                 SELECT og.order_timestamp AS transaction_date,
                        og.order_gold_id AS transaction_id,
                        og.user_id,
                        og.order_item_weight AS weight,
                        og.order_amount AS price,
+                       og.order_admin_amount AS admin_price,
+                       0 AS admin_weight,
                        NULL AS gold_history_price_base,
                        og.order_number AS ref_number,
                        'order_buy' AS transaction_type
@@ -128,30 +143,36 @@ class GoldTransactionLogView(APIView):
                        ogr.user_id,
                        ogr.order_item_weight AS weight,
                        ogr.order_amount AS price,
+                       ogr.order_admin_amount AS admin_amount,
+                       0 AS admin_weight,
                        NULL AS gold_history_price_base,
                        ogr.order_number AS ref_number,
                        'order_redeem' AS transaction_type
                 FROM order_order_gold ogr 
                 WHERE ogr.order_type = 'redeem'
                 UNION ALL
-              SELECT 
+                SELECT 
                 	wdt.disburst_timestamp AS transaction_date,
                 	wdt.disburst_transaction_id AS transaction_id,
                 	wdt.user_id, 
                 	NULL AS weight,
                 	wdt.disburst_amount AS price,
+                	wdt.disburst_admin  AS admin_price,
+                	0 AS admin_weight,
                 	NULL AS gold_history_price_base,
                 	wdt.disburst_number AS ref_number,
                 	'disburst' AS transaction_type
                 FROM wallet_disburst_transaction wdt  
                 WHERE 1=1
                UNION ALL
-                SELECT 
+               SELECT 
 	            	wtt.topup_timestamp  AS transaction_date,
 	            	wtt.topup_transaction_id  AS transaction_id ,
 	            	wtt.user_id ,
 	            	NULL AS weight,
 	            	wtt.topup_amount AS price,
+	            	wtt.topup_admin AS admin_price,
+	            	0 AS admin_weight,
 	            	NULL AS gold_history_price_base,
 	            	wtt.topup_number AS ref_number,
 	            	'topup' AS transaction_type

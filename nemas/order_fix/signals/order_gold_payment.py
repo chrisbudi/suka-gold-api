@@ -45,7 +45,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
         <tr>
         <td style="text-align: center;">{detail_number}</td>
         <td style="text-align: left;">{detail.gold.brand} - {detail.gold.type}</td>
-        <td style="text-align: center;">{detail.weight:,.4f}</td>
+        <td style="text-align: center;">{detail.weight:,.0f}</td>
         <td style="text-align: center;">gram</td> 
         {order_qty_html}
         <td style="text-align: center;">{(detail.weight * detail.qty):,.0f}</td>

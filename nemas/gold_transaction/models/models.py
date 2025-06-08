@@ -120,6 +120,9 @@ class gold_transfer(models.Model):
     transfer_member_admin_weight = models.DecimalField(
         max_digits=8, decimal_places=4, default=Decimal(0)
     )
+    transfer_member_admin_amount = models.DecimalField(
+        max_digits=16, decimal_places=2, default=Decimal(0)
+    )
     transfer_member_amount_received = models.DecimalField(
         max_digits=16, decimal_places=2, default=Decimal(0)
     )
