@@ -14,7 +14,8 @@ def qris_webhook_view(request):
     token = request.headers.get("X-Webhook-Token")
 
     # Validate token
-    if token != settings.XENDIT.get("WEBHOOK_KEY"):
+    xendit_settings = settings.XENDIT
+    if token != xendit_settings.get("WEBHOOK_KEY"):
         return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # Deserialize and save
