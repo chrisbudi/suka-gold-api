@@ -23,6 +23,7 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             "transfer_member_service_option",
             "transfer_member_amount_received",
             "transfer_member_datetime",
+            "transfer_member_admin_amount",
         ]
         read_only_fields = [
             "gold_transfer_id",
@@ -32,6 +33,7 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             "transfer_member_admin_percentage",
             "transfer_member_transfered_weight",
             "transfer_member_amount_received",
+            "transfer_member_admin_amount",
         ]
 
     def validate(self, attrs):
@@ -98,8 +100,9 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             validated_data["transfer_member_transfered_weight"] * price.gold_price_buy
         )
 
-        validated_data["transfer_member_admin_price"] = (
-            validated_data["transfer_member_admin_weight"] * price.gold_price_buy
+        validated_data["transfer_member_admin_amount"] = (
+            Decimal(validated_data["transfer_member_admin_weight"])
+            * price.gold_price_buy
         )
 
         # from user phone number to user
