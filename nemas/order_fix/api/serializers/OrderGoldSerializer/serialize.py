@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+import decimal
 from django.utils import timezone
 from rest_framework import serializers
 from core.domain.delivery import delivery_partner, delivery_partner_service
@@ -111,6 +112,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_shipping_item_amount = Decimal(
             0 if order_cart_models.order_type == "redeem" else order_amount
         )
+        order_total_redeem_price = Decimal(0)
         if order_cart_models.order_type == "redeem":
             for cart_detail in order_cart_details_model:
 
@@ -130,7 +132,11 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     )
                     * cart_detail.quantity
                 )
-
+                order_total_redeem_price += (
+                    cart_detail.redeem_price
+                    if cart_detail.redeem_price is not None
+                    else 0
+                )
                 print(order_shipping_item_amount, "order_shipping_item_amount")
 
         # get shipping id
@@ -205,6 +211,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                         if self.instance is None
                         else self.instance.order_number
                     ),
+                    "order_total_redeem_price": order_total_redeem_price,
                     "order_payment_method_id": validated_data.get(
                         "order_payment_method_id"
                     ),

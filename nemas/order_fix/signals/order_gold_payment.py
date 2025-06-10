@@ -83,6 +83,11 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
             {
                 "NAMA_USER": user.name,
                 "ID_PELANGGAN": user.member_number,
+                "TarikEmas_Cost": (
+                    order.order_total_redeem_price
+                    if order.order_type == "redeem"
+                    else 0.0
+                ),
                 "TANGGAL_WAKTU": (
                     order.order_timestamp.strftime("%d/%m/%Y")
                     if order.order_timestamp
