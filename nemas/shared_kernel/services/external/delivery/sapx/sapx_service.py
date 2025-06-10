@@ -90,6 +90,8 @@ class SapxService:
             "",
         )
 
+        print(payload, "payload")
+
         payload_data = json.dumps(payload)
         shipping_data = self.get_price(payload_data)
         print(shipping_data, "shipping_data")

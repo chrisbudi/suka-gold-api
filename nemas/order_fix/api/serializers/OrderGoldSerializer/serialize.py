@@ -111,23 +111,27 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_shipping_item_amount = Decimal(
             0 if order_cart_models.order_type == "redeem" else order_amount
         )
-        for cart_detail in order_cart_details_model:
-            goldModel = cart_detail.gold
-            certificateModel = goldModel.certificate
+        if order_cart_models.order_type == "redeem":
+            for cart_detail in order_cart_details_model:
 
-            order_shipping_item_amount = (
-                Decimal(
-                    (
-                        (goldPriceModel.gold_price_buy * goldModel.gold_weight)
-                        // 100
-                        * 100
-                        + 100
+                goldModel = cart_detail.gold
+                certificateModel = goldModel.certificate
+
+                order_shipping_item_amount += (
+                    Decimal(
+                        (
+                            (goldPriceModel.gold_price_buy * goldModel.gold_weight)
+                            // 100
+                            * 100
+                            + 100
+                        )
+                        + (certificateModel.cert_price if certificateModel else 0)
+                        + (goldModel.product_cost or 0)
                     )
-                    + (certificateModel.cert_price if certificateModel else 0)
-                    + (goldModel.product_cost or 0)
+                    * cart_detail.quantity
                 )
-                * cart_detail.quantity
-            )
+
+                print(order_shipping_item_amount, "order_shipping_item_amount")
 
         # get shipping id
 
