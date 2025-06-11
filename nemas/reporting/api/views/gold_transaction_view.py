@@ -86,7 +86,11 @@ class GoldTransactionLogView(APIView):
                        0 AS admin_weight,
                        gb.gold_history_price_base,
                        gb.gold_buy_number AS ref_number,
-                       'gold_buy' AS transaction_type
+                       'gold_buy' AS transaction_type,
+                       '' AS user_from,
+                	   '' AS user_to,
+					   0.0 AS transfered_weight,
+					   0.0 AS transfered_admin_weight
                 FROM gold_transaction_gold_saving_buy gb
                 UNION ALL
                 SELECT gs.transaction_date,
@@ -98,7 +102,11 @@ class GoldTransactionLogView(APIView):
                        0 AS admin_weight,
                        gs.gold_history_price_base,
                        gs.gold_sell_number AS ref_number,
-                       'gold_sell' AS transaction_type
+                       'gold_sell' AS transaction_type,
+                       '' AS user_from,
+                	   '' AS user_to,
+					   0.0 AS transfered_weight,
+					   0.0 AS transfered_admin_weight
                 FROM gold_transaction_gold_saving_sell gs
                 UNION ALL
                 SELECT gt.transfer_member_datetime AS transaction_date,
@@ -110,7 +118,11 @@ class GoldTransactionLogView(APIView):
                        gt.transfer_member_admin_weight AS admin_weight,
                        NULL AS gold_history_price_base,
                        gt.gold_transfer_number AS ref_number,
-                       'gold_transfer_send' AS transaction_type
+                       'gold_transfer_send' AS transaction_type,
+                	   user_from_name AS user_from,
+                	   user_to_name AS user_to,
+                	   gt.transfer_member_gold_weight AS transfered_weight,
+                	   gt.transfer_member_admin_weight AS transfered_admin_weight
                 FROM gold_transaction_gold_transfer gt
                 UNION ALL
                 SELECT gt.transfer_member_datetime AS transaction_date,
@@ -122,7 +134,11 @@ class GoldTransactionLogView(APIView):
                        gt.transfer_member_admin_weight AS admin_weight,
                        NULL AS gold_history_price_base,
                        gt.gold_transfer_number AS ref_number,
-                       'gold_transfer_receive' AS transaction_type
+                       'gold_transfer_receive' AS transaction_type,
+                	   user_from_name AS user_from,
+                	   user_to_name AS user_to,
+                	   gt.transfer_member_gold_weight AS transfered_weight,
+                	   gt.transfer_member_admin_weight AS transfered_admin_weight
                 FROM gold_transaction_gold_transfer gt
                 UNION ALL
                 SELECT og.order_timestamp AS transaction_date,
@@ -134,7 +150,11 @@ class GoldTransactionLogView(APIView):
                        0 AS admin_weight,
                        NULL AS gold_history_price_base,
                        og.order_number AS ref_number,
-                       'order_buy' AS transaction_type
+                       'order_buy' AS transaction_type,
+					   '' AS user_from,
+                	   '' AS user_to,
+					   0.0 AS transfered_weight,
+					   0.0 AS transfered_admin_weight
                 FROM order_order_gold og
                 WHERE og.order_type = 'buy'
                 UNION ALL
@@ -147,7 +167,11 @@ class GoldTransactionLogView(APIView):
                        0 AS admin_weight,
                        NULL AS gold_history_price_base,
                        ogr.order_number AS ref_number,
-                       'order_redeem' AS transaction_type
+                       'order_redeem' AS transaction_type,
+                        '' AS user_from,
+                	   '' AS user_to,
+					   0.0 AS transfered_weight,
+					   0.0 AS transfered_admin_weight
                 FROM order_order_gold ogr 
                 WHERE ogr.order_type = 'redeem'
                 UNION ALL
@@ -161,7 +185,11 @@ class GoldTransactionLogView(APIView):
                 	0 AS admin_weight,
                 	NULL AS gold_history_price_base,
                 	wdt.disburst_number AS ref_number,
-                	'disburst' AS transaction_type
+                	'disburst' AS transaction_type,
+                	'' AS user_from,
+            	    '' AS user_to,
+				    0.0 AS transfered_weight,
+				    0.0 AS transfered_admin_weight
                 FROM wallet_disburst_transaction wdt  
                 WHERE 1=1
                UNION ALL
@@ -175,7 +203,11 @@ class GoldTransactionLogView(APIView):
 	            	0 AS admin_weight,
 	            	NULL AS gold_history_price_base,
 	            	wtt.topup_number AS ref_number,
-	            	'topup' AS transaction_type
+	            	'topup' AS transaction_type,
+	            	'' AS user_from,
+                	'' AS user_to,
+					0.0 AS transfered_weight,
+					0.0 AS transfered_admin_weight
 	            FROM wallet_topup_transaction wtt   
             ) gt
             INNER JOIN user_user uu ON uu.id = gt.user_id

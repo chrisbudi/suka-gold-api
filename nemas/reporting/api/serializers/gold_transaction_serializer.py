@@ -20,3 +20,11 @@ class GoldTransactionContractSerializer(serializers.Serializer):
     gold_history_price_base = serializers.FloatField(allow_null=True)
     ref_number = serializers.CharField()
     transaction_type = serializers.CharField()
+    user_from = serializers.CharField()
+    user_to = serializers.CharField()
+    transfered_weight = serializers.DecimalField(
+        allow_null=True, max_digits=10, decimal_places=4
+    )
+    transfered_admin_weight = serializers.DecimalField(
+        allow_null=True, max_digits=10, decimal_places=4
+    )

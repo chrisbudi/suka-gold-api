@@ -16,3 +16,7 @@ class GoldTransactionContract:
     gold_history_price_base: float
     ref_number: str
     transaction_type: str
+    user_from: str
+    user_to: str
+    transfered_weight: float
+    transfered_admin_weight: float
