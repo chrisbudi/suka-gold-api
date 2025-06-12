@@ -95,6 +95,9 @@ class GoldTransactionAvgView(APIView):
             # If no rows are returned, create an empty contract
             contract = GoldTransactionAVGContract(
                 avg_pct=Decimal(0),
+                current_gold_price=Decimal(0),
+                avg_saving_price=Decimal(0),
+                diff=Decimal(0),
             )
         contracts = contract
 
