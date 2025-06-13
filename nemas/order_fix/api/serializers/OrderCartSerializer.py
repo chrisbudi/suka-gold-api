@@ -57,7 +57,7 @@ class AddCartDetailSerializer(serializers.ModelSerializer):
             )
             redeem_price = Decimal(goldModel.redeem_price)
 
-            price = (certificateModel.cert_price if certificateModel else 0) + (
+            price = Decimal(certificateModel.cert_price if certificateModel else 0) + (
                 goldModel.product_cost or 0
             )
             price_round = price
