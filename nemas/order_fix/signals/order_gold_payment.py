@@ -65,7 +65,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
             {order_qty_html}
             <td style="text-align: center;">{1}</td>
             <td style="text-align: right;">{detail.cert_price:,.2f}</td>
-            <td style="text-align: right;">{detail.order_detail_total_price_round:,.2f}</td>
+            <td style="text-align: right;">{detail.cert_price:,.2f}</td>
             </tr>"""
 
         detail_number += 1
@@ -102,7 +102,7 @@ def generate_email(order: order_gold, order_payment: order_payment, user: User):
                 "Expedisi_Cost": f"{((order.order_tracking_amount or 0)):,.2f}",
                 "Admin_Cost": f"{((order.order_admin_amount or 0)):,.2f}",
                 "Insurance_Cost": f"{(order.order_tracking_insurance_total_round or 0.0):,.2f}",
-                "SubTotal": f"{order.order_total_price_round:,.2f}",
+                "SubTotal": f"{((order.order_total_price_round or 0) - (order.order_total_redeem_price or 0)):,.2f}",
                 "GrandTotal": f"{order.order_grand_total_price:,.2f}",
                 "STATUS": order_payment.order_payment_status,
                 "Pembayaran": (order_payment.order_payment_method_name or "")
