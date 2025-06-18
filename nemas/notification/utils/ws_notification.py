@@ -5,7 +5,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def send_ws_notification(user_id: int, title: str, message: str, data: dict = None):
+from typing import Optional
+
+
+def send_ws_notification(
+    user_id: int, title: str, message: str, data: Optional[dict] = None
+):
     """
     Global WebSocket notification sender
     """
