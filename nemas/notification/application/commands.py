@@ -1,14 +1,7 @@
-from application.dto import NotificationDTO
-from application.services import NotificationService
+from notification.application.dto import NotificationDTO
+from notification.application.services import NotificationService
+from notification.tasks import send_notification_task
 
 
-class SendNotificationCommand:
-
-    def __init__(self, service: NotificationService):
-        self.service = service
-
-    def execute(self, user, title, message, data=None):
-        notification = NotificationDTO(
-            user=user, title=title, message=message, data=data
-        )
-        self.service.send_notification(notification)
+def notify_user(dto: NotificationDTO):
+    send_notification_task.delay(dto.__dict__)

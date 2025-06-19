@@ -1,18 +1,19 @@
-from typing import List
-from interfaces.notification_sender import NotificationSender
-from application.dto import NotificationDTO
+from .dto import NotificationDTO
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 class NotificationService:
-
-    def __init__(self, senders: List[NotificationSender]):
-        self.senders = senders
-
-    def send_notification(self, notification: NotificationDTO):
-        for sender in self.senders:
-            sender.send(
-                user=notification.user,
-                title=notification.title,
-                message=notification.message,
-                data=notification.data,
+    @staticmethod
+    def send(dto: NotificationDTO):
+        channel_layer = get_channel_layer()
+        if channel_layer is not None:
+            async_to_sync(channel_layer.group_send)(
+                f"user_{dto.user_id}",
+                {
+                    "type": "send_notification",
+                    "title": dto.title,
+                    "message": dto.message,
+                    "data": dto.data,
+                },
             )

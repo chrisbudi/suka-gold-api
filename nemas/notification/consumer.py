@@ -1,17 +1,14 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope["user"]
-        if self.user.is_authenticated:
-            self.group_name = f"user_{self.user.id}"
-            if self.channel_layer is not None:
-                await self.channel_layer.group_add(self.group_name, self.channel_name)
-            await self.accept()
-        else:
-            await self.close()
+        self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
+        self.group_name = f"user_{self.user_id}"
+        if self.channel_layer is not None:
+            await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
 
     async def disconnect(self, close_code):
         if self.channel_layer is not None:
@@ -23,7 +20,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 {
                     "title": event["title"],
                     "message": event["message"],
-                    "data": event.get("data", {}),
+                    "data": event["data"],
                 }
             )
         )
