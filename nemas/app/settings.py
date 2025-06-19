@@ -217,6 +217,18 @@ if USE_HTTPS:
         },
     }
 
+else:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {"class": "logging.StreamHandler"},
+        },
+        "loggers": {
+            "django": {"handlers": ["console"], "level": "DEBUG"},
+            "channels": {"handlers": ["console"], "level": "DEBUG"},
+        },
+    }
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
@@ -330,7 +342,7 @@ CELERY_TASK_TIME_LIMIT = 300
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # Channels config
-ASGI_APPLICATION = "app.asgi.application"
+ASGI_APPLICATION = "nemas.asgi.application"
 
 
 # Redis configuration

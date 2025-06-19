@@ -26,3 +26,6 @@ django-celery-beat==2.7.0
 django-celery-results==2.5.1
 django-sendgrid-v5==1.2.4
 sendgrid==6.11.0
+daphne==4.1.0
+granian==2.3.4
+granian[reload]==2.3.4

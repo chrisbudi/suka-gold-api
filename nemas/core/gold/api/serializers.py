@@ -142,12 +142,17 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    activate_price = gold_price().get_active_price()
+    activate_price = (
+        serializers.SerializerMethodField()
+    )  # gold_price().get_active_price()
 
     gold_price_summary = serializers.IntegerField(read_only=True)
     gold_price_summary_roundup = serializers.IntegerField(read_only=True)
 
     stock = serializers.SerializerMethodField()
+
+    def get_activate_price(self, obj):
+        return obj.get_active_price()
 
     def get_stock(self, obj):
         return obj.cert_detail_count - obj.open_order_count
@@ -160,6 +165,7 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
             "type",
             "brand",
             "certificate",
+            "activate_price",
             "redeem_price",
             "certificate_id",
             "certificate_weight",

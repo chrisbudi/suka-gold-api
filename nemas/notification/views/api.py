@@ -5,6 +5,7 @@ from notification.application.dto import NotificationDTO
 from notification.application.commands import notify_user
 from .serializers import NotificationSerializer
 from drf_spectacular.utils import extend_schema, OpenApiResponse
+from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
@@ -18,14 +19,17 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
     description="Endpoint to trigger a notification to a user.",
 )
 class TriggerNotificationView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = NotificationSerializer(data=request.data)
         if serializer.is_valid():
             validated_data = serializer.validated_data or {}
+            user = request.user
             dto = NotificationDTO(
-                user_id=validated_data.get("user_id"),
-                user_name=validated_data.get("user_name"),
-                user_email=validated_data.get("email"),
+                user_id=user.id,
+                user_name=getattr(user, "username", None),
+                user_email=getattr(user, "email", None),
                 title=validated_data.get("title"),
                 message=validated_data.get("message"),
                 data=validated_data.get("data", {}),
