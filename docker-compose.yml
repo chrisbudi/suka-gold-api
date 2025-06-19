@@ -20,7 +20,7 @@ services:
       sh -c "
         python manage.py wait_for_db &&
         if [ \"$USE_HTTPS\" = \"true\" ]; then
-          granian --interface asgi --ssl-certificate /etc/letsencrypt/live/nemas.id/fullchain.pem --ssl-keyfile /etc/letsencrypt/live/nemas.id/privkey.pem --port 8000 app.asgi:application
+          granian --interface asgi --host 0.0.0.0 --ssl-certificate /etc/letsencrypt/live/nemas.id/fullchain.pem --ssl-keyfile /etc/letsencrypt/live/nemas.id/privkey.pem --port 8000 app.asgi:application
         else
           granian --interface asginl --host 0.0.0.0 --port 8000 --reload app.asgi:application
         fi
