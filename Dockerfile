@@ -58,7 +58,7 @@ RUN apk add --update --no-cache postgresql-client openssl nginx && \
 # sudo cp /etc/letsencrypt/live/nemas.id/fullchain.pem /etc/ssl/certs/fullchain.pem && \
 # sudo cp /etc/letsencrypt/live/nemas.id/privkey.pem /etc/ssl/private/privkey.pem; 
 
-# Install Gunicorn
+# Install 
 RUN /py/bin/pip install granian 
 
 # Configure Nginx
@@ -75,8 +75,4 @@ EXPOSE 8000
 EXPOSE 443
 
 # Start Nginx and Granian with HTTPS
-CMD ["sh", "-c", "nginx && granian --interface asgi \
-    --certfile=/etc/letsencrypt/live/nemas.id/fullchain.pem \
-    --keyfile=/etc/letsencrypt/live/nemas.id/privkey.pem \
-    --port=8000 \
-    app.asgi:application"]
+CMD ["sh", "-c", "nginx && granian --interface asginl --host 0.0.0.0 --ssl-certificate /etc/letsencrypt/live/nemas.id/fullchain.pem --ssl-keyfile /etc/letsencrypt/live/nemas.id/privkey.pem --port 8000 app.asgi:application "]
