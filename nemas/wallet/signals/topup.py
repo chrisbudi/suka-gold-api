@@ -2,6 +2,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import datetime
 
+from nemas.shared.utils.notification import create_user_notification
+from nemas.user.models.user_notification import (
+    NotificationIconType,
+    NotificationTransactionType,
+)
 from wallet.models import topup_transaction
 from user.models import user_wallet_history, user_props
 from django.db import transaction
@@ -23,15 +28,30 @@ def handle_topup(
     **kwargs,
 ):
     print("Topup transaction saved:", instance)
-    if instance.topup_status == "SUCCESS" or created:
-        # send email
-        print("Sending email for topup transaction")
-        mailService = EmailService()
-        mail = generate_email(instance, instance.user)
-        if mail:
-            mailService.sendMail(mail)
-        else:
-            print("Failed to generate email. Mail object is None.")
+    # send email
+    print("Sending email for topup transaction")
+    mailService = EmailService()
+    mail = generate_email(instance, instance.user)
+    if mail:
+        mailService.sendMail(mail)
+        if instance.topup_status == "SUCCESS":
+            create_user_notification(
+                instance.user,
+                title="Top Up Saldo",
+                message=f"Top Up Saldo Anda telah berhasil diproses.",
+                icon_type=NotificationIconType.INFO,
+                transaction_type=NotificationTransactionType.TOPUP,
+            )
+        elif instance.topup_status == "ISSUED":
+            create_user_notification(
+                instance.user,
+                title="Top Up Saldo",
+                message=f"Top Up Saldo Anda telah diterbitkan.",
+                icon_type=NotificationIconType.INFO,
+                transaction_type=NotificationTransactionType.TOPUP,
+            )
+    else:
+        print("Failed to generate email. Mail object is None.")
 
 
 def generate_email(topup: topup_transaction, user: User):
