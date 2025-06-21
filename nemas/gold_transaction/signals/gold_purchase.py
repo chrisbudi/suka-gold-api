@@ -1,3 +1,4 @@
+from venv import create
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
@@ -5,6 +6,11 @@ from datetime import datetime
 from core.domain import gold_price
 
 from gold_transaction.models import gold_saving_buy
+from nemas.shared.utils.notification import create_user_notification
+from nemas.user.models.user_notification import (
+    NotificationIconType,
+    NotificationTransactionType,
+)
 from user.models import user_gold_history, user_wallet_history, user_props
 from django.db import transaction
 
@@ -61,6 +67,13 @@ def handle_purchase(
                 print("Instance user is None. Email generation skipped.")
             if mail:
                 mailService.sendMail(mail)
+                create_user_notification(
+                    instance.user,
+                    "Pembelian Emas Digital",
+                    f"Anda telah melakukan pembelian emas digital dengan nomor transaksi {instance.gold_buy_number}.",
+                    NotificationIconType.INFO,
+                    NotificationTransactionType.GOLD_PURCHASE,
+                )
 
 
 def generate_email(gold: gold_saving_buy, user: User):

@@ -31,11 +31,19 @@ def handle_order_gold_payment(
         mail = generate_email(order_gold_model, instance, user)
         if mail:
             mailService.sendMail(mail)
-            if instance.order_payment_status == "SENDER":
+            if instance.order_payment_status == "PAID":
                 create_user_notification(
                     user=user,
                     title="Pembayaran Diterima",
                     message=f"Pembayaran untuk transaksi {order_gold_model.order_number} telah diterima.",
+                    icon_type=NotificationIconType.INFO,
+                    transaction_type=NotificationTransactionType.ORDER_GOLD,
+                )
+            elif instance.order_payment_status == "ISSUED":
+                create_user_notification(
+                    user=user,
+                    title="Pembayaran Diterbitkan",
+                    message=f"Pembayaran untuk transaksi {order_gold_model.order_number} telah diterbitkan.",
                     icon_type=NotificationIconType.INFO,
                     transaction_type=NotificationTransactionType.ORDER_GOLD,
                 )
