@@ -4,8 +4,8 @@ from django import template
 from django.core.mail import send_mail
 from django.dispatch import receiver
 from django.conf import settings
-from nemas.shared.utils.notification import create_user_notification
-from nemas.user.models.user_notification import (
+from shared.utils.notification import create_user_notification
+from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
 )

@@ -2,8 +2,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import datetime
 
-from nemas.shared.utils.notification import create_user_notification
-from nemas.user.models.user_notification import (
+from shared.utils.notification import create_user_notification
+from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
 )
