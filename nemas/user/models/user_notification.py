@@ -1,7 +1,6 @@
 from django.conf import settings
 
 from django.db import models
-from core.domain.gold import gold
 from core.fields.uuidv7_field import UUIDv7Field
 
 
