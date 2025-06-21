@@ -152,7 +152,14 @@ class GoldProductShowSerializer(serializers.ModelSerializer):
     stock = serializers.SerializerMethodField()
 
     def get_activate_price(self, obj):
-        return obj.get_active_price()
+        active_price = gold_price().get_active_price()
+        if active_price:
+            return {
+                "gold_price_buy": active_price.gold_price_buy,
+                "gold_price_sell": active_price.gold_price_sell,
+                "gold_price_buy_round": active_price.gold_price_buy_round,
+            }
+        return None
 
     def get_stock(self, obj):
         return obj.cert_detail_count - obj.open_order_count
