@@ -2,7 +2,7 @@ import decimal
 from common.responses import NemasReponses
 from core import address
 from core.domain.delivery import delivery_partner
-from shared_kernel.services.external.delivery.sapx.sapx_service import SapxService
+from shared.services.external.delivery.sapx.sapx_service import SapxService
 from order_fix.api.serializers.OrderCartSerializer import User
 from order_fix.type.shipping_details import ShippingDetails
 from user.models.users import user_address
@@ -10,7 +10,7 @@ from order.models import order_payment, order_gold
 from user.models import user_virtual_account as UserVa
 from core.domain import bank as core_bank
 from datetime import datetime, timedelta
-from shared_kernel.services.external.xendit_service import (
+from shared.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )

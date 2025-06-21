@@ -19,8 +19,8 @@ from user.api.serializers import (
     UserSerializer,
 )
 from user.models import user_ktp as modelInfo, user as userModel
-from shared_kernel.services import image_services, s3_services
-from shared_kernel.services.external import verihub_services
+from shared.services import image_services, s3_services
+from shared.services.external import verihub_services
 from django.utils import timezone
 
 from datetime import datetime

@@ -9,7 +9,7 @@ from core.domain import information_article as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from shared_kernel.services.s3_services import S3Service
+from shared.services.s3_services import S3Service
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 

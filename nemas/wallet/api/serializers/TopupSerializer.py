@@ -3,7 +3,7 @@ from attr import validate
 from rest_framework import serializers
 from common.generator import generate_alphanumeric_code
 from wallet.models import topup_transaction
-from shared_kernel.services.external.xendit_service import (
+from shared.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )

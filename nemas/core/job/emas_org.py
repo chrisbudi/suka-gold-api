@@ -5,7 +5,7 @@ from datetime import datetime
 from core.domain import gold_price_config, gold_price_source
 from asgiref.sync import sync_to_async
 from core.services.price_service import price_service
-from shared_kernel.services.redis_service import redis_service
+from shared.services.redis_service import redis_service
 import math
 
 

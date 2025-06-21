@@ -2,7 +2,7 @@ import json
 from pyexpat import model
 from rest_framework import serializers
 from django.db import models
-from shared_kernel.services.external.xendit_service import (
+from shared.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )

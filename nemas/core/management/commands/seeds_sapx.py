@@ -3,7 +3,7 @@ from core.domain.delivery import delivery_partner
 from core.domain import delivery_partner_district, delivery_shipment_content
 from concurrent.futures import ThreadPoolExecutor
 
-from shared_kernel.services.external.delivery.sapx.sapx_service import SapxService
+from shared.services.external.delivery.sapx.sapx_service import SapxService
 
 
 class Command(BaseCommand):

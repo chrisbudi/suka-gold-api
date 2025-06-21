@@ -10,7 +10,7 @@ from django.core.cache import cache
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from shared_kernel.services.s3_services import S3Service
+from shared.services.s3_services import S3Service
 import os
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import F, Value, IntegerField, Prefetch, Count, Q, Sum

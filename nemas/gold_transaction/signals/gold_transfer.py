@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 
 from user.models.users import user as User
 
-from shared_kernel.services.email_service import EmailService
+from shared.services.email_service import EmailService
 from django.conf import settings
 
 

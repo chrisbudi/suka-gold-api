@@ -1,7 +1,7 @@
 from attr import validate
 from rest_framework import serializers
 from common.generator import generate_alphanumeric_code
-from shared_kernel.services.external.xendit_service.disbursment_service import (
+from shared.services.external.xendit_service.disbursment_service import (
     DisburstService,
 )
 from wallet.models import disburst_transaction

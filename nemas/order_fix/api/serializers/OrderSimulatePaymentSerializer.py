@@ -1,6 +1,6 @@
 import json
 from rest_framework import serializers
-from shared_kernel.services.external.xendit_service import (
+from shared.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )

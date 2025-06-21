@@ -4,7 +4,7 @@ from order.models import order_payment, order_gold
 from user.models import user_virtual_account as UserVa
 from core.domain import bank as core_bank
 from datetime import datetime, timedelta
-from shared_kernel.services.external.xendit_service import (
+from shared.services.external.xendit_service import (
     QRISPaymentService,
     VAPaymentService,
 )

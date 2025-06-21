@@ -3,7 +3,7 @@ from scrapy.utils.project import get_project_settings
 from django.core.management.base import BaseCommand
 
 from core.job import HargaEmasSpider
-from shared_kernel.services.redis_service import redis_service
+from shared.services.redis_service import redis_service
 from core.services.price_service import price_service
 
 

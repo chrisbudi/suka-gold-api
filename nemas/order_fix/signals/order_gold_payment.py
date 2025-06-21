@@ -1,10 +1,9 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from datetime import datetime
-from django.utils import timezone
-from core.domain import gold_price
 
+from shared.utils.notification import create_user_notification
+from user.models import user_notification
 from order.models import order_gold, order_gold_detail
 from order.models import order_payment
 from sendgrid.helpers.mail import Mail
@@ -13,7 +12,11 @@ from django.template.loader import render_to_string
 
 from user.models.users import user as User
 
-from shared_kernel.services.email_service import EmailService
+from shared.services.email_service import EmailService
+from user.models.user_notification import (
+    NotificationIconType,
+    NotificationTransactionType,
+)
 
 
 @receiver(post_save, sender=order_payment)
@@ -28,6 +31,14 @@ def handle_order_gold_payment(
         mail = generate_email(order_gold_model, instance, user)
         if mail:
             mailService.sendMail(mail)
+            if instance.order_payment_status == "SENDER":
+                create_user_notification(
+                    user=user,
+                    title="Pembayaran Diterima",
+                    message=f"Pembayaran untuk transaksi {order_gold_model.order_number} telah diterima.",
+                    icon_type=NotificationIconType.INFO,
+                    transaction_type=NotificationTransactionType.ORDER_GOLD,
+                )
         else:
             print("Failed to generate email. Mail object is None.")
 

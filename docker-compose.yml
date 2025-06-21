@@ -1,11 +1,15 @@
 version: "3.9"
 
+networks:
+  nemas_network:
+    driver: bridge
+
 services:
   app:
     build:
       context: .
       args:
-        - DEV=true
+        DEV: "true"
     image: chbudi9/nemasapp
     volumes:
       - ./nemas:/nemas
@@ -16,14 +20,17 @@ services:
       - redis
     expose:
       - "8000"
+    restart: unless-stopped
+    networks:
+      - nemas_network
     command: >
       sh -c "
-        python manage.py wait_for_db &&
-        if [ \"$USE_HTTPS\" = \"true\" ]; then
-          granian --interface asginl --host 0.0.0.0 --port 8000 app.asgi:application
-        else
-          granian --interface asginl --host 0.0.0.0 --port 8000 --reload app.asgi:application
-        fi
+      python manage.py wait_for_db &&
+      if [ \"$USE_HTTPS\" = \"true\" ]; then
+        granian --interface asginl --host 0.0.0.0 --port 8000 app.asgi:application
+      else
+        granian --interface asginl --host 0.0.0.0 --port 8000 --reload app.asgi:application
+      fi
       "
 
   nginx:
@@ -37,36 +44,50 @@ services:
       - /etc/letsencrypt/archive/nemas.id-0001/privkey1.pem:/etc/ssl/private/privkey.pem:ro
     depends_on:
       - app
+    restart: unless-stopped
+    networks:
+      - nemas_network
 
   redis:
     image: redis:alpine
-    container_name: redis
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - nemas_network
 
   celery_worker:
     image: chbudi9/nemasapp
-    command: sh -c "celery -A app worker --loglevel=info & celery -A app beat --scheduler django_celery_beat.schedulers:DatabaseScheduler --loglevel=info"
+    command: >
+      sh -c "celery -A app worker --loglevel=info & celery -A app beat --scheduler django_celery_beat.schedulers:DatabaseScheduler --loglevel=info"
     volumes:
-      - ./nemas:/nemas # Mount the local directory to the container
+      - ./nemas:/nemas
     env_file:
       - .env
     depends_on:
       - redis
+    restart: unless-stopped
+    networks:
+      - nemas_network
 
   flower:
     image: chbudi9/nemasapp
     command: celery -A app --broker=redis://redis/0 flower --port=5555 --db=/flower_db --persistent=True
     volumes:
-      - ./nemas:/nemas # Mount the local directory to the container
+      - ./nemas:/nemas
     env_file:
       - .env
     ports:
       - "5555:5555"
     depends_on:
       - redis
+    restart: unless-stopped
+    networks:
+      - nemas_network
+  
 
+
+  
   # web:
   #   image: idrislabdev/nemas-admin-docker:v1.0
   #   container_name: web.nemas
