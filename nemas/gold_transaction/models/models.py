@@ -1,5 +1,4 @@
 from decimal import Decimal
-from logging import PercentStyle
 from django.conf import settings
 
 from django.db import models
@@ -153,6 +152,30 @@ class gold_transfer(models.Model):
         elif weight > 50:
             percentage = 0.03
         return percentage
+
+    def send_notification(self, user_from, user_to):
+
+        from shared.utils.notification import (
+            NotificationTransactionType,
+            NotificationIconType,
+            create_user_notification,
+        )
+
+        create_user_notification(
+            user=user_from,
+            icon_type=NotificationIconType.TRANSACTION,
+            title="Gold Transfer Sent",
+            message=f"You have sent {self.transfer_member_gold_weight} grams of gold to {user_to.name}.",
+            transaction_type=NotificationTransactionType.GOLD_TRANSFER_SEND,
+        )
+
+        create_user_notification(
+            user=user_to,
+            icon_type=NotificationIconType.TRANSACTION,
+            title="Gold Transfer Received",
+            message=f"You have received {self.transfer_member_gold_weight} grams of gold from {user_from.name}.",
+            transaction_type=NotificationTransactionType.GOLD_TRANSFER_RECEIVE,
+        )
 
     def __str__(self):
         return f"Gold Transfer {self.gold_transfer_id} - Type:"

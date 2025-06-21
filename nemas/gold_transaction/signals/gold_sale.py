@@ -1,20 +1,24 @@
+from datetime import datetime
+
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import datetime
-from core.domain import gold_price
-from django.contrib.auth import get_user_model
-
-from gold_transaction.models import gold_saving_sell
-from user.models import user_gold_history, user_wallet_history, user_props
-from django.db import transaction
-
-from sendgrid.helpers.mail import Mail
-from django.conf import settings
 from django.template.loader import render_to_string
 
-from user.models.users import user as User
+from sendgrid.helpers.mail import Mail
 
+from core.domain import gold_price
+from gold_transaction.models import gold_saving_sell
 from shared.services.email_service import EmailService
+from shared.utils.notification import create_user_notification
+from user.models import user_gold_history, user_wallet_history, user_props
+from user.models.user_notification import (
+    NotificationIconType,
+    NotificationTransactionType,
+)
+from user.models.users import user as User
 
 
 @receiver(post_save, sender=gold_saving_sell)
@@ -62,6 +66,14 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
 
             if mail:
                 mailService.sendMail(mail)
+                create_user_notification(
+                    instance.user,
+                    "Pembelian Emas Digital",
+                    f"Anda telah melakukan pembelian emas digital dengan nomor transaksi {instance.gold_buy_number}.",
+                    NotificationIconType.INFO,
+                    NotificationTransactionType.GOLD_BUY,
+                )
+
             else:
                 print("Failed to generate email. Mail object is None.")
 

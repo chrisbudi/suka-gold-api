@@ -72,7 +72,7 @@ def handle_purchase(
                     "Pembelian Emas Digital",
                     f"Anda telah melakukan pembelian emas digital dengan nomor transaksi {instance.gold_buy_number}.",
                     NotificationIconType.INFO,
-                    NotificationTransactionType.GOLD_PURCHASE,
+                    NotificationTransactionType.GOLD_BUY,
                 )
 
 

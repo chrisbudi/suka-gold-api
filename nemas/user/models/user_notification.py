@@ -10,18 +10,23 @@ from core.fields.uuidv7_field import UUIDv7Field
 
 # create enum for transaction types
 class NotificationTransactionType(models.TextChoices):
-    BUY = "gold_buy", "Buy"
-    SELL = "gold_sell", "Sell"
-    TRANSFER = "gold_transfer", "Transfer"
+    GOLD_BUY = "gold_buy", "Buy"
+    GOLD_SELL = "gold_sell", "Sell"
+    GOLD_TRANSFER_SEND = "gold_transfer_send", "Transfer Send"
+    GOLD_TRANSFER_RECEIVE = "gold_transfer_receive", "Transfer Receive"
     ORDER_GOLD = "order_gold", "Order Gold"
     TARIK_EMAS = "tarik_emas", "Tarik Emas"
-    TOPUP = "topup", "Top Up"
+    TOPUP = (
+        "topup",
+        "Top Up",
+    )
+    WITHDRAW = "withdraw", "Withdraw"
 
 
 # create enum for icon types
 class NotificationIconType(models.TextChoices):
     INFO = "info", "Info"
-    PURCHASING = "transaction", "Transaction"
+    TRANSACTION = "transaction", "Transaction"
 
 
 class user_notification(models.Model):

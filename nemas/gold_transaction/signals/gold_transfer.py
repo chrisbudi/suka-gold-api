@@ -4,7 +4,6 @@ from gold_transaction.models import gold_transfer
 from user.models import user_gold_history
 from core.domain import gold_price
 from datetime import datetime
-from decimal import Decimal
 from sendgrid.helpers.mail import Mail
 
 from django.template.loader import render_to_string
@@ -69,6 +68,11 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
             for mail, role in [(mailFrom, "sender"), (mailTo, "receiver")]:
                 if mail:
                     mailService.sendMail(mail)
+                    gold_transfer.send_notification(
+                        instance,
+                        user_from=UserFrom,
+                        user_to=UserTo,
+                    )
                 else:
                     print(f"Failed to generate email for {role}. Mail object is None.")
         else:
