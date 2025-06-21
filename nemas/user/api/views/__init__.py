@@ -25,3 +25,7 @@ from .user_pin_view import (
 from .user_reset_token_view import RequestResetView, ResetView
 
 from .user_address_view import UserAddressView
+
+from .user_notification_view import (
+    user_notification_views,
+)

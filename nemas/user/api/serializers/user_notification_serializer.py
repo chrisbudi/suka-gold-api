@@ -3,8 +3,10 @@ from django.utils.translation import ngettext_lazy as _
 from rest_framework import serializers
 from user.models import user_notification
 
+from django_filters import rest_framework as filters
 
-class UserPropSerializer(serializers.ModelSerializer):
+
+class UserNotificationSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
     class Meta:
@@ -17,3 +19,12 @@ class UserPropSerializer(serializers.ModelSerializer):
             "user_notification_icon_type",
             "user",
         )
+
+
+class UserNotificationFilterSerializer(filters.FilterSet):
+    class Meta:
+        model = user_notification
+
+        fields = {
+            "user_notification_title": ["icontains"],
+        }

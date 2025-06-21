@@ -12,3 +12,9 @@ from .user_ktp_serializer import UserKtpSerializer, UploadSerializer
 from .user_token_serializer import ResetRequestSerializer, ApplyResetSerializer
 
 from .user_address_serializer import UserAddressSerializer
+
+
+from .user_notification_serializer import (
+    UserNotificationSerializer,
+    UserNotificationFilterSerializer,
+)

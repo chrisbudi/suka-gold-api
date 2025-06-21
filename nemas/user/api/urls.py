@@ -21,6 +21,7 @@ from .views import (
     RequestResetView,
     CreateComparePhotoANDKtp,
     UserAddressView,
+    user_notification_views,
 )
 
 
@@ -105,9 +106,9 @@ urlpatterns = [
         UserAddressView.as_view({"post": "address_submit"}),
         name="user-address-create",
     ),
-    # path(
-    #     "user_ktp/",
-    #     RetrieveUpdateUserKtpView.as_view(),
-    #     name="user_ktp_retrieve_update",
-    # ),
+    path(
+        "user/notification/",
+        user_notification_views.as_view({"get": "list"}),
+        name="list_user_notification",
+    ),
 ]
