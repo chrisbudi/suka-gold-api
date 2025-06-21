@@ -55,14 +55,18 @@ EXPOSE 8000 443
 # Use entrypoint script to handle cert mounting and start services
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-USER django-user
-
-# Ensure the /nemas directory is owned by the django-user
+# Run ownership and permission fixes as root (default user in build)
 RUN chown -R django-user:django-user /nemas
 RUN touch /nemas/api_errors.log && \
     chown django-user:django-user /nemas/api_errors.log && \
     chmod 664 /nemas/api_errors.log
+
+# Switch to django-user for running the container
+USER django-user
+
 
 
 CMD ["/entrypoint.sh"]
