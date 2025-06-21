@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import extend_schema
 
+from shared.utils.notification import create_user_notification
 from user.api.serializers import UserPropSerializer, UserPropBankSerializer
 from user.models import user_props as UserProps
 
