@@ -192,25 +192,25 @@ if USE_HTTPS:
                 "class": "logging.StreamHandler",
                 "formatter": "verbose",
             },
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": "/nemas/api_errors.log",
-                "formatter": "verbose",
-            },
+            # "file": {
+            #     "class": "logging.FileHandler",
+            #     "filename": "/nemas/api_errors.log",
+            #     "formatter": "verbose",
+            # },
         },
         "loggers": {
             "django": {
-                "handlers": ["console", "file"],
+                "handlers": ["console"],
                 "level": "INFO",
                 "propagate": True,
             },
             "django.request": {
-                "handlers": ["console", "file"],
+                "handlers": ["console"],
                 "level": "ERROR",
                 "propagate": False,
             },
             "django.db.backends": {
-                "handlers": ["console", "file"],
+                "handlers": ["console"],
                 "level": "DEBUG",
                 "propagate": False,
             },
