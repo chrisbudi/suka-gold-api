@@ -7,7 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import extend_schema
 
 from rest_framework import status, viewsets, filters, pagination, response
-from core.domain import gold_cert_detail_price as modelInfo
+from user.models import user_notification as modelInfo
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -15,7 +15,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from user.api.serializers import (
     UserNotificationSerializer as objectSerializer,
-    UserNotificationFilterSerializer as objectFilter,
 )
 
 
@@ -25,6 +24,8 @@ from user.api.serializers import (
 class user_notification_views(viewsets.ModelViewSet):
     """View user prop view in the system"""
 
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     queryset = modelInfo.objects.all()
     serializer_class = objectSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -36,7 +37,7 @@ class user_notification_views(viewsets.ModelViewSet):
         tags=["User - List User notification"],
     )
     def list(self, request):
-        queryset = modelInfo.objects.filter(user_from=request.user)
+        queryset = modelInfo.objects.filter(user=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = objectSerializer(paginated_queryset, many=True)
