@@ -6,8 +6,8 @@ from datetime import datetime
 from core.domain import gold_price
 
 from gold_transaction.models import gold_saving_buy
-from nemas.shared.utils.notification import create_user_notification
-from nemas.user.models.user_notification import (
+from shared.utils.notification import create_user_notification
+from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
 )
