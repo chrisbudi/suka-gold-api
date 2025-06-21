@@ -58,4 +58,11 @@ RUN chmod +x /entrypoint.sh
 
 USER django-user
 
+# Ensure the /nemas directory is owned by the django-user
+RUN chown -R django-user:django-user /nemas
+RUN touch /nemas/api_errors.log && \
+    chown django-user:django-user /nemas/api_errors.log && \
+    chmod 664 /nemas/api_errors.log
+
+
 CMD ["/entrypoint.sh"]

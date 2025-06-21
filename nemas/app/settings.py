@@ -194,7 +194,7 @@ if USE_HTTPS:
             },
             "file": {
                 "class": "logging.FileHandler",
-                "filename": "api_errors.log",
+                "filename": "/nemas/api_errors.log",
                 "formatter": "verbose",
             },
         },
