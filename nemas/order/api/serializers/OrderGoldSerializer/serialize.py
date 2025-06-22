@@ -8,8 +8,8 @@ from common.responses import NemasReponses, ServicesResponse
 from common.generator import generate_alphanumeric_code
 from common.round_value import round_up_to_100
 from shared.services.external.delivery.sapx.sapx_service import SapxService
-from order_fix.api.serializers.OrderGoldSerializer.tracking import TrackingProcess
-from order_fix.api.serializers.OrderGoldSerializer.payments import PaymentProcess
+from order.api.serializers.OrderGoldSerializer.tracking import TrackingProcess
+from order.api.serializers.OrderGoldSerializer.payments import PaymentProcess
 from order.models.order_cart import order_cart_detail
 from order.models import order_cart
 from order.models import order_gold, order_gold_detail
@@ -24,7 +24,7 @@ from user.models.users import user_virtual_account as UserVa, user_address
 from core.domain import bank as core_bank
 from django.db import transaction
 from typing import cast
-from order_fix.type.shipping_details import ShippingDetails
+from order.type.shipping_details import ShippingDetails
 
 User = get_user_model()
 

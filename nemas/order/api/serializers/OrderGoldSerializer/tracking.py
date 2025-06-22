@@ -3,8 +3,8 @@ from common.responses import NemasReponses
 from core import address
 from core.domain.delivery import delivery_partner
 from shared.services.external.delivery.sapx.sapx_service import SapxService
-from order_fix.api.serializers.OrderCartSerializer import User
-from order_fix.type.shipping_details import ShippingDetails
+from order.api.serializers.OrderCartSerializer import User
+from order.type.shipping_details import ShippingDetails
 from user.models.users import user_address
 from order.models import order_payment, order_gold
 from user.models import user_virtual_account as UserVa

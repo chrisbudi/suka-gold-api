@@ -6,8 +6,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Correct model import
 from order.models import order_cart_detail, order_cart
-from order_fix.api.serializers import OrderCartSerializer
-from order_fix.api.serializers.OrderCartSerializer import (
+from order.api.serializers import OrderCartSerializer
+from order.api.serializers.OrderCartSerializer import (
     AddCartDetailSerializer,
     CartDetailSerializer,
     CartSerializer,

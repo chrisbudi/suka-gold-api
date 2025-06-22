@@ -3,7 +3,7 @@ URL mapping for cart app
 """
 
 from django.urls import path
-from order_fix.api import views
+from order.api import views
 from django.urls import include
 
 app_name = "order-fix"

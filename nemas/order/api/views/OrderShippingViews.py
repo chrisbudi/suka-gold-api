@@ -8,7 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 # Correct model import
-from order_fix.api.serializers import OrderShippingSerializer
+from order.api.serializers import OrderShippingSerializer
 
 
 @extend_schema(

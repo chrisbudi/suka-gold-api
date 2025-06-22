@@ -29,7 +29,7 @@ from user.api import urls as userUrl
 from core import urls as coreUrl
 from wallet.api import urls as walletUrl
 from gold_transaction.api import urls as goldUrl
-from order_fix.api import urls as orderFixUrl
+from order.api import urls as orderFixUrl
 from reporting import urls as reporting_url
 from notification import urls as notification_url
 
@@ -78,7 +78,7 @@ urlpatterns = [
     ),
     path(
         "api/schema/order/fix",
-        SpectacularAPIView.as_view(urlconf="order_fix.api.urls"),
+        SpectacularAPIView.as_view(urlconf="order.api.urls"),
         name="order-fix-schema",
     ),
     path(

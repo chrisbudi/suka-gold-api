@@ -9,7 +9,7 @@ from common import round_value
 
 # Correct model import
 from shared.services.external.delivery.sapx.sapx_service import SapxService
-from order_fix.api.serializers import OrderShippingSerializer
+from order.api.serializers import OrderShippingSerializer
 
 
 @extend_schema(

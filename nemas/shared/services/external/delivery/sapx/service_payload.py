@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from order.models.order_gold import order_gold
-from order_fix.api.serializers.OrderCartSerializer import User
+from order.api.serializers.OrderCartSerializer import User
 from user.models.users import user, user_address
 from core.domain import gold
 

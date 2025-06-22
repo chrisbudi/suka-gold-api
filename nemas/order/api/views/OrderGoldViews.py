@@ -7,7 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # Correct model import
 from gold_transaction.models import gold_saving_buy
 from common.responses import NemasReponses
-from order_fix.api.serializers.OrderGoldSerializer.serialize import (
+from order.api.serializers.OrderGoldSerializer.serialize import (
     OrderGoldSerializer,
     OrderGoldListSerializer,
     SubmitOrderGoldSerializer,

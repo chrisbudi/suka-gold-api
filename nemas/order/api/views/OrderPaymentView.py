@@ -6,7 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 from common.responses import NemasReponses
-from order_fix.api.serializers.OrderSimulatePaymentSerializer import (
+from order.api.serializers.OrderSimulatePaymentSerializer import (
     OrderSimulatedPaymentQrisSerializer,
     OrderSimulatedPaymentVaSerializer,
 )
