@@ -22,6 +22,7 @@ from .views import (
     CreateComparePhotoANDKtp,
     UserAddressView,
     user_notification_views,
+    user_notification_price_views,
 )
 
 
@@ -110,5 +111,15 @@ urlpatterns = [
         "user/notification/",
         user_notification_views.as_view({"get": "list"}),
         name="list_user_notification",
+    ),
+    path(
+        "user/notification/price/",
+        user_notification_price_views.as_view({"get": "get"}),
+        name="get_user_notification_price",
+    ),
+    path(
+        "user/notification/price/create/",
+        user_notification_price_views.as_view({"post": "post"}),
+        name="updset_user_notification_price",
     ),
 ]

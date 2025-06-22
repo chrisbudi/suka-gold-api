@@ -9,3 +9,4 @@ from .users import (
 from .users_reset_token import user_reset_token
 from .user_history import user_gold_history, user_wallet_history
 from .user_notification import user_notification
+from .user_notification_price import user_notification_price

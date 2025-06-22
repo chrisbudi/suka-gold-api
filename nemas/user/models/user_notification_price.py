@@ -26,6 +26,6 @@ class user_notification_price(models.Model):
         decimal_places=2,
     )
 
-    user_notification_date = models.DateTimeField(auto_now_add=True)
+    timestamps = models.DateTimeField(auto_now_add=True)
 
     user_notification_price_status = models.BooleanField(default=True)

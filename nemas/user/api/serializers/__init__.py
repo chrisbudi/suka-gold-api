@@ -17,4 +17,5 @@ from .user_address_serializer import UserAddressSerializer
 from .user_notification_serializer import (
     UserNotificationSerializer,
     UserNotificationFilterSerializer,
+    UserNotificationPriceSerializer,
 )
