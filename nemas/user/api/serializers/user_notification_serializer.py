@@ -29,8 +29,8 @@ class UserNotificationPriceSerializer(serializers.ModelSerializer):
         model = user_notification_price
         fields = (
             "user_notification_price_id",
-            "user_notification_price_max",
-            "user_notification_price_min",
+            "user_notification_price_buy",
+            "user_notification_price_sell",
             "timestamps",
             "user_notification_price_status",
             "user",
