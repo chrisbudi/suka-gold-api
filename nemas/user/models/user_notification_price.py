@@ -17,11 +17,11 @@ class user_notification_price(models.Model):
     user_notification_price_id = UUIDv7Field(
         primary_key=True, unique=True, editable=False
     )
-    user_notification_price_max = models.DecimalField(
+    user_notification_price_buy = models.DecimalField(
         max_digits=16,
         decimal_places=2,
     )
-    user_notification_price_min = models.DecimalField(
+    user_notification_price_sell = models.DecimalField(
         max_digits=16,
         decimal_places=2,
     )
