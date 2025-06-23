@@ -177,7 +177,7 @@ USE_I18N = True
 USE_TZ = True
 
 HTTPCACHE_ENABLED = False
-if USE_HTTPS:
+if USE_HTTPS == True:
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -221,12 +221,31 @@ else:
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
+        "formatters": {
+            "verbose": {
+                "format": "{levelname} {asctime} {module} {message}",
+                "style": "{",
+            },
+            "simple": {
+                "format": "{levelname} {message}",
+                "style": "{",
+            },
+        },
         "handlers": {
-            "console": {"class": "logging.StreamHandler"},
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "verbose",
+            },
+            "file": {
+                "class": "logging.FileHandler",
+                "filename": BASE_DIR / "nemas_debug.log",
+                "level": "DEBUG",
+                "formatter": "verbose",
+            },
         },
         "loggers": {
-            "django": {"handlers": ["console"], "level": "DEBUG"},
-            "channels": {"handlers": ["console"], "level": "DEBUG"},
+            "django": {"handlers": ["console", "file"], "level": "DEBUG"},
+            "channels": {"handlers": ["console", "file"], "level": "DEBUG"},
         },
     }
 

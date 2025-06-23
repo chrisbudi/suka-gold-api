@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.conf import settings
 
 from django.db import models
@@ -18,12 +19,10 @@ class user_notification_price(models.Model):
         primary_key=True, unique=True, editable=False
     )
     user_notification_price_buy = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
+        max_digits=16, decimal_places=2, default=Decimal(0.00), null=True, blank=True
     )
     user_notification_price_sell = models.DecimalField(
-        max_digits=16,
-        decimal_places=2,
+        max_digits=16, decimal_places=2, default=Decimal(0.00), null=True, blank=True
     )
 
     timestamps = models.DateTimeField(auto_now_add=True)

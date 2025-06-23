@@ -43,7 +43,7 @@ class user_notification_price_views(viewsets.ModelViewSet):
         queryset = get_object_or_404(modelInfo, user=request.user)
         if not queryset:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
-        serializer = objectSerializer(queryset)
+        serializer = objectSerializer(queryset, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -54,7 +54,10 @@ class user_notification_price_views(viewsets.ModelViewSet):
     def post(self, request):
         notification_price, _ = modelInfo.objects.get_or_create(user=request.user)
         serializer = objectSerializer(
-            notification_price, data=request.data, partial=True
+            notification_price,
+            data=request.data,
+            partial=True,
+            context={"request": request},
         )
         if serializer.is_valid():
             serializer.save()
