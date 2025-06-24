@@ -34,6 +34,6 @@ def create_user_notification(
         user_notification_description=message,
         user_notification_icon_type=icon_type,
         user_notification_date=timezone_now(),
-        user_notification_transaction_type=transaction_type,
-        user_notification_transaction_id=None,
+        user_transaction_type=transaction_type,
+        user_transaction_id=None,
     )
