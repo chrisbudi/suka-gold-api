@@ -72,9 +72,10 @@ services:
 
   flower:
     image: chbudi9/nemasapp
-    command: celery -A app --broker=redis://redis/0 flower --port=5555 --db=/flower_db --persistent=True
+    command: celery -A app --broker=redis://redis/0 flower --port=5555 --db=/flower_db/flower.db --persistent=True
     volumes:
       - ./nemas:/nemas
+      - ./flower_db:/flower_db
     env_file:
       - .env
     ports:
@@ -84,7 +85,7 @@ services:
     restart: unless-stopped
     networks:
       - nemas_network
-  
+    
 
 
   
