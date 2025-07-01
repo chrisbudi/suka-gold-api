@@ -8,7 +8,7 @@ from core.fields.uuidv7_field import UUIDv7Field
 # Create your models here.
 # buy, sell, buyback, sellback, transfer
 class virtual_account_webhook(models.Model):
-    payment_id = models.CharField(max_length=100, unique=True)
+    payment_id = models.CharField(max_length=100)
     callback_virtual_account_id = models.CharField(max_length=100)
     owner_id = models.CharField(max_length=100)
     external_id = models.CharField(max_length=100)

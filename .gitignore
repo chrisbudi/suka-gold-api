@@ -9,3 +9,4 @@ nginx.conf
 .DS_Store
 .DS_Store
 *.log
+flower_db/flower.db

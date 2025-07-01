@@ -89,11 +89,6 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
 
             orderTransaction.update_payment_status("PAID")
 
-            # mail service
-            print(orderTransaction, "order transaction")
-            # mail = orderMailService()
-            # mail.send_email(orderTransaction, user=user)
-
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))
