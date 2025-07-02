@@ -24,8 +24,8 @@ class SimulatePaymentView(viewsets.ModelViewSet):
     def simulate_payment_qris(self, request):
         serializer = modelqrisSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({}, status=status.HTTP_200_OK)
+            response = serializer.save()
+            return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
@@ -35,6 +35,6 @@ class SimulatePaymentView(viewsets.ModelViewSet):
     def simulate_payment_va(self, request):
         serializer = modelVASerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({}, status=status.HTTP_200_OK)
+            response = serializer.save()
+            return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

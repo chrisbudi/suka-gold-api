@@ -37,11 +37,6 @@ class SimulatedPaymentQrisSerializer(serializers.Serializer):
             }
             payload_json = json.dumps(payload)
             response = qris_service.qris_payment_simulate(reference_id, payload_json)
-            print(response, "response")
-            topupTransaction = topup_transaction.objects.get(
-                topup_payment_ref=reference_id
-            )
-            topupTransaction.update_status(topup_status="SUCCESS")
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))
@@ -70,12 +65,6 @@ class SimulatedPaymentVaSerializer(serializers.Serializer):
             }
             payload_json = json.dumps(payload)
             response = va_service.va_payment_simulate(reference_id, payload_json)
-
-            topupTransaction = topup_transaction.objects.get(
-                topup_payment_ref=reference_id
-            )
-            topupTransaction.update_status(topup_status="SUCCESS")
-
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))
