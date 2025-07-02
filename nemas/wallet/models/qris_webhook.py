@@ -20,7 +20,7 @@ class qris_webhook(models.Model):
     data_created = models.DateTimeField()
     qr_id = models.CharField(max_length=100)
     qr_string = models.TextField()
-    reference_id = models.CharField(max_length=100)
+    reference_id = models.CharField(max_length=1000)
     type = models.CharField(max_length=20)
     channel_code = models.CharField(max_length=20)
     expires_at = models.DateTimeField()
