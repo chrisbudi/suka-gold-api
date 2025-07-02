@@ -34,7 +34,7 @@ def handle_topup(
     mail = generate_email(instance, instance.user)
     if mail:
         mailService.sendMail(mail)
-        if instance.topup_status == "SUCCESS":
+        if instance.topup_status == "PAID":
             create_user_notification(
                 instance.user,
                 title="Top Up Saldo",

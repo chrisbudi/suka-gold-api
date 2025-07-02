@@ -27,7 +27,7 @@ class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
             if not topup:
                 raise serializers.ValidationError("Top-up transaction not found.")
             # Update the top-up transaction with the webhook data
-            topup.status = validated_data.get("status", "COMPLETED")
+            topup.status = "PAID"
             topup.save()
             return topup
         elif reference_id.startswith("qris-order_"):
@@ -40,7 +40,7 @@ class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
             if not order:
                 raise serializers.ValidationError("Order transaction not found.")
             # Update the order with the webhook data
-            order.order_gold_payment_status = validated_data.get("status", "COMPLETED")
+            order.order_gold_payment_status = "PAID"
             order.save()
             return order
 
