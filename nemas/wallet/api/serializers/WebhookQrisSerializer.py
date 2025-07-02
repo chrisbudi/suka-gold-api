@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from wallet.models import qris_webhook
-from wallet.models import topup_qris_webhook
 from datetime import datetime
+
+from wallet.models.topup import topup_transaction
 
 
 class PaymentDetailSerializer(serializers.Serializer):
@@ -23,13 +24,13 @@ class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Reference ID is required.")
         if reference_id.startswith("qris-topup_"):
             # this is a top-up transaction get topup_qris_webhook
-            topup = topup_qris_webhook.objects.filter(reference_id=reference_id).first()
+            topup = topup_transaction.objects.filter(reference_id=reference_id).first()
             if not topup:
                 raise serializers.ValidationError("Top-up transaction not found.")
             # Update the top-up transaction with the webhook data
-            topup.status = "PAID"
+            topup.topup_status = "PAID"
             topup.save()
-            return topup
+
         elif reference_id.startswith("qris-order_"):
             # this is an order transaction get order_gold
             from order.models import order_gold
@@ -42,7 +43,9 @@ class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
             # Update the order with the webhook data
             order.order_gold_payment_status = "PAID"
             order.save()
-            return order
+        else:
+            # Handle other cases or raise an error
+            raise serializers.ValidationError("Invalid reference ID format.")
 
         return qris_webhook.objects.create(**validated_data)
 

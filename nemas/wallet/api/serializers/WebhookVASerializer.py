@@ -24,6 +24,7 @@ class VirtualAccountPaymentWebhookSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Top-up transaction not found.")
             # Update the top-up transaction with the webhook data
             topup.topup_status = "PAID"
+            topup.save()
 
         elif external_id.startswith("va-order_"):
             # this is an order transaction get order_gold
@@ -36,6 +37,10 @@ class VirtualAccountPaymentWebhookSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Order transaction not found.")
             # Update the order with the webhook data
             order.order_gold_payment_status = "PAID"
+            order.save()
+        else:
+            # Handle other cases or raise an error
+            raise serializers.ValidationError("Invalid external ID format.")
 
         return super().create(validated_data)
 
