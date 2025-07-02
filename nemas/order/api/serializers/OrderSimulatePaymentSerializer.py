@@ -43,14 +43,6 @@ class OrderSimulatedPaymentQrisSerializer(serializers.Serializer):
             payload_json = json.dumps(payload)
             response = qris_service.qris_payment_simulate(reference_id, payload_json)
 
-            orderTransaction = order_gold.objects.get(
-                order_gold_payment_ref=reference_id
-            )
-            if orderTransaction:
-                orderTransaction.update_payment_status("PAID")
-            else:
-                raise serializers.ValidationError("Order transaction not found")
-
             return response
         except Exception as e:
             raise serializers.ValidationError(str(e))
@@ -80,14 +72,6 @@ class OrderSimulatedPaymentVaSerializer(serializers.Serializer):
             }
             payload_json = json.dumps(payload)
             response = va_service.va_payment_simulate(reference_id, payload_json)
-            orderTransaction = order_gold.objects.filter(
-                order_gold_payment_ref=reference_id
-            ).first()
-
-            if not orderTransaction:
-                raise serializers.ValidationError("Order transaction not found")
-
-            orderTransaction.update_payment_status("PAID")
 
             return response
         except Exception as e:
