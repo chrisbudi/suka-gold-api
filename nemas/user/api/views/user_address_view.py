@@ -49,11 +49,13 @@ class UserAddressView(ViewSet):
             if address is None:
                 address = user_address()
                 address.user = request.user
-            address.address = serialize.data["address"]
-            address.city = serialize.data["city"]
-            address.district = serialize.data["district"]
-            address.subdistrict = serialize.data["subdistrict"]
-            address.postal_code = serialize.data["postal_code"]
+            address.address = serialize.validated_data["address"]
+            address.city = serialize.validated_data["city"]
+            address.district = serialize.validated_data["district"]
+            address.subdistrict = serialize.validated_data["subdistrict"]
+            address.postal_code = serialize.validated_data["postal_code"]
+            address.longtitude = serialize.validated_data.get("longtitude", None)
+            address.latitude = serialize.validated_data.get("latitude", None)
             address.save()
-            return Response(serialize.data, status=200)
+            return Response(serialize.validated_data, status=200)
         return Response(serialize.errors, status=400)

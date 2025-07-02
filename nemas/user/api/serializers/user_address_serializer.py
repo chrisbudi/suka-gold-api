@@ -17,4 +17,6 @@ class UserAddressSerializer(serializers.ModelSerializer):
             "subdistrict",
             "postal_code",
             "is_default",
+            "longtitude",
+            "latitude",
         )

@@ -9,6 +9,10 @@ class VirtualAccountPaymentWebhookSerializer(serializers.ModelSerializer):
         model = virtual_account_webhook
         fields = "__all__"
 
+    def create(self, validated_data):
+
+        return super().create(validated_data)
+
     def to_internal_value(self, data):
         # Map the incoming JSON to the model
         data = {

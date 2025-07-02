@@ -11,6 +11,7 @@ from shared.services.redis_service import redis_service
 import math
 
 from user.models import user_notification_price
+from user.models.users import user
 
 
 class HargaEmasSpider(scrapy.Spider):
@@ -78,9 +79,13 @@ class HargaEmasSpider(scrapy.Spider):
             # get all user notification price buy and sell
             # where price_buy <  and price_sell
             user_notification_prices = user_notification_price.objects.filter(
-                user_notification_price_buy__gte=price_buy,
-                user_notification_price_sell__lte=price_sell,
-                user_notification_price_status=True,
+                user_notification_price_status=True
+            ).filter(
+                user_notification_price_buy__gte=price_buy
+            ) | user_notification_price.objects.filter(
+                user_notification_price_status=True
+            ).filter(
+                user_notification_price_sell__lte=price_sell
             )
             # if not user_notification_prices:
             if not user_notification_prices.exists():
@@ -88,15 +93,15 @@ class HargaEmasSpider(scrapy.Spider):
                 return
 
             # loop each user notification price
-            for user_notification_price in user_notification_prices:
-                user = user_notification_price.user
+            for notification_price in user_notification_prices:
+                usr: user = notification_price.user
                 print(
-                    f"User: {user.username} - Price Buy: {user_notification_price.user_notification_price_buy} - Price Sell: {user_notification_price.user_notification_price_sell}"
+                    f"User: {usr.user_name} - Price Buy: {notification_price.user_notification_price_buy} - Price Sell: {notification_price.user_notification_price_sell}"
                 )
                 dto = NotificationDTO(
-                    user_id=user.id,
-                    user_name=getattr(user, "username", None),
-                    user_email=getattr(user, "email", None),
+                    user_id=str(usr.id),
+                    user_name=getattr(usr, "username", None),
+                    user_email=getattr(usr, "email", None),
                     title="Notifikasi Harga Emas",
                     message=f"Harga emas telah diperbarui. Harga beli: {price_buy}, Harga jual: {price_sell}",
                     data={

@@ -275,6 +275,13 @@ class user_address(models.Model):
     subdistrict = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
+    longtitude = models.DecimalField(
+        max_digits=10, decimal_places=6, null=True, blank=True
+    )
+    latitude = models.DecimalField(
+        max_digits=10, decimal_places=6, null=True, blank=True
+    )
+
     is_default = models.BooleanField(default=True, null=True)
     is_deleted = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now_add=True)
