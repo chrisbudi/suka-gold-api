@@ -14,7 +14,7 @@ class QRISPaymentService(XenditService):
 
     def generate_payload(self, amount: float, external_id: str):
         payload = {
-            "reference_id": f"qris_generated_user_{external_id}_{str(uuid4())}",
+            "reference_id": f"{external_id}_{str(uuid4())}",
             "type": "DYNAMIC",
             "currency": "IDR",
             "amount": float(amount),

@@ -62,7 +62,7 @@ class TopupVASerializer(serializers.ModelSerializer):
         # Generate static VA
         payload = service.generate_payload(
             float(validated_data["topup_total_amount"]),
-            f"va_topup_{user.id}_{str(uuid4())}",
+            f"va-topup_{user.id}_{str(uuid4())}",
             bank_code,
             user,
             virtual_account_number,
@@ -136,7 +136,7 @@ class TopupQrisSerializer(serializers.ModelSerializer):
 
         payload = service.generate_payload(
             float(validated_data["topup_total_amount"]),
-            f"qris_topup_{user.id}_{str(uuid4())}",
+            f"qris-topup_{user.id}_{str(uuid4())}",
         )
         payload_json = json.dumps(payload)
         qris = service.qris_payment_generate(payload_json)

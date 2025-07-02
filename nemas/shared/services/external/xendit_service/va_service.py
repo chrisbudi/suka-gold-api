@@ -12,7 +12,7 @@ class VAPaymentService(XenditService):
         self, amount: float, external_id: str, bank_code: str, user, va_number: str
     ):
         payload = {
-            "external_id": f"va_generated_invoice_user_{external_id}_{str(uuid4())}",
+            "external_id": f"{external_id}_{str(uuid4())}",
             "bank_code": bank_code,
             "name": user.name,
             "expected_amount": float(amount),

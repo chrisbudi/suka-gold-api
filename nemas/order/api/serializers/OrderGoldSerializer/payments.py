@@ -27,7 +27,7 @@ class PaymentProcess:
         order_amount_summary_round = order_amount_summary // 100 * 100 + 100
         payload = payment_service.generate_payload(
             float(order_amount_summary_round),
-            f"qris_order_{user.id}_{str(uuid4())}",
+            f"qris-order_{user.id}_{str(uuid4())}",
         )
         payload_json = json.dumps(payload)
         qris = payment_service.qris_payment_generate(payload_json)
@@ -80,7 +80,7 @@ class PaymentProcess:
 
         payload = payment_service.generate_payload(
             float(order_amount_summary_round),
-            f"qris_order_{user.id}_{str(uuid4())}",
+            f"va-order_{user.id}_{str(uuid4())}",
             validated_data.get("order_payment_va_bank"),
             user,
             va_number,
