@@ -277,10 +277,10 @@ class user_address(models.Model):
     postal_code = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     longtitude = models.DecimalField(
-        max_digits=10, decimal_places=6, null=True, blank=True
+        max_digits=12, decimal_places=8, null=True, blank=True
     )
     latitude = models.DecimalField(
-        max_digits=10, decimal_places=6, null=True, blank=True
+        max_digits=12, decimal_places=8, null=True, blank=True
     )
 
     is_default = models.BooleanField(default=True, null=True)
