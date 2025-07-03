@@ -38,7 +38,7 @@ class OrderPaymentView(viewsets.ModelViewSet):
             result = serializer.save()
             return response.Response(result, status=status.HTTP_201_CREATED)
         return response.Response(
-            NemasReponses.failure("Validation Failed", serializer.errors),
+            NemasReponses.failure("Validation Failed", dict(serializer.errors)),
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -56,6 +56,6 @@ class OrderPaymentView(viewsets.ModelViewSet):
             result = serializer.save()
             return response.Response(result, status=status.HTTP_201_CREATED)
         return response.Response(
-            NemasReponses.failure("Validation Failed", serializer.errors),
+            NemasReponses.failure("Validation Failed", dict(serializer.errors)),
             status=status.HTTP_400_BAD_REQUEST,
         )

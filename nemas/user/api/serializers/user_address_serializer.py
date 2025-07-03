@@ -14,6 +14,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
             "address",
             "city",
             "district",
+            "province",
             "subdistrict",
             "postal_code",
             "is_default",

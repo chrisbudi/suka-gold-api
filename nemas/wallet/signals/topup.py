@@ -8,8 +8,6 @@ from user.models.user_notification import (
     NotificationTransactionType,
 )
 from wallet.models import topup_transaction
-from user.models import user_wallet_history, user_props
-from django.db import transaction
 from sendgrid.helpers.mail import Mail
 
 from django.template.loader import render_to_string
