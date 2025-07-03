@@ -163,6 +163,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             tracking_service_code,
             order_shipping_item_amount,
             shipping_weight,
+            user_address_model,
         )
 
         if shipping_details.get("success") == False or not shipping_details.get("data"):
@@ -326,7 +327,6 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         order_amount: Decimal,
         shipping_weight: Decimal,
         address: user_address,
-        service_name: str,
     ) -> ServicesResponse[ShippingDetails]:
         # get shipping service
         if dp_model.delivery_partner_code == "SAPX":
@@ -345,7 +345,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
 
         elif dp_model.delivery_partner_code == "PAXEL":
             pax_service = PaxelService()
-            shipping_details = pax_service.get_shipping_details(
+            shipping_details = pax_service._get_shipping_details(
                 address,
                 service_code,
                 order_amount,
