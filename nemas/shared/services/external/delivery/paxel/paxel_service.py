@@ -5,6 +5,7 @@ import requests
 
 from common.responses import ServicesResponse
 from common.round_value import round_up_to_100
+from core.domain.delivery import delivery_partner_service
 from user.models.users import user_address
 from .service_payload import generate_price_payload
 
@@ -74,6 +75,60 @@ class PaxelService:
         print(f"Shipping data response: {shipping_data}")
 
         return shipping_data.get("data", {})
+
+    def _get_shipping_details(
+        self, address, service_code: str, invoice_item_amount: Decimal
+    ) -> ServicesResponse:
+        """Get shipping details based on address and service name."""
+
+        service = delivery_partner_service.objects.filter(
+            delivery_partner_code="PAXEL",
+            service_type_code=service_code,
+        ).first()
+        service_name = service.delivery_partner_service_name if service else "SAMEDAY"
+
+        # Generate the payload
+        payload = generate_price_payload(
+            address,
+            service_name,
+        )
+
+        print(f"Generated payload: {payload}")
+
+        # Convert to JSON string
+        payload_data = json.dumps(payload)
+
+        # Get the price using the payload
+        shipping_data = self.get_price(payload_data)
+
+        print(f"Shipping data response: {shipping_data}")
+
+        insurance_cost = Decimal("0.002") * invoice_item_amount
+
+        data_shipping = shipping_data.get("data", {})
+        if not data_shipping:
+            return {
+                "success": False,
+                "data": {
+                    "message": "No shipping data found",
+                },
+            }
+        shipping_price = data_shipping.get("fixed_price", 0)
+
+        return {
+            "success": True,
+            "data": {
+                "insurance": insurance_cost,
+                "insurance_round": round_up_to_100(insurance_cost),
+                "insurance_admin": 0,
+                "packing": 0,
+                "cost": shipping_price,
+                "shipping_total": shipping_price + insurance_cost,
+                "shipping_total_rounded": round_up_to_100(
+                    shipping_price + insurance_cost
+                ),
+            },
+        }
 
     # def _get_shipping_details(
     #     self, service_code: str, order_amount: Decimal, shipping_weight: Decimal

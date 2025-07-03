@@ -7,6 +7,7 @@ from core.domain.delivery import delivery_partner, delivery_partner_service
 from common.responses import NemasReponses, ServicesResponse
 from common.generator import generate_alphanumeric_code
 from common.round_value import round_up_to_100
+from shared.services.external.delivery.paxel.paxel_service import PaxelService
 from shared.services.external.delivery.sapx.sapx_service import SapxService
 from order.api.serializers.OrderGoldSerializer.tracking import TrackingProcess
 from order.api.serializers.OrderGoldSerializer.payments import PaymentProcess
@@ -324,6 +325,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
         service_code: str,
         order_amount: Decimal,
         shipping_weight: Decimal,
+        address: user_address,
+        service_name: str,
     ) -> ServicesResponse[ShippingDetails]:
         # get shipping service
         if dp_model.delivery_partner_code == "SAPX":
@@ -341,6 +344,12 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             }
 
         elif dp_model.delivery_partner_code == "PAXEL":
+            pax_service = PaxelService()
+            shipping_details = pax_service.get_shipping_details(
+                address,
+                service_code,
+                order_amount,
+            )
             return {
                 "success": True,
                 "data": ShippingDetails(
