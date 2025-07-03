@@ -120,7 +120,7 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
         item_show = []
         paxSvc = paxel_service.PaxelService()
 
-        insurance_cost = Decimal("0.0002") * item_amount
+        insurance_cost = Decimal("0.002") * item_amount
         print("insurance_cost", insurance_cost)
         try:
             shipping_data = []
@@ -131,22 +131,23 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
             # print("sameday item", sameday_item)
             # Add SAMEDAY service with custom type code and name
 
-            sameday_service = dict(sameday_item)
-            sameday_service["service_type_code"] = "same_day"
-            sameday_service["service_type_name"] = "SAMEDAY"
-            shipping_data.append(("SAMEDAY", sameday_service))
+            sameday_item_with_type = dict(sameday_item)
+            sameday_item_with_type["service_type_code"] = "same_day"
+            sameday_item_with_type["service_type_name"] = "SAMEDAY"
+            shipping_data.append(("SAMEDAY", sameday_item_with_type))
 
             nextday_item = paxSvc.get_shipping_price(
                 address=address,
                 service_name="NEXTDAY",  # or "nextday" based on your requirement
             )
-            nextday_service = dict(sameday_item)
-            nextday_service["service_type_code"] = "next_day"
-            nextday_service["service_type_name"] = "NEXTDAY"
+            # Create a new dict with additional keys to avoid mutating TypedDict
+            nextday_item_with_type = dict(nextday_item)
+            nextday_item_with_type["service_type_code"] = "next_day"
+            nextday_item_with_type["service_type_name"] = "NEXTDAY"
 
-            shipping_data.append(("NEXTDAY", nextday_item))
+            shipping_data.append(("NEXTDAY", nextday_item_with_type))
 
-            # print(shipping_data, "shipping_data")
+            print(shipping_data, "shipping_data")
 
             for service_name, data_item in shipping_data:
                 # print(item, "item")
