@@ -1,3 +1,4 @@
+from decimal import Decimal
 import json
 from requests import Response
 from rest_framework import viewsets, filters, pagination, status, response
@@ -8,7 +9,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from common import round_value
 
 # Correct model import
-from shared.services.external.delivery.sapx.sapx_service import SapxService
+from shared.services.external.delivery.paxel import (
+    paxel_service,
+    service_payload as paxel_payload,
+)
+from shared.services.external.delivery.sapx import (
+    sapx_service,
+    service_payload as sapx_payload,
+)
 from order.api.serializers import OrderShippingSerializer
 from user.models.users import user_address
 
@@ -42,6 +50,11 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                 partner = request.data.get("delivery_partner_code")
                 address = user_address.objects.filter(user=request.user).first()
                 item_show = []
+                if not address:
+                    return response.Response(
+                        {"error": "User address not found"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
                 if partner == "SAPX":
                     # process sapx service
@@ -67,7 +80,7 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
     def process_sapx(self, item_weight, item_amount, address: user_address):
         """Process sapx service"""
 
-        sapx_service = SapxService()
+        sapSvc = sapx_service.SapxService()
         payload = {
             "origin": "JK07",
             "destination": "JI28",
@@ -78,7 +91,7 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
             "item_value": float(item_amount),
         }
         payload_data = json.dumps(payload)
-        data = sapx_service.get_price(payload_data)
+        data = sapSvc.get_price(payload_data)
         filtered_data = [
             item for item in data["data"]["services"] if item["weight"] == 1
         ]
@@ -97,14 +110,66 @@ class OrderShippingServiceAPIView(viewsets.ModelViewSet):
                     "total_cost_round": round_value.round_up_to_100(item["total_cost"]),
                     "service_type_code": item["service_type_code"],
                     "service_type_name": item["service_type_name"],
-                    "sla": item["sla"],
                 }
             )
 
         return item_show
 
-    def process_paxel(self, item_weight, item_amount, address: user_address):
+    def process_paxel(self, item_weight, item_amount: Decimal, address: user_address):
         """Process paxel service"""
-        # Implement paxel service processing logic here
-        # This is a placeholder for the actual implementation
-        pass
+        item_show = []
+        paxSvc = paxel_service.PaxelService()
+
+        insurance_cost = Decimal("0.0002") * item_amount
+        print("insurance_cost", insurance_cost)
+        try:
+            shipping_data = []
+            sameday_item = paxSvc.get_shipping_price(
+                address=address,
+                service_name="SAMEDAY",  # or "nextday" based on your requirement
+            )
+            # print("sameday item", sameday_item)
+            # Add SAMEDAY service with custom type code and name
+
+            sameday_service = dict(sameday_item)
+            sameday_service["service_type_code"] = "same_day"
+            sameday_service["service_type_name"] = "SAMEDAY"
+            shipping_data.append(("SAMEDAY", sameday_service))
+
+            nextday_item = paxSvc.get_shipping_price(
+                address=address,
+                service_name="NEXTDAY",  # or "nextday" based on your requirement
+            )
+            nextday_service = dict(sameday_item)
+            nextday_service["service_type_code"] = "next_day"
+            nextday_service["service_type_name"] = "NEXTDAY"
+
+            shipping_data.append(("NEXTDAY", nextday_item))
+
+            # print(shipping_data, "shipping_data")
+
+            for service_name, data_item in shipping_data:
+                # print(item, "item")
+
+                print(data_item, "data_item")
+                item_show.append(
+                    {
+                        "weight": 1,  # Assuming weight is always 1 for this service
+                        "insurance_cost": insurance_cost,
+                        "insurance_cost_round": round_value.round_up_to_100(
+                            insurance_cost
+                        ),
+                        "total_cost": data_item.get("fixed_price") + insurance_cost,
+                        "total_cost_round": round_value.round_up_to_100(
+                            data_item.get("fixed_price") + insurance_cost
+                        ),
+                        "service_type_code": data_item.get("service_type_code"),
+                        "service_type_name": data_item.get("service_type_name"),
+                    }
+                )
+            return item_show
+        except Exception as e:
+            return {
+                "success": False,
+                "data": {"message": f"Failed to get price: {str(e)}"},
+            }

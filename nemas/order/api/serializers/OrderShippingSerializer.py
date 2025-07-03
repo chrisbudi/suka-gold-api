@@ -8,7 +8,7 @@ class OrderShippingSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=16, decimal_places=2)
     weight = serializers.DecimalField(max_digits=10, decimal_places=4)
     delivery_partner_code = serializers.ChoiceField(
-        choices=["paxel", "sapx"], required=True
+        choices=["PAXEL", "SAPX"], required=True
     )
 
     def validate(self, data):

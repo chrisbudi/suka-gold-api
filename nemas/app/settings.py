@@ -87,12 +87,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -192,11 +192,6 @@ if USE_HTTPS == True:
                 "class": "logging.StreamHandler",
                 "formatter": "verbose",
             },
-            # "file": {
-            #     "class": "logging.FileHandler",
-            #     "filename": "/nemas/api_errors.log",
-            #     "formatter": "verbose",
-            # },
         },
         "loggers": {
             "django": {
@@ -226,26 +221,29 @@ else:
                 "format": "{levelname} {asctime} {module} {message}",
                 "style": "{",
             },
-            "simple": {
-                "format": "{levelname} {message}",
-                "style": "{",
-            },
         },
         "handlers": {
             "console": {
                 "class": "logging.StreamHandler",
                 "formatter": "verbose",
             },
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": BASE_DIR / "nemas_debug.log",
-                "level": "DEBUG",
-                "formatter": "verbose",
-            },
         },
         "loggers": {
-            "django": {"handlers": ["console", "file"], "level": "DEBUG"},
-            "channels": {"handlers": ["console", "file"], "level": "DEBUG"},
+            "django": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": True,
+            },
+            "django.request": {
+                "handlers": ["console"],
+                "level": "ERROR",
+                "propagate": False,
+            },
+            "django.db.backends": {
+                "handlers": ["console"],
+                "level": "DEBUG",
+                "propagate": False,
+            },
         },
     }
 
