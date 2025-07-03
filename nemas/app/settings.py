@@ -425,3 +425,10 @@ MAIL = {
     "MAIL_SUPPORT": os.getenv("MAIL_SUPPORT", "support@nemas.com"),
     "MAIL_SUPPORT_URL": os.getenv("MAIL_SUPPORT_URL", "mailto:support@nemas.com"),
 }
+
+
+PAXEL = {
+    "API_URL": os.getenv("PAXEL_API_URL", "https://api.paxel.co.id/v1"),
+    "API_KEY": os.getenv("PAXEL_API_KEY", ""),
+    "API_SECRET": os.getenv("PAXEL_API_SECRET", ""),
+}

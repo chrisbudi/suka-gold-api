@@ -37,7 +37,7 @@ class paxel_service:
             },
             "destination": {
                 "address": address.address,
-                "province": address.district,
+                "province": address.province,
                 "city": address.city,
                 "district": address.district,
                 "village": address.subdistrict,
