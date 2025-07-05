@@ -34,5 +34,6 @@ def accumulate_sell(sender, instance, created, **kwargs):
         prop = user_props.objects.get(user=user)
         prop.total_sell += amount
         prop.save(update_fields=["total_sell", "updated_at"])
+        prop.update_level()
 
     update()
