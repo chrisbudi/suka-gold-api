@@ -6,6 +6,5 @@ class OrderFixConfig(AppConfig):
     name = "reporting"
 
     def ready(self) -> None:
-        import order.signals
 
         return super().ready()
