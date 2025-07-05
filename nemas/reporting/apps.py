@@ -6,5 +6,6 @@ class ReportingConfig(AppConfig):
     name = "reporting"
 
     def ready(self) -> None:
+        import reporting.signals
 
         return super().ready()

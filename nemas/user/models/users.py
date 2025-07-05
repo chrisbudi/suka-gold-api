@@ -186,6 +186,12 @@ class user_props(models.Model):
     bank_account_code = models.CharField(max_length=255)
     bank_account_number = models.CharField(max_length=255)
     bank_account_holder_name = models.CharField(max_length=255)
+    total_buy = models.DecimalField(
+        max_digits=20, decimal_places=2, default=Decimal("0")
+    )
+    total_sell = models.DecimalField(
+        max_digits=20, decimal_places=2, default=Decimal("0")
+    )
     level = models.CharField(max_length=255)
     level_id = models.IntegerField(blank=True, null=True)
     address = models.CharField(max_length=255)
@@ -197,6 +203,39 @@ class user_props(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_user = models.CharField(max_length=255)
     update_time = models.DateTimeField(auto_now=True)
+
+    def update_level(self):
+        """
+        Update user level based accumulated total sell and total buy
+        """
+        total_amount = self.total_buy + self.total_sell
+        if total_amount > Decimal("50000000"):
+            self.level = "Opulence King"
+            self.level_id = 3
+        elif total_amount > Decimal("500000000") and total_amount <= Decimal(
+            "5000000000"
+        ):
+            self.level = "Gold Sovereign"
+            self.level_id = 2
+        elif total_amount > Decimal("50000000") and total_amount >= Decimal(
+            "500000000"
+        ):
+            self.level = "Treasure Voyager"
+            self.level_id = 4
+        elif total_amount > Decimal("5000000") and total_amount <= Decimal("50000000"):
+            self.level = "Fortune Rider"
+            self.level_id = 3
+        elif total_amount > Decimal("1000000") and total_amount < Decimal("5000000"):
+            self.level = "Coin Digger"
+            self.level_id = 2
+        elif total_amount > 0 and total_amount <= Decimal("1000000"):
+            self.level = "Novice Saver"
+            self.level_id = 1
+        else:
+            self.level = "Newbie"
+            self.level_id = 0
+
+        self.save()
 
     def update_balance(self, amount: Decimal):
         print(f"amount: {amount}")
