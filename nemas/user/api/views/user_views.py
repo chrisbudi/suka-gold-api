@@ -4,7 +4,7 @@ views for the user API
 
 from django.forms import model_to_dict
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, pagination
 from rest_framework.settings import api_settings
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -99,6 +99,23 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+
+
+class ListRetrieveUserView(generics.ListAPIView, generics.RetrieveAPIView):
+    """List all users or retrieve a single user by ID"""
+
+    serializer_class = UserSerializer
+    pagination_class = pagination.LimitOffsetPagination
+    lookup_field = "id"
+
+    def list(self, request, *args, **kwargs):
+        """List users with pagination and support for page/page_size query params"""
+        queryset = user.objects.select_related("user_props").all()
+        # queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 @extend_schema(

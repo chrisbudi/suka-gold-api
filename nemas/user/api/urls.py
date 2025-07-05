@@ -23,6 +23,7 @@ from .views import (
     UserAddressView,
     user_notification_views,
     user_notification_price_views,
+    ListRetrieveUserView,
 )
 
 
@@ -47,6 +48,7 @@ urlpatterns = [
         view=ResetView.as_view({"post": "post"}),
         name="token_reset_password_done",
     ),
+    path("list/", ListRetrieveUserView.as_view(), name="list_user"),
     path("token/", CreateTokenView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", ManageRefreshTokenView.as_view(), name="token_refresh"),
     path("token/verify/", ManageVerifyTokenView.as_view(), name="token_verify"),

@@ -6,6 +6,7 @@ from .user_views import (
     ManageRefreshTokenView,
     ManageVerifyTokenView,
     GETUserProfileByPhoneNumberView,
+    ListRetrieveUserView,
 )
 
 from .user_prop_view import (
