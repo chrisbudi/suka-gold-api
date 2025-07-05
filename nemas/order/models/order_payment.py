@@ -1,6 +1,5 @@
 from django.db import models
 from core.fields.uuidv7_field import UUIDv7Field
-from order.models import order_gold
 from core.domain import payment_method
 
 
