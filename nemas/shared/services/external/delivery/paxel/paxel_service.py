@@ -82,8 +82,7 @@ class PaxelService:
         """Get shipping details based on address and service name."""
 
         service = delivery_partner_service.objects.filter(
-            delivery_partner_code="PAXEL",
-            service_type_code=service_code,
+            delivery_partner_service_code=service_code,
         ).first()
         service_name = service.delivery_partner_service_name if service else "SAMEDAY"
 
