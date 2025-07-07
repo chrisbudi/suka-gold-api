@@ -5,9 +5,9 @@ from datetime import datetime
 from wallet.models.topup import topup_transaction
 
 
-class PaymentDetailSerializer(serializers.Serializer):
-    receipt_id = serializers.CharField()
-    source = serializers.CharField()
+# class PaymentDetailSerializer(serializers.Serializer):
+#     receipt_id = serializers.CharField()
+#     source = serializers.CharField()
 
 
 class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
