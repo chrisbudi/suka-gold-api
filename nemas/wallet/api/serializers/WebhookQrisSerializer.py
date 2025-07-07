@@ -67,8 +67,7 @@ class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
             "type": data["data"].get("type"),
             "channel_code": data["data"].get("channel_code"),
             "expires_at": data["data"].get("expires_at"),
-            "branch_code": data["data"]["metadata"].get("branch_code"),
-            "receipt_id": data["data"]["payment_detail"].get("receipt_id"),
-            "source": data["data"]["payment_detail"].get("source"),
+            # "receipt_id": data["data"]["payment_detail"].get("receipt_id"),
+            # "source": data["data"]["payment_detail"].get("source"),
         }
         return super().to_internal_value(data)
