@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     "order_fix",
     "reporting",
     "notification",
+    "contact",
 ]
 
 MIDDLEWARE = [
