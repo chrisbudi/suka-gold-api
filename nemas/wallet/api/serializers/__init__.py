@@ -8,10 +8,6 @@ from .SimulatePaymentSerializer import (
     SimulatedPaymentQrisSerializer,
 )
 
-from .WebhookQrisSerializer import (
-    PaymentDetailSerializer,
-)
-
 from .DisburstSerializer import (
     DisburstSerializer,
 )
