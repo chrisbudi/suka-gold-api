@@ -26,11 +26,11 @@ class qris_webhook(models.Model):
     expires_at = models.DateTimeField()
 
     # Metadata
-    branch_code = models.CharField(max_length=100)
+    # branch_code = models.CharField(max_length=100)
 
     # Payment detail
-    receipt_id = models.CharField(max_length=50)
-    source = models.CharField(max_length=50)
+    # receipt_id = models.CharField(max_length=50)
+    # source = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.reference_id} - {self.status}"

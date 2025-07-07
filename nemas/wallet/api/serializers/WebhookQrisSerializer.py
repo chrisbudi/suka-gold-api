@@ -24,7 +24,9 @@ class QRISPaymentWebhookSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Reference ID is required.")
         if reference_id.startswith("qris-topup_"):
             # this is a top-up transaction get topup_qris_webhook
-            topup = topup_transaction.objects.filter(reference_id=reference_id).first()
+            topup = topup_transaction.objects.filter(
+                topup_payment_ref=reference_id
+            ).first()
             if not topup:
                 raise serializers.ValidationError("Top-up transaction not found.")
             # Update the top-up transaction with the webhook data
