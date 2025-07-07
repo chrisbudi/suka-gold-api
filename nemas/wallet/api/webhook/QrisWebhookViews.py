@@ -10,13 +10,13 @@ from wallet.api.serializers.WebhookQrisSerializer import (
 
 @api_view(["POST"])
 def qris_webhook_view(request):
-    # Get token from header
-    # token = request.headers.get("X-CALLBACK-TOKEN")
+    token = request.headers.get("X-CALLBACK-TOKEN")
 
-    # # Validate token
-    # xendit_settings = settings.XENDIT
-    # if token != xendit_settings.get("WEBHOOK_KEY"):
-    #     return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+    # Validate token
+    xendit_settings = settings.XENDIT
+    if token != xendit_settings.get("WEBHOOK_KEY"):
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+    # Get token from header
 
     # Deserialize and save
     serializer = QRISPaymentWebhookSerializer(data=request.data)
