@@ -71,7 +71,7 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
                     "Pembelian Emas Digital",
                     f"Anda telah melakukan penjualan emas digital dengan nomor transaksi {instance.gold_sell_number}.",
                     NotificationIconType.INFO,
-                    NotificationTransactionType.GOLD_BUY,
+                    NotificationTransactionType.GOLD_SELL,
                 )
 
             else:

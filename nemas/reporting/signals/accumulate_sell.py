@@ -10,12 +10,12 @@ from django.db import transaction
 
 
 @receiver(post_save, sender=gold_saving_sell)
-def accumulate_sell(sender, instance, created, **kwargs):
+def accumulate_sell(sender, instance: gold_saving_sell, created, **kwargs):
     if not created:
         return
 
     user = instance.user
-    amount = instance.amount
+    amount = instance.price
     today = now().date()
     month = today.replace(day=1)
 
@@ -33,7 +33,7 @@ def accumulate_sell(sender, instance, created, **kwargs):
 
         prop = user_props.objects.get(user=user)
         prop.total_sell += amount
-        prop.save(update_fields=["total_sell", "updated_at"])
+        prop.save(update_fields=["total_sell", "update_time"])
         prop.update_level()
 
     update()
