@@ -129,6 +129,12 @@ class gold_transfer(models.Model):
     transfer_member_service_option = models.CharField(
         max_length=100, blank=True, null=True
     )
+    gold_history_price_sell = models.DecimalField(
+        max_digits=16, decimal_places=2, default=Decimal(0)
+    )
+    gold_history_price_buy = models.DecimalField(
+        max_digits=16, decimal_places=2, default=Decimal(0)
+    )
 
     def get_transfer_cost(self, weight: float):
         weight_cost = 0.0

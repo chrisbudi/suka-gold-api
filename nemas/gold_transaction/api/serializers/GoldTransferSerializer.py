@@ -105,11 +105,16 @@ class GoldTransferSerializer(serializers.ModelSerializer):
             * price.gold_price_buy
         )
 
+        # update history price
+        validated_data["gold_history_price_sell"] = price.gold_price_sell
+        validated_data["gold_history_price_buy"] = price.gold_price_buy
+
         # from user phone number to user
         user_to = user.objects.get(phone_number=validated_data["phone_number"])
         validated_data["user_to"] = user_to
         validated_data["user_to_name"] = user_to.name
         validated_data["user_from_name"] = self.context["request"].user.name
+
         # print(validated_data, "validated data")
         return super().create(validated_data)
 
