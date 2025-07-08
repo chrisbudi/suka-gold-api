@@ -254,6 +254,8 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
                     ),
                     "tracking_status_id": "0",
                     "order_status": "ISSUED",
+                    "gold_history_price_sell": goldPriceModel.gold_price_sell,
+                    "gold_history_price_buy": goldPriceModel.gold_price_buy,
                 }
             )
             order_gold_instance = order_gold.objects.create(**validated_data)
