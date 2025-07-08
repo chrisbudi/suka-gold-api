@@ -12,7 +12,7 @@ from core.domain import (
 from core.domain.gold import gold
 from core.domain.delivery import delivery_partner_service
 from order.models.order_cart import order_cart_detail
-from user.models.users import user_address
+from user.models.users import user_address, user_props
 
 
 class order_gold(models.Model):
@@ -132,6 +132,8 @@ class order_gold(models.Model):
 
     def update_payment_status(self, status: str):
         self.order_gold_payment_status = status
+        user = user_props.objects.get(user=self.user)
+        user.update_gold_amt(self.order_item_weight * -1)
         self.save()
 
     def generate_number(self):

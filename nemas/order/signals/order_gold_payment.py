@@ -24,7 +24,7 @@ def handle_order_gold_payment(
     sender: type[order_payment], instance: order_payment, created, **kwargs
 ):
     print("send email")
-    order_gold_model = instance.order_gold
+    order_gold_model: order_gold = instance.order_gold
     user = instance.order_gold.user
     if order_gold_model.order_gold_payment_status == "PAID" or created:
         mailService = EmailService()
@@ -32,6 +32,7 @@ def handle_order_gold_payment(
         if mail:
             mailService.sendMail(mail)
             if instance.order_payment_status == "PAID":
+                # update stock for this order
                 create_user_notification(
                     user=user,
                     title="Pembayaran Diterima",

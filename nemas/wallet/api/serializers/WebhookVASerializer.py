@@ -36,7 +36,6 @@ class VirtualAccountPaymentWebhookSerializer(serializers.ModelSerializer):
             if not order:
                 raise serializers.ValidationError("Order transaction not found.")
             # Update the order with the webhook data
-            order.order_gold_payment_status = "PAID"
             order.update_payment_status("PAID")
             order.save()
         else:
