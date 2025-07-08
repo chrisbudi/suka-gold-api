@@ -352,15 +352,7 @@ class SubmitOrderGoldSerializer(serializers.ModelSerializer):
             )
             return {
                 "success": True,
-                "data": ShippingDetails(
-                    cost=Decimal(0),
-                    shipping_total=Decimal(0),
-                    shipping_total_rounded=Decimal(0),
-                    insurance=Decimal(0),
-                    insurance_round=Decimal(0),
-                    insurance_admin=Decimal(0),
-                    packing=Decimal(0),
-                ),
+                "data": cast(ShippingDetails, shipping_details.get("data")),
             }
         elif dp_model.delivery_partner_code == "MANDIRI":
             return {

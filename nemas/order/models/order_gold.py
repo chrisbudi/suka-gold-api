@@ -123,6 +123,13 @@ class order_gold(models.Model):
         max_digits=16, decimal_places=2, null=True
     )
 
+    gold_history_price_sell = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True
+    )
+    gold_history_price_buy = models.DecimalField(
+        max_digits=16, decimal_places=2, null=True
+    )
+
     def __str__(self):
         return f"Gold Transaction {self.order_gold_id} - Type:"
 
