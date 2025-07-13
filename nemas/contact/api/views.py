@@ -1,3 +1,4 @@
+import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,16 +27,41 @@ class ContactUsView(APIView):
     )
     def post(self, request):
         serializer = ContactRequestSerializer(data=request.data)
-        if serializer.is_valid():
-            command = SubmitContactRequestCommand(**serializer.validated_data)
-            repo = DjangoContactRequestRepository()
-            service = ContactService(repo)
-            handler = SubmitContactRequestHandler(service)
-            handler.handle(command)
+        try:
+            if serializer.is_valid():
+                command = (
+                    SubmitContactRequestCommand(  # Ensure this is imported properly
+                        first_name=serializer.validated_data.get("first_name"),
+                        last_name=serializer.validated_data.get("last_name"),
+                        email=serializer.validated_data.get("email"),
+                        phone=serializer.validated_data.get("phone"),
+                        message=serializer.validated_data.get("message"),
+                    )
+                )
+                repo = DjangoContactRequestRepository()
+                service = ContactService(repo)
+                print("Submitting contact request with command:", command)
+                handler = SubmitContactRequestHandler(service)
+                print("Handling command with handler:", handler)
+                handler.handle(command)
+                print("Contact request submitted successfully")
+                return Response(
+                    {"message": "Contact request submitted"},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logging.error("Error submitting contact request", exc_info=True)
+            # Return clear JSON error response with exception info (avoid exposing sensitive debug info in production)
             return Response(
-                {"message": "Contact request submitted"}, status=status.HTTP_201_CREATED
+                {
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                    # "traceback": traceback.format_exc()  # Optional: include for dev only
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
         methods=["GET"],

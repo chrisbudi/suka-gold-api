@@ -117,6 +117,12 @@ class ListRetrieveUserView(generics.ListAPIView, generics.RetrieveAPIView):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
+    def get(self, request, *args, **kwargs):
+        """Retrieve a single user by ID"""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
 @extend_schema(
     tags=["User - get by phone number"],

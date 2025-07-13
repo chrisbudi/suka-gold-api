@@ -113,6 +113,7 @@ CORS_ALLOWED_ORIGINS = [
 
 ROOT_URLCONF = "app.urls"
 
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -216,10 +217,10 @@ if USE_HTTPS == True:
 else:
     LOGGING = {
         "version": 1,
-        "disable_existing_loggers": False,
+        "disable_existing_loggers": False,  # keep Django's default loggers enabled
         "formatters": {
             "verbose": {
-                "format": "{levelname} {asctime} {module} {message}",
+                "format": "{levelname} {asctime} {name} {message}",
                 "style": "{",
             },
         },
@@ -232,19 +233,18 @@ else:
         "loggers": {
             "django": {
                 "handlers": ["console"],
-                "level": "INFO",
+                "level": "ERROR",  # Show errors and above in console
                 "propagate": True,
             },
             "django.request": {
                 "handlers": ["console"],
-                "level": "ERROR",
-                "propagate": False,
+                "level": "ERROR",  # To capture 500 errors from requests
+                "propagate": True,
             },
-            "django.db.backends": {
-                "handlers": ["console"],
-                "level": "DEBUG",
-                "propagate": False,
-            },
+        },
+        "root": {
+            "handlers": ["console"],
+            "level": "ERROR",
         },
     }
 
@@ -267,6 +267,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
 }
 
 

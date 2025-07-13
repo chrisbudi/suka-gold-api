@@ -15,5 +15,5 @@ class SubmitContactRequestHandler:
     def __init__(self, service: ContactService):
         self.service = service
 
-    def handle(self, command: SubmitContactRequestCommand):
+    def handle(self, command):
         return self.service.submit_contact_request(command)
