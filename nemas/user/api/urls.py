@@ -108,6 +108,11 @@ urlpatterns = [
         name="user_ktp_verify",
     ),
     path(
+        "user/selfie/upload/",
+        CreateKtpIfNotVerify.as_view({"post": "upload_selfie_user"}),
+        name="user_selfie_upload",
+    ),
+    path(
         "user/ktp/verify/approve/",
         CreateKtpIfNotVerify.as_view({"post": "submit_verify"}),
         name="user_ktp_verify_approve",

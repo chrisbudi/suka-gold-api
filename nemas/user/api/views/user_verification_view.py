@@ -81,7 +81,6 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                 )
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # KTP Verification
     @extend_schema(
         request=UploadSerializer,
         responses={
@@ -95,7 +94,7 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
         },
         tags=["User - Selfie Verification"],
     )
-    def upload_selfie_verify_user(self, request):
+    def upload_selfie_user(self, request):
         serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
             if (
