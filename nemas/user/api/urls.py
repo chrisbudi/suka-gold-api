@@ -23,7 +23,7 @@ from .views import (
     UserAddressView,
     user_notification_views,
     user_notification_price_views,
-    ListRetrieveUserView,
+    UserAdminView,
 )
 
 
@@ -31,6 +31,34 @@ app_name = "user"
 
 user_view_url = []
 
+
+user_admin_url = [
+    path(
+        "",
+        UserAdminView.as_view({"get": "list"}),
+        name="list_delivery_partner",
+    ),
+    path(
+        "create",
+        UserAdminView.as_view({"post": "create"}),
+        name="post_delivery_partner",
+    ),
+    path(
+        "<uuid:id>",
+        UserAdminView.as_view({"patch": "update"}),
+        name="patch_delivery_partner",
+    ),
+    path(
+        "<uuid:id>",
+        UserAdminView.as_view({"delete": "destroy"}),
+        name="delete_delivery_partner",
+    ),
+    path(
+        "<uuid:id>",
+        UserAdminView.as_view({"get": "retrieve"}),
+        name="get_delivery_partner",
+    ),
+]
 
 urlpatterns = [
     path(
@@ -48,7 +76,6 @@ urlpatterns = [
         view=ResetView.as_view({"post": "post"}),
         name="token_reset_password_done",
     ),
-    path("list/", ListRetrieveUserView.as_view(), name="list_user"),
     path("token/", CreateTokenView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", ManageRefreshTokenView.as_view(), name="token_refresh"),
     path("token/verify/", ManageVerifyTokenView.as_view(), name="token_verify"),
@@ -124,4 +151,5 @@ urlpatterns = [
         user_notification_price_views.as_view({"post": "post"}),
         name="updset_user_notification_price",
     ),
+    *user_admin_url,
 ]

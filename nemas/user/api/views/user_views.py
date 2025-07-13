@@ -101,7 +101,10 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
 
 
-class ListRetrieveUserView(generics.ListAPIView, generics.RetrieveAPIView):
+@extend_schema(
+    tags=["User - Admin"],
+)
+class UserAdminView(viewsets.ModelViewSet):
     """List all users or retrieve a single user by ID"""
 
     serializer_class = UserSerializer
@@ -122,6 +125,9 @@ class ListRetrieveUserView(generics.ListAPIView, generics.RetrieveAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
 
 @extend_schema(
