@@ -56,33 +56,24 @@ services:
     networks:
       - nemas_network
 
-  celery_worker:
+  celery:
     image: chbudi9/nemasapp
     command: >
-      sh -c "celery -A app worker --loglevel=info & celery -A app beat --scheduler django_celery_beat.schedulers:DatabaseScheduler --loglevel=info"
-    volumes:
-      - ./nemas:/nemas
-    env_file:
-      - .env
-    depends_on:
-      - redis
-    # restart: unless-stopped
-    networks:
-      - nemas_network
-
-  flower:
-    image: chbudi9/nemasapp
-    command: celery -A app --broker=redis://redis/0 flower --port=5555 --db=/flower_db/flower.db --persistent=True
+      sh -c "
+      celery -A app worker --loglevel=info &
+      celery -A app beat --scheduler django_celery_beat.schedulers:DatabaseScheduler --loglevel=info &
+      celery -A app --broker=redis://redis/0 flower --port=5555 --db=/flower_db/flower.db --persistent=True &
+      wait -n
+      "
     volumes:
       - ./nemas:/nemas
       - ./flower_db:/flower_db
     env_file:
       - .env
-    ports:
-      - "5555:5555"
     depends_on:
       - redis
-    # restart: unless-stopped
+    ports:
+      - "5555:5555"
     networks:
       - nemas_network
     
