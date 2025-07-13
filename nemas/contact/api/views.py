@@ -29,14 +29,12 @@ class ContactUsView(APIView):
         serializer = ContactRequestSerializer(data=request.data)
         try:
             if serializer.is_valid():
-                command = (
-                    SubmitContactRequestCommand(  # Ensure this is imported properly
-                        first_name=serializer.validated_data.get("first_name"),
-                        last_name=serializer.validated_data.get("last_name"),
-                        email=serializer.validated_data.get("email"),
-                        phone=serializer.validated_data.get("phone"),
-                        message=serializer.validated_data.get("message"),
-                    )
+                command = SubmitContactRequestCommand(
+                    first_name=serializer.validated_data.get("first_name"),
+                    last_name=serializer.validated_data.get("last_name"),
+                    email=serializer.validated_data.get("email"),
+                    phone=serializer.validated_data.get("phone"),
+                    message=serializer.validated_data.get("message"),
                 )
                 repo = DjangoContactRequestRepository()
                 service = ContactService(repo)

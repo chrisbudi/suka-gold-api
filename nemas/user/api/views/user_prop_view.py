@@ -48,12 +48,14 @@ class UserPropView(ViewSet):
         serialize = UserPropBankSerializer(data=request.data)
         if serialize.is_valid():
             user_props = UserProps.objects.get(user=request.user)
-            user_props.bank_account_code = serialize.data["bank_account_code"]
-            user_props.bank_account_number = serialize.data["bank_account_number"]
-            user_props.bank_account_holder_name = serialize.data[
+            user_props.bank_account_code = serialize.validated_data["bank_account_code"]
+            user_props.bank_account_number = serialize.validated_data[
+                "bank_account_number"
+            ]
+            user_props.bank_account_holder_name = serialize.validated_data[
                 "bank_account_holder_name"
             ]
             user_props.save()
-            return Response(serialize.data, status=200)
+            return Response(serialize.validated_data, status=200)
 
         return Response(serialize.errors, status=400)

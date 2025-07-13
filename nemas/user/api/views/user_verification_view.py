@@ -81,6 +81,57 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                 )
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # KTP Verification
+    @extend_schema(
+        request=UploadSerializer,
+        responses={
+            201: {
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string"},
+                    "url": {"type": "string"},
+                },
+            }
+        },
+        tags=["User - Selfie Verification"],
+    )
+    def upload_selfie_verify_user(self, request):
+        serializer = UploadSerializer(data=request.data)
+        if serializer.is_valid():
+            if (
+                isinstance(serializer.validated_data, dict)
+                and "file" in serializer.validated_data
+            ):
+                file = serializer.validated_data["file"]
+            else:
+                return response.Response(
+                    {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+            image = image_services
+            try:
+                image.upload_file_to_temp(file, request.user.id)
+                s3 = s3_services.S3Service()
+                image_s3_url = s3.upload_file(
+                    image, f"SELFIE/{str(request.user.id)}.jpg"
+                )
+                print(image_s3_url, "image_s3_url")
+                # check user
+                user = userModel.objects.get(pk=request.user.id)
+                user.photo_selfie_url = image_s3_url
+                user.update_time = timezone.now()
+                user.update_user = str(request.user.id)
+                user.save()
+                return response.Response(
+                    {"message": "File uploaded successfully", "url": image_s3_url},
+                    status=status.HTTP_201_CREATED,
+                )
+            except Exception as e:
+                return response.Response(
+                    {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @extend_schema(
         request=UserKtpSerializer,
         responses={
@@ -216,23 +267,7 @@ class CreateComparePhotoANDKtp(viewsets.ModelViewSet):
 
                     # get data from user ktp
                     user = userModel.objects.get(pk=request.user.id)
-                    # user.verify_update_state("verify_photo")
-                    # userKtp = modelInfo.objects.get(user=request.user)
-
-                    # payloadKtp = {
-                    #     "nik": userKtp.nik,
-                    #     "name": userKtp.full_name,
-                    #     "birth_date": userKtp.date_of_birth,
-                    #     "email": user.email,
-                    #     "phone": user.phone_number,
-                    #     "selfie_photo": strImagePhoto,
-                    #     "ktp_photo": strImageKtp,
-                    # }
-                    # print(payloadKtp, "payloadKtp")
-                    # result = verihub.verify_identity(payloadKtp)
-                    # print(result, "result 02")
                     user.verify_update_state("verified")
-                    # image_services.delete_file_from_temp(request.user.id)
                     return response.Response(
                         {
                             "message": "successfully verify photo and ktp",
