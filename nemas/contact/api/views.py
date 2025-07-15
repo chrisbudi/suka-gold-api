@@ -20,6 +20,10 @@ from contact.infrastucture.repositories.django_contact_repository import (
 )
 
 
+@extend_schema(
+    tags=["Contact - Contact Us"],
+    description="API endpoint to submit contact requests",
+)
 class ContactUsView(APIView):
 
     @extend_schema(
