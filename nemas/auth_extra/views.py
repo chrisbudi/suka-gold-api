@@ -1,15 +1,21 @@
 # views.py
 import random
+import re
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model, login
 from auth_extra.models import EmailOTP
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 
+from shared.services.email_service import EmailService
+
+from django.template.loader import render_to_string
+
 from rest_framework import status, viewsets, filters, pagination, response, permissions
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
 
 User = get_user_model()
 
@@ -20,23 +26,29 @@ class email_otp_views(viewsets.ModelViewSet):
         tags=["OTP Authentication"],
         description="Handles email OTP requests and verifications.",
         methods=["POST"],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "email": {"type": "string", "format": "email"},
+                },
+                "required": ["email"],
+            }
+        },
         responses={
             status.HTTP_200_OK: "OTP sent successfully.",
             status.HTTP_400_BAD_REQUEST: "Invalid request data.",
             status.HTTP_404_NOT_FOUND: "Email not found.",
         },
-        parameters=[
-            OpenApiParameter(
-                name="email",
-                description="Email address for OTP",
-                required=True,
-                type=str,
-            ),
-        ],
     )
     def request_otp(self, request):
         if request.method == "POST":
-            email = request.POST["email"]
+            email = request.data.get("email")
+            if not email:
+                return response.Response(
+                    {"error": "Email is required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             # check if email exists in the database
             if not User.objects.filter(email=email).exists():
                 return response.Response(
@@ -48,15 +60,19 @@ class email_otp_views(viewsets.ModelViewSet):
             EmailOTP.objects.create(email=email, code=code)
             # Send email using SendGrid
 
-            message = Mail(
-                from_email="noreply@example.com",
-                to_emails=email,
-                subject="Your Login Code",
-                plain_text_content=f"Your OTP is {code}",
+            sendGridEmail = settings.SENDGRID_EMAIL
+
+            mail = Mail(
+                from_email=sendGridEmail["DEFAULT_FROM_EMAIL"],
+                to_emails=[email],
+                subject="Nemas OTP Code",
+                plain_text_content=f"Your OTP code is: {code}. Please use this code to verify your email.",
             )
+
             try:
-                sg = SendGridAPIClient("YOUR_SENDGRID_API_KEY")
-                sg.send(message)
+                mailService = EmailService()
+                mailService.sendMail(mail)
+
             except Exception as e:
                 return response.Response(
                     {"error": "Failed to send email"},
@@ -75,25 +91,26 @@ class email_otp_views(viewsets.ModelViewSet):
             status.HTTP_400_BAD_REQUEST: "Invalid request data.",
             status.HTTP_404_NOT_FOUND: "Email not found.",
         },
-        parameters=[
-            OpenApiParameter(
-                name="email",
-                description="Email address for OTP",
-                required=True,
-                type=str,
-            ),
-            OpenApiParameter(
-                name="code",
-                description="OTP code to verify",
-                required=True,
-                type=str,
-            ),
-        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "email": {"type": "string", "format": "email"},
+                    "code": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 6,
+                        "required": True,
+                    },
+                },
+                "required": ["email"],
+            }
+        },
     )
     def verify_otp(self, request):
         if request.method == "POST":
-            email = request.POST["email"]
-            code = request.POST["code"]
+            email = request.data.get("email")
+            code = request.data.get("code")
 
             otp = (
                 EmailOTP.objects.filter(email=email, code=code)
@@ -105,10 +122,13 @@ class email_otp_views(viewsets.ModelViewSet):
                     email=email, defaults={"username": email}
                 )
                 refresh = RefreshToken.for_user(user)
-                return {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }
+                return response.Response(
+                    {
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    },
+                    status=status.HTTP_200_OK,
+                )
             else:
                 return response.Response(
                     {"error": "Invalid or expired code"},
