@@ -69,9 +69,14 @@ INSTALLED_APPS = [
     "django_filters",
     "django_celery_beat",
     "django_celery_results",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "two_factor",
+    "qrcode",
     "channels",
     "taggit",
     "corsheaders",
+    "auth_extra",
     "core",
     "user",
     "wallet",
@@ -94,6 +99,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_otp.middleware.OTPMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [

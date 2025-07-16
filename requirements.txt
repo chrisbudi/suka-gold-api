@@ -29,3 +29,6 @@ sendgrid==6.11.0
 daphne==4.1.0
 granian==2.3.4
 granian[reload]==2.3.4
+django-otp==1.6.1
+django-two-factor-auth==1.16.0
+qrcode==7.4.2

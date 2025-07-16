@@ -33,6 +33,7 @@ from order.api import urls as orderFixUrl
 from reporting import urls as reporting_url
 from contact import urls as contact_url
 from notification import urls as notification_url
+from auth_extra import urls as auth_extra_url
 
 authentication_classes = [JWTAuthentication]
 
@@ -91,6 +92,7 @@ urlpatterns = [
     path("api/reports/", include(reporting_url, "reporting")),
     path("api/contact/", include(contact_url, "contact")),
     path("api/notification/", include(notification_url, "notification")),
+    path("api/otp/", include(auth_extra_url, "auth_extra")),
 ]
 
 # urlpatterns = [
