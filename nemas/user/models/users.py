@@ -133,6 +133,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     update_time = models.DateTimeField(auto_now=True)
     update_user = models.CharField(max_length=256)
 
+    is_2fa_verified = models.BooleanField(default=False)
     objects = user_manager()
 
     USERNAME_FIELD = "email"

@@ -1,11 +1,8 @@
 # views.py
 import random
-import re
-from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.contrib.auth import get_user_model, login
-from auth_extra.models import EmailOTP
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+from django.contrib.auth import get_user_model
+from auth_core.models import email_otp
+from drf_spectacular.utils import extend_schema
 
 from shared.services.email_service import EmailService
 
@@ -57,7 +54,7 @@ class email_otp_views(viewsets.ModelViewSet):
 
             code = str(random.randint(100000, 999999))
 
-            EmailOTP.objects.create(email=email, code=code)
+            email_otp.objects.create(email=email, code=code)
             # Send email using SendGrid
 
             sendGridEmail = settings.SENDGRID_EMAIL
@@ -113,7 +110,7 @@ class email_otp_views(viewsets.ModelViewSet):
             code = request.data.get("code")
 
             otp = (
-                EmailOTP.objects.filter(email=email, code=code)
+                email_otp.objects.filter(email=email, code=code)
                 .order_by("-created_at")
                 .first()
             )

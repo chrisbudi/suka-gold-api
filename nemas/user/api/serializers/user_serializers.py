@@ -41,6 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
             "phone_number",
             "password",
             "name",
+            "is_2fa_verified",
             "income_source",
             "investment_purpose",
             "referal_code",

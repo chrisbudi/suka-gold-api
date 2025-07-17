@@ -1,7 +1,7 @@
 from django.urls import path, include
-from auth_extra.views import email_otp_views
+from auth_core.views import email_otp_views
 
-app_name = "auth_extra"
+app_name = "auth_core"
 
 otp_url = [
     path(
