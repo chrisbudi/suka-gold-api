@@ -168,7 +168,12 @@ class ProcessCartSerializer(serializers.Serializer):
         )
 
         order_cart_instance.total_weight = Decimal(
-            sum([item.weight for item in order_cart_detail_model])
+            sum(
+                [
+                    item.weight * item.gold.gold_weight
+                    for item in order_cart_detail_model
+                ]
+            )
         )
 
         order_cart_instance.total_price = Decimal(
