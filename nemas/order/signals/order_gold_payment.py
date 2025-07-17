@@ -36,7 +36,8 @@ def handle_order_gold_payment(
                 create_user_notification(
                     user=user,
                     title="Pembayaran Diterima",
-                    message=f"Pembayaran untuk transaksi {order_gold_model.order_number} telah diterima.",
+                    message=f"""Pembayaran untuk transaksi {order_gold_model.order_number} telah diterima. 
+                    Nominal pembayaran: {order_gold_model.order_grand_total_price:,.2f}""",
                     icon_type=NotificationIconType.INFO,
                     transaction_type=NotificationTransactionType.ORDER_GOLD,
                 )
@@ -44,7 +45,8 @@ def handle_order_gold_payment(
                 create_user_notification(
                     user=user,
                     title="Pembayaran Diterbitkan",
-                    message=f"Pembayaran untuk transaksi {order_gold_model.order_number} telah diterbitkan.",
+                    message=f"""Pembayaran untuk transaksi {order_gold_model.order_number} telah diterima. 
+                    Nominal pembayaran: {order_gold_model.order_grand_total_price:,.2f}""",
                     icon_type=NotificationIconType.INFO,
                     transaction_type=NotificationTransactionType.ORDER_GOLD,
                 )
