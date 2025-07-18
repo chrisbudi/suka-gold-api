@@ -2,6 +2,7 @@
 views for the user API
 """
 
+import uuid
 from django.forms import model_to_dict
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, permissions, pagination
@@ -143,20 +144,23 @@ class GETUserProfileByPhoneNumberView(viewsets.ModelViewSet):
     def get(self, request, *args, **kwargs):
         # The 'id' is passed as part of the URL, so you can access it through kwargs
         id = kwargs.get("id")
-
+        print(id, "id from kwargs")
         if not id:
             raise ValueError("Phone number is required")
 
         # Pass the id directly to the method without keyword argument
         user_instance = self.get_user_by_identifier(id)
+        # print(user_instance, "user instance")
         user_data = UserSerializer(user_instance).data
+        print(user_data, "user data")
         return Response({"user": user_data}, status=200)
 
-    def get_user_by_identifier(self, id: str):
+    def get_user_by_identifier(self, id: uuid.UUID | str):
         """Retrieve user profile by phone number"""
-        # Query for user by phone number or email
+        # Ensure id is a string for filtering
+        identifier = str(id)
         user_instance = (
-            user.objects.filter(phone_number=id).first()
-            or user.objects.filter(email=id).first()
+            user.objects.filter(phone_number=identifier).first()
+            or user.objects.filter(email=identifier).first()
         )
         return user_instance
