@@ -10,6 +10,8 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -151,7 +153,18 @@ class AuthTokenObtainPairSerializer(serializers.Serializer):
         if user is None:
             msg = "Unable to authenticate with provided credentials."
             raise serializers.ValidationError(msg, code="authentication")
+        if not user or not user.is_active:
+            raise serializers.ValidationError(
+                {"detail": "Invalid credentials or inactive account"},
+                code="authentication",
+            )
 
+        device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+        if device:
+            raise serializers.ValidationError(
+                {"detail": "2FA required", "partial_token": str(user.pk)},
+                code="2fa_required",
+            )
         # If user is authenticated, proceed to generate tokens
         refresh = RefreshToken.for_user(user)
         return {
