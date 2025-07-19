@@ -107,12 +107,11 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                     {"error": "File not provided"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            image = image_services
             try:
-                image.upload_file_to_temp(file, request.user.id)
+
                 s3 = s3_services.S3Service()
                 image_s3_url = s3.upload_file(
-                    image, f"SELFIE/{str(request.user.id)}.jpg"
+                    file, f"SELFIE/{str(request.user.id)}.jpg"
                 )
                 print(image_s3_url, "image_s3_url")
                 # check user
@@ -126,6 +125,9 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                     status=status.HTTP_201_CREATED,
                 )
             except Exception as e:
+                # print innner exception
+                print(e, "error in upload_selfie_user")
+
                 return response.Response(
                     {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
