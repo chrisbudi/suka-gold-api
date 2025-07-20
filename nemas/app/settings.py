@@ -248,6 +248,11 @@ else:
                 "level": "ERROR",  # To capture 500 errors from requests
                 "propagate": True,
             },
+            "django.db.backends": {
+                "handlers": ["console"],
+                "level": "DEBUG",  # Print SQL queries to console
+                "propagate": False,
+            },
         },
         "root": {
             "handlers": ["console"],

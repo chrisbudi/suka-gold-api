@@ -103,35 +103,6 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
 
 
 @extend_schema(
-    tags=["User - Admin"],
-)
-class UserAdminView(viewsets.ModelViewSet):
-    """List all users or retrieve a single user by ID"""
-
-    serializer_class = UserSerializer
-    pagination_class = pagination.LimitOffsetPagination
-    lookup_field = "id"
-
-    def list(self, request, *args, **kwargs):
-        """List users with pagination and support for page/page_size query params"""
-        queryset = user.objects.select_related("user_props").all()
-        # queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
-
-    def get(self, request, *args, **kwargs):
-        """Retrieve a single user by ID"""
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-
-@extend_schema(
     tags=["User - get by phone number"],
 )
 class GETUserProfileByPhoneNumberView(viewsets.ModelViewSet):

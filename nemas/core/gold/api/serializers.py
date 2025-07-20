@@ -3,9 +3,6 @@ Serializer for recipe api
 """
 
 from datetime import datetime
-from os import read
-import uuid
-from humanize import activate
 from rest_framework import serializers
 from django_filters import rest_framework as filters
 from core.domain import (
