@@ -108,16 +108,19 @@ class user(AbstractBaseUser, PermissionsMixin):
     user_name = models.CharField(max_length=255, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
     user_type = models.CharField(max_length=100, default="user")
-    # unverified, verify KTP, verify Photo, verified, rejected, blacklisted
+    # unverified, in_progress, verified
     verify_status = models.CharField(max_length=100, default="unverified")
     verify_updated_time = models.DateTimeField(null=True, blank=True)
     verify_notes = models.TextField(null=True, blank=True)
     photo_selfie_url = models.CharField(max_length=255, null=True, blank=True)
     photo_ktp_url = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
+    is_ktp_verified = models.BooleanField(default=False)
+    is_photo_selfie_verified = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)
     pin = models.IntegerField(
         validators=[
             MaxValueValidator(999999),
@@ -134,6 +137,8 @@ class user(AbstractBaseUser, PermissionsMixin):
     update_user = models.CharField(max_length=256)
 
     is_2fa_verified = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+
     objects = user_manager()
 
     USERNAME_FIELD = "email"
@@ -145,8 +150,17 @@ class user(AbstractBaseUser, PermissionsMixin):
     def has_module_perms(self, app_label: str) -> bool:
         return super().has_module_perms(app_label)
 
-    def verify_update_state(self, status: str):
-        self.verify_status = status
+    def verify_update_state(self):
+        if (
+            self.is_active
+            and self.is_verified
+            and self.is_ktp_verified
+            and self.is_email_verified
+        ):
+            self.verify_status = "verified"
+        else:
+            self.verify_status = "in_progress"
+
         self.verify_updated_time = datetime.now()
         self.update_time = datetime.now()
         self.save()

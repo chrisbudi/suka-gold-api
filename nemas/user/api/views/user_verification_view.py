@@ -116,6 +116,7 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                 print(image_s3_url, "image_s3_url")
                 # check user
                 user = userModel.objects.get(pk=request.user.id)
+                user.is_photo_selfie_verified = True
                 user.photo_selfie_url = image_s3_url
                 user.update_time = timezone.now()
                 user.update_user = str(request.user.id)
@@ -168,14 +169,17 @@ class CreateKtpIfNotVerify(viewsets.ModelViewSet):
                     **validated_data,
                 },
             )
+
             userModel.objects.filter(pk=str(request.user.id)).update(
                 photo_ktp_url=image_s3_url,
+                is_ktp_verified=True,
+                verify_status="in_process",
                 update_time=datetime.now(),
                 update_user=str(request.user.id),
             )
+
             print("userModel.objects.filter(pk=request.user.id).update")
-            user.verify_update_state("verify_ktp")
-            # image_services.delete_file_from_temp(request.user.id)
+            user.verify_update_state()
             return response.Response(
                 {"message": "KTP verified successfully"},
                 status=status.HTTP_201_CREATED,
@@ -268,7 +272,8 @@ class CreateComparePhotoANDKtp(viewsets.ModelViewSet):
 
                     # get data from user ktp
                     user = userModel.objects.get(pk=request.user.id)
-                    user.verify_update_state("verified")
+                    user.verify_update_state()
+
                     return response.Response(
                         {
                             "message": "successfully verify photo and ktp",
