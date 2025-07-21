@@ -159,7 +159,11 @@ class AuthTokenObtainPairSerializer(serializers.Serializer):
 
         # Authenticate user based on identifier (username/email/phone)
         user = authenticate(
-            request=self.context.get("request"), username=identifier, password=password
+            request=self.context.get("request"),
+            username=identifier,
+            password=password,
+            is_email_verified=True,
+            is_active=True,
         )
 
         if user is None:
