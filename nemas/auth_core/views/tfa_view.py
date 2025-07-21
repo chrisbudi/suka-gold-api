@@ -54,7 +54,7 @@ class tfa_view(viewsets.ModelViewSet):
         except User.DoesNotExist:
             return Response({"detail": "Invalid user"}, status=400)
 
-        device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+        device = TOTPDevice.objects.filter(user=user).first()
         if device and device.verify_token(otp):
             refresh = RefreshToken.for_user(user)
             return Response(

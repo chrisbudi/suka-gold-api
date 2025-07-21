@@ -1,1 +1,2 @@
 from .mail_user_reset_token import email_user_reset_token, email_user_reset_token_done
+from .user_registered import email_user_verification

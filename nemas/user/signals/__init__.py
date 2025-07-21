@@ -7,6 +7,9 @@ from django.dispatch import Signal
 email_user_reset_token = Signal()
 email_user_reset_token_done = Signal()
 
+
+email_user_verification = Signal()
+
 # user_reset_password_complete = Signal()
 # user_reset_password_confirm = Signal()
 

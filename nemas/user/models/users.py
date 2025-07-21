@@ -109,7 +109,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     user_type = models.CharField(max_length=100, default="user")
     # unverified, in_progress, verified
-    verify_status = models.CharField(max_length=100, default="unverified")
+    verify_status = models.CharField(max_length=100, default="pending")
     verify_updated_time = models.DateTimeField(null=True, blank=True)
     verify_notes = models.TextField(null=True, blank=True)
     photo_selfie_url = models.CharField(max_length=255, null=True, blank=True)
@@ -151,14 +151,11 @@ class user(AbstractBaseUser, PermissionsMixin):
         return super().has_module_perms(app_label)
 
     def verify_update_state(self):
-        if (
-            self.is_active
-            and self.is_verified
-            and self.is_ktp_verified
-            and self.is_email_verified
-        ):
+        if self.is_active and self.is_ktp_verified and self.is_email_verified:
+            self.is_verified = True
             self.verify_status = "verified"
         else:
+            self.is_verified = False
             self.verify_status = "in_progress"
 
         self.verify_updated_time = datetime.now()

@@ -159,7 +159,7 @@ class AuthTokenObtainPairSerializer(serializers.Serializer):
                 code="authentication",
             )
 
-        device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+        device = TOTPDevice.objects.filter(user=user).first()
         if device:
             raise serializers.ValidationError(
                 {"detail": "2FA required", "partial_token": str(user.pk)},
