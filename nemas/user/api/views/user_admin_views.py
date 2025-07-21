@@ -3,9 +3,10 @@ views for the user API
 """
 
 from urllib import response
+import uuid
+from django.contrib.auth import get_user
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, pagination, filters, status
 from rest_framework.response import Response
 
 from user.api.serializers.user_admin_serializer import (
@@ -14,7 +15,8 @@ from user.api.serializers.user_admin_serializer import (
 )
 from django_filters.rest_framework import DjangoFilterBackend
 from user.models import user  # Import the User model
-from rest_framework.permissions import IsAuthenticated
+
+from rest_framework import status, viewsets, filters, pagination, permissions
 
 
 @extend_schema(
@@ -34,7 +36,7 @@ class UserAdminView(viewsets.ModelViewSet):
         if self.action in ["list", "get"]:
             permission_classes = []
         else:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
 
     def list(self, request, *args, **kwargs):
@@ -51,9 +53,19 @@ class UserAdminView(viewsets.ModelViewSet):
 
     def get(self, request, *args, **kwargs):
         """Retrieve a single user by ID"""
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        id = kwargs.get("id")
+        print(id, "id from kwargs")
+        if not id:
+            raise ValueError("Phone number is required")
+
+        # Pass the id directly to the method without keyword argument
+        user_instance = user.objects.select_related(
+            "user_props", "user_ktp", "user_address"
+        ).get(pk=id)
+        # print(user_instance, "user instance")
+        user_data = UserAdminSerializer(user_instance).data
+        print(user_data, "user data")
+        return Response({"user": user_data}, status=200)
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
