@@ -1,22 +1,25 @@
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 import qrcode
 import base64
 from io import BytesIO
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.decorators import action
 from rest_framework import viewsets
+import base64 as b64
+from urllib.parse import quote
 
 User = get_user_model()
 
 
 class tfa_view(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+        if self.action in ["setup", "confirm"]:
+            return [IsAuthenticated()]
+        return super().get_permissions()
 
     @extend_schema(
         request={
@@ -48,13 +51,12 @@ class tfa_view(viewsets.ModelViewSet):
     def verify(self, request):
         user_id = request.data.get("partial_token")
         otp = request.data.get("otp")
-
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return Response({"detail": "Invalid user"}, status=400)
 
-        device = TOTPDevice.objects.filter(user=user).first()
+        device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
         if device and device.verify_token(otp):
             refresh = RefreshToken.for_user(user)
             return Response(
@@ -63,7 +65,6 @@ class tfa_view(viewsets.ModelViewSet):
                     "access": str(refresh.access_token),
                 }
             )
-
         return Response({"detail": "Invalid OTP"}, status=400)
 
     @extend_schema(
@@ -87,19 +88,20 @@ class tfa_view(viewsets.ModelViewSet):
         TOTPDevice.objects.filter(user=user, confirmed=False).delete()
 
         device = TOTPDevice.objects.create(user=user, confirmed=False)
-        from urllib.parse import quote
 
         issuer = quote("nemas.id")
         label = quote(f"nemas.id:{user.email}")
-        secret = device.bin_key.hex().upper()
+
+        # Base32 encode the binary secret key
+        secret = b64.b32encode(device.bin_key).decode("utf-8").replace("=", "")
+
         config_url = f"otpauth://totp/{label}?secret={secret}&issuer={issuer}&algorithm=SHA1&digits=6&period=30"
-        print(config_url, "config url")
+
         qr = qrcode.make(config_url)
         buffer = BytesIO()
         qr.save(buffer)
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-        print(config_url, "config url")
         return Response(
             {
                 "config_url": config_url,
