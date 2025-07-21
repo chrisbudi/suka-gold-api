@@ -17,6 +17,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from common.generator import generate_numeric_code
 from user.models import user
+from user.signals.receiver import email_user_verification
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -44,6 +45,10 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "name",
             "is_2fa_verified",
+            "is_active",
+            "is_verified",
+            "is_ktp_verified",
+            "is_email_verified",
             "income_source",
             "investment_purpose",
             "referal_code",
@@ -68,8 +73,11 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data["member_number"] = member_number
 
         if self.context.get("is_superuser", False):
-            return get_user_model().objects.create_superuser(**validated_data)
-        return get_user_model().objects.create_user(**validated_data)
+            users = get_user_model().objects.create_superuser(**validated_data)
+
+        users = get_user_model().objects.create_user(**validated_data)
+        self.send_verification_email(users)
+        return users
 
     def update(self, instance, validated_data):
         """Update a user, setting the password correctly and return it"""
@@ -81,6 +89,10 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return user
+
+    def send_verification_email(self, user):
+        """Emit the password reset requested signal."""
+        email_user_verification.send(sender=self.__class__, user=user)
 
 
 class UserPinSerializer(serializers.Serializer):

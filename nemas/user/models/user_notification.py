@@ -22,6 +22,7 @@ class NotificationTransactionType(models.TextChoices):
     )
     WITHDRAW = "withdraw", "Withdraw"
     FORGOT_PASSWORD = "forgot_password", "Forgot Password"
+    EMAIL_VERIFICATION = "email_verification", "Email Verification"
 
 
 # create enum for icon types
