@@ -169,6 +169,7 @@ class UserAdminServiceFilter(filters.FilterSet):
         fields = {
             "id": ["exact"],
             "email": ["exact", "icontains"],
+            "user_name": ["exact", "icontains"],
             "phone_number": ["exact", "icontains"],
             "name": ["exact", "icontains"],
             "member_number": ["exact", "icontains"],
