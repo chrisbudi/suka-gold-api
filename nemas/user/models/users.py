@@ -96,6 +96,27 @@ class user_manager(BaseUserManager):
         return user
 
 
+class role(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Roles"
+
+
+class menu(models.Model):
+    name = models.CharField(max_length=100)
+    url = models.CharField(max_length=255)
+    roles = models.ManyToManyField(role, related_name="menus")
+
+    def __str__(self):
+        return self.name
+
+
 class user(AbstractBaseUser, PermissionsMixin):
     """
     Custom user model that supports using email instead of username
@@ -121,6 +142,7 @@ class user(AbstractBaseUser, PermissionsMixin):
     is_email_verified = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    role = models.ForeignKey(role, on_delete=models.SET_NULL, null=True, blank=True)
     pin = models.IntegerField(
         validators=[
             MaxValueValidator(999999),
