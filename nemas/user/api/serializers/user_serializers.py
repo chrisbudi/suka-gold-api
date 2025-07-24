@@ -2,6 +2,7 @@
 Serializers for user api view
 """
 
+from django.contrib.auth.models import User
 from attr import validate
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import ngettext_lazy as _
@@ -50,6 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_ktp_verified",
             "is_email_verified",
             "income_source",
+            "role",
             "investment_purpose",
             "referal_code",
         ]
