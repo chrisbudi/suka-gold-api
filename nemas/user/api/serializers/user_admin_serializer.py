@@ -105,6 +105,12 @@ class UserAdminSerializer(serializers.ModelSerializer):
     address = user_address_serializer(
         required=False, allow_null=True, read_only=True, source="user_address"
     )
+    role_name = serializers.CharField(
+        source="role.name", read_only=True, allow_blank=True, max_length=255
+    )
+    role = serializers.PrimaryKeyRelatedField(
+        queryset=get_user_model().objects.all(), required=False, allow_null=True
+    )
 
     class Meta:
         model = get_user_model()
@@ -122,6 +128,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
             "is_ktp_verified",
             "is_email_verified",
             "role",
+            "role_name",
             "income_source",
             "investment_purpose",
             "referal_code",
@@ -178,4 +185,6 @@ class UserAdminServiceFilter(filters.FilterSet):
             "phone_number": ["exact", "icontains"],
             "name": ["exact", "icontains"],
             "member_number": ["exact", "icontains"],
+            "role_name": ["exact", "icontains"],
+            "is_active": ["exact"],
         }
