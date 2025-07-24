@@ -174,14 +174,14 @@ class AuthTokenObtainPairSerializer(serializers.Serializer):
                 {"detail": "Invalid credentials or inactive account"},
                 code="authentication",
             )
+        if hasattr(user, "is_2fa_verified") and user.is_2fa_verified is True:
+            device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+            if device:
+                raise serializers.ValidationError(
+                    {"detail": "2FA required", "partial_token": str(user.pk)},
+                    code="2fa_required",
+                )
 
-        device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
-        if device:
-            raise serializers.ValidationError(
-                {"detail": "2FA required", "partial_token": str(user.pk)},
-                code="2fa_required",
-            )
-        # If user is authenticated, proceed to generate tokens
         refresh = RefreshToken.for_user(user)
         return {
             "refresh": str(refresh),
