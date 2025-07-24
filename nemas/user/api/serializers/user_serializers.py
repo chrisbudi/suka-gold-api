@@ -34,13 +34,19 @@ class UserSerializer(serializers.ModelSerializer):
         required=False, allow_blank=True, max_length=255
     )
 
+    role_name = serializers.CharField(
+        source="role.name", read_only=True, allow_blank=True, max_length=255
+    )
+    role = serializers.PrimaryKeyRelatedField(
+        queryset=get_user_model().objects.all(), required=False, allow_null=True
+    )
+
     class Meta:
         model = get_user_model()
         fields = [
             "id",
             "member_number",
             "user_name",
-            "member_number",
             "email",
             "phone_number",
             "password",
@@ -52,6 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_email_verified",
             "income_source",
             "role",
+            "role_name",
             "investment_purpose",
             "referal_code",
         ]
