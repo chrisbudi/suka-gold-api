@@ -44,11 +44,6 @@ admin_fee_url = [
         views_admin_fee.AdminFeeViewSet.as_view({"get": "retrieve"}),
         name="get_article",
     ),
-    path(
-        "upload/<int:id>/",
-        views_admin_fee.AdminFeeViewSet.as_view({"post": "upload"}),
-        name="upload_article",
-    ),
 ]
 
 urlpatterns = [

@@ -15,6 +15,7 @@ class AdminFeeSerializer(serializers.ModelSerializer):
         fields = [
             "name",
             "fee_type",
+            "transaction_type",
             "value",
             "description",
         ]
