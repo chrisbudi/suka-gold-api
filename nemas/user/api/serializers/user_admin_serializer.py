@@ -185,6 +185,6 @@ class UserAdminServiceFilter(filters.FilterSet):
             "phone_number": ["exact", "icontains"],
             "name": ["exact", "icontains"],
             "member_number": ["exact", "icontains"],
-            "role_name": ["exact", "icontains"],
+            "role__name": ["exact", "icontains"],
             "is_active": ["exact"],
         }
