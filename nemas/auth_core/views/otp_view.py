@@ -118,6 +118,9 @@ class email_otp_views(viewsets.ModelViewSet):
                 user, _ = User.objects.get_or_create(
                     email=email, defaults={"username": email}
                 )
+                if user is not None:
+                    setattr(user, "is_email_verified", True)
+                    user.save()
                 refresh = RefreshToken.for_user(user)
                 return response.Response(
                     {
