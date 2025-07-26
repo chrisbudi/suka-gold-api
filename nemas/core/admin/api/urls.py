@@ -47,5 +47,5 @@ admin_fee_url = [
 ]
 
 urlpatterns = [
-    path("admin-fee/", include(admin_fee_url)),
+    path("fee/", include(admin_fee_url)),
 ]

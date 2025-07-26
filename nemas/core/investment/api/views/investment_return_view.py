@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
-    tags=["Information - Rating"],
+    tags=["investment - return"],
 )
 class investment_return_viewset(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()

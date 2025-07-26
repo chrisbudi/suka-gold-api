@@ -48,5 +48,5 @@ investment_return_url = [
 ]
 
 urlpatterns = [
-    path("investment-return/", include(investment_return_url)),
+    path("return/", include(investment_return_url)),
 ]

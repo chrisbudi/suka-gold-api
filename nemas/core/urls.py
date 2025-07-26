@@ -20,6 +20,6 @@ urlpatterns = [
     path("address/", include(address_urls)),
     path("payment/", include(payment_urls)),
     path("delivery_partner/", include(delivery_partner_urls)),
-    path("admin_fee/", include(admin_fee_urls)),
-    path("investment_return/", include(investment_return_urls)),
+    path("admin/", include(admin_fee_urls)),
+    path("investment/", include(investment_return_urls)),
 ]

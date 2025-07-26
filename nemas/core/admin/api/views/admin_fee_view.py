@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
-    tags=["invenstment - admin fee"],
+    tags=["invenstment - fee"],
 )
 class AdminFeeViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()
