@@ -6,12 +6,22 @@ class AdminFee(models.Model):
     Master data for admin fees applicable on investments.
     """
 
+    TRANSACTION_TYPE_CHOICES = [
+        ("investment", "Investment"),
+        ("redeem", "Redeem"),
+    ]
+
     FEE_TYPE_CHOICES = [
         ("percentage", "Percentage"),
         ("fixed", "Fixed Amount"),
     ]
+
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     fee_type = models.CharField(max_length=20, choices=FEE_TYPE_CHOICES)
+    transaction_type = models.CharField(
+        max_length=20, choices=TRANSACTION_TYPE_CHOICES, default="investment"
+    )
     value = models.DecimalField(
         max_digits=10, decimal_places=2, help_text="Percentage or fixed amount"
     )
