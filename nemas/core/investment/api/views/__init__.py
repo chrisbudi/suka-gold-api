@@ -1,0 +1,1 @@
+from .investment_return_view import investment_return_viewset

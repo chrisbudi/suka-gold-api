@@ -1,0 +1,2 @@
+from .admin_fee_view import InformationPromoViewSet, PromoUploadAPIView
+from .investment_return_view import InformationRatingViewSet

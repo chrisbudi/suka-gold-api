@@ -1,1 +1,1 @@
-from .models import AdminFee, InvestmentReturn, InvestmentTransaction
+from .models import InvestmentTransaction

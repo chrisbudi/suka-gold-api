@@ -9,6 +9,10 @@ from .address import (
 from .bank import (
     bank,
 )
+from .investment import (
+    AdminFee,
+    InvestmentReturn,
+)
 
 from .gold import (
     cert,
