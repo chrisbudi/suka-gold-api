@@ -1,4 +1,5 @@
 from core.domain import InvestmentReturn, gold_price
+import investment
 from investment.models import TransactionModel
 from rest_framework import serializers
 
@@ -54,11 +55,20 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         gold_active = gold_price().get_active_price()
+        investment_return = validated_data.data.get("investment_return")
         if not gold_active:
             raise serializers.ValidationError("No active gold price found.")
 
         # calculate investment return based on gold price active
 
+        validated_data["return_weight"] = (
+            validated_data["amount_invested"] / investment_return.rate
+        )
+
+        validated_data["return_amount"] = (
+            validated_data["return_weight"] * gold_active.gold_price_buy
+        )
+        validated_data["investor"] = self.context["request"].user
         transaction = TransactionModel.objects.create(**validated_data)
         return transaction
 
