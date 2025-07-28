@@ -34,6 +34,7 @@ from reporting import urls as reporting_url
 from contact import urls as contact_url
 from notification import urls as notification_url
 from auth_core import urls as auth_core_url
+from investment.api import urls as investmentUrl
 
 authentication_classes = [JWTAuthentication]
 
@@ -93,6 +94,7 @@ urlpatterns = [
     path("api/contact/", include(contact_url, "contact")),
     path("api/notification/", include(notification_url, "notification")),
     path("api/authentication/", include(auth_core_url, "auth_core")),
+    path("api/investment/", include(investmentUrl, "investment")),
 ]
 
 # urlpatterns = [

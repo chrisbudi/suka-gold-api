@@ -20,16 +20,16 @@ class TransactionModel(models.Model):
     date_invested = models.DateField(auto_now_add=True)
 
     investment_return = models.ForeignKey(InvestmentReturn, on_delete=models.PROTECT)
-    investment_weight_return = models.DecimalField(
-        max_digits=10, decimal_places=4, blank=True
-    )
 
     return_amount = models.DecimalField(
         max_digits=15, decimal_places=2, blank=True, null=True
     )
 
+    return_weight = models.DecimalField(max_digits=10, decimal_places=4, blank=True)
+
     date_returned = models.DateField(blank=True, null=True)
     is_returned = models.BooleanField(default=False)
+    status = models.CharField(max_length=50, default="PENDING")  # PENDING, COMPLETED
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

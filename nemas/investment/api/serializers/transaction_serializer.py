@@ -1,16 +1,41 @@
+from core.domain import InvestmentReturn, gold_price
 from investment.models import TransactionModel
 from rest_framework import serializers
 
+from django_filters import rest_framework as filters
+
+
+class InvestmentReturnSerializer(serializers.ModelSerializer):
+    """Serializer for investment return model"""
+
+    class Meta:
+        model = InvestmentReturn
+        fields = [
+            "name",
+            "rate",
+            "duration_days",
+            "description",
+        ]
+
 
 class TransactionSerializer(serializers.ModelSerializer):
+
+    investor_name = serializers.CharField(source="investor.name", read_only=True)
+    investor_return = InvestmentReturnSerializer(
+        source="investment_return", read_only=True
+    )
+
     class Meta:
         model = TransactionModel
         fields = (
             "amount_invested",
             "weight_invested",
             "date_invested",
+            "investor_name",
             "investment_return",
-            "investment_weight_return",
+            "investor_return",
+            "return_weight",
+            "return_amount",
             "date_returned",
             "is_returned",
         )
@@ -28,6 +53,26 @@ class TransactionSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        gold_active = gold_price().get_active_price()
+        if not gold_active:
+            raise serializers.ValidationError("No active gold price found.")
+
+        # calculate investment return based on gold price active
 
         transaction = TransactionModel.objects.create(**validated_data)
         return transaction
+
+
+class TransactionFilter(filters.FilterSet):
+    """
+    Filter for transactions based on user and date.
+    """
+
+    class Meta:
+        model = TransactionModel
+        fields = {
+            "investor": ["exact"],
+            "date_invested": ["exact", "gte", "lte"],
+            "is_returned": ["exact"],
+            "status": ["exact"],
+        }
