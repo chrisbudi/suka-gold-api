@@ -13,6 +13,7 @@ class InvestmentReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvestmentReturn
         fields = [
+            "id",
             "name",
             "rate",
             "duration_days",
