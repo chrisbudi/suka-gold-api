@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema(
-    tags=["delivery partner - service "],
+    tags=["deposito transaction- service "],
 )
 class DeliveryPartnerServiceViewSet(viewsets.ModelViewSet):
     queryset = modelInfo.objects.all()

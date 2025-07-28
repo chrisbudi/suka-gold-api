@@ -1,1 +1,1 @@
-from .models import InvestmentTransaction
+from .models import TransactionModel

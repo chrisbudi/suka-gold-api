@@ -1,39 +1,39 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from core.domain import AdminFee, InvestmentReturn
+
+from core.domain import InvestmentReturn
+from core.fields.uuidv7_field import UUIDv7Field
 
 
-class InvestmentTransaction(models.Model):
+class TransactionModel(models.Model):
     """
     Records transactions for investments including fee and return calculations.
     """
 
+    transaction_id = UUIDv7Field(primary_key=True, unique=True, editable=False)
     User = get_user_model()
     investor = models.ForeignKey(User, on_delete=models.CASCADE)
     amount_invested = models.DecimalField(max_digits=15, decimal_places=2)
+    weight_invested = models.DecimalField(max_digits=10, decimal_places=4, blank=True)
+
     date_invested = models.DateField(auto_now_add=True)
 
-    admin_fee = models.ForeignKey(AdminFee, on_delete=models.PROTECT)
-    fee_amount = models.DecimalField(
-        max_digits=15, decimal_places=2, blank=True, null=True
+    investment_return = models.ForeignKey(InvestmentReturn, on_delete=models.PROTECT)
+    investment_weight_return = models.DecimalField(
+        max_digits=10, decimal_places=4, blank=True
     )
 
-    investment_return = models.ForeignKey(InvestmentReturn, on_delete=models.PROTECT)
     return_amount = models.DecimalField(
         max_digits=15, decimal_places=2, blank=True, null=True
     )
 
     date_returned = models.DateField(blank=True, null=True)
     is_returned = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        # Calculate fee amount
-        if self.admin_fee:
-            if self.admin_fee.fee_type == "percentage":
-                self.fee_amount = (self.amount_invested * self.admin_fee.value) / 100
-            else:
-                self.fee_amount = self.admin_fee.value
 
         # Calculate ROI return amount if returned
         if self.is_returned and self.investment_return:
