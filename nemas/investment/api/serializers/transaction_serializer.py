@@ -40,7 +40,16 @@ class TransactionSerializer(serializers.ModelSerializer):
             "date_returned",
             "is_returned",
         )
-        read_only_fields = ("id", "created_at", "updated_at")
+        read_only_fields = (
+            "id",
+            "created_at",
+            "return_weight",
+            "return_amount",
+            "date_returned",
+            "is_returned",
+            "investor",
+            "updated_at",
+        )
 
     def validate(self, attrs):
         if attrs.get("amount_invested") <= 0:
