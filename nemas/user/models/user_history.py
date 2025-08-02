@@ -1,50 +1,76 @@
+import uuid
 from django.db import models
-from core.fields.uuidv7_field import UUIDv7Field
 from django.conf import settings
 
+from core.fields import uuidv7_field
+from core.fields.base_user_history import BaseUserHistory
 
-class user_gold_history(models.Model):
-    id = UUIDv7Field(primary_key=True, editable=False)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="gold_history"
+
+class GoldHistory(BaseUserHistory):
+    TRANSACTION_TYPES = (
+        ("B", "Buy"),
+        ("S", "Sell"),
     )
-    gold_purchase_date = models.DateTimeField(auto_now_add=True)
-    gold_weight = models.DecimalField(max_digits=10, decimal_places=4)
-    gold_history_price_base = models.DecimalField(max_digits=10, decimal_places=2)
-    gold_history_price_buy = models.DecimalField(max_digits=10, decimal_places=2)
-    gold_history_price_sell = models.DecimalField(max_digits=10, decimal_places=2)
-    gold_history_type = models.CharField(max_length=1)
-    gold_history_amount = models.DecimalField(max_digits=16, decimal_places=2)
-    gold_history_note = models.CharField(max_length=255)
+    weight = models.DecimalField(max_digits=10, decimal_places=4)
+    price_base = models.DecimalField(max_digits=10, decimal_places=2)
+    price_buy = models.DecimalField(max_digits=10, decimal_places=2)
+    price_sell = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_type = models.CharField(max_length=1, choices=TRANSACTION_TYPES)
+    amount = models.DecimalField(max_digits=16, decimal_places=2)
 
-    def __str__(self):
-        return f"{self.user} - {self.gold_purchase_date} - {self.gold_history_amount}"
+    class Meta(BaseUserHistory.Meta):
+        verbose_name = "Gold History"
+        verbose_name_plural = "Gold Histories"
 
-    def user_gold_history(self, user):
-        return self.objects.filter(user=user)
+    @classmethod
+    def for_user(cls, user):
+        return cls.objects.filter(user=user)
 
-    def user_gold_history_by_date(self, user, start_date, end_date):
-        return self.objects.filter(
-            user=user, gold_purchase_date__range=[start_date, end_date]
-        )
+    @classmethod
+    def for_user_and_date_range(cls, user, start_date, end_date):
+        return cls.objects.filter(user=user, date__range=(start_date, end_date))
 
-    def user_gold_history_by_type(self, user, gold_history_type):
-        return self.objects.filter(user=user, gold_history_type=gold_history_type)
+    @classmethod
+    def for_user_and_type(cls, user, transaction_type):
+        return cls.objects.filter(user=user, transaction_type=transaction_type)
 
 
-class user_wallet_history(models.Model):
-    id = UUIDv7Field(primary_key=True, editable=False)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="wallet_history",
+class WalletHistory(BaseUserHistory):
+    TRANSACTION_TYPES = (
+        ("D", "Deposit"),
+        ("W", "Withdrawal"),
     )
-    wallet_history_date = models.DateTimeField(auto_now_add=True)
-    wallet_history_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    wallet_history_type = models.CharField(max_length=1)
-    wallet_history_notes = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_type = models.CharField(max_length=1, choices=TRANSACTION_TYPES)
 
-    def __str__(self):
-        return (
-            f"{self.user} - {self.wallet_history_date} - {self.wallet_history_amount}"
-        )
+    class Meta(BaseUserHistory.Meta):
+        verbose_name = "Wallet History"
+        verbose_name_plural = "Wallet Histories"
+
+
+class GoldDepositoHistory(BaseUserHistory):
+    price_base = models.DecimalField(max_digits=10, decimal_places=2)
+    price_sell = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=16, decimal_places=2)
+    amount_dividend = models.DecimalField(max_digits=16, decimal_places=2)
+    weight = models.DecimalField(max_digits=10, decimal_places=4)
+    weight_dividend = models.DecimalField(max_digits=16, decimal_places=2)
+
+    class Meta(BaseUserHistory.Meta):
+        verbose_name = "Gold Deposito History"
+        verbose_name_plural = "Gold Deposito Histories"
+
+
+class GoldLoanHistory(BaseUserHistory):
+    price_base = models.DecimalField(max_digits=10, decimal_places=2)
+    price_sell = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=16, decimal_places=2)
+    weight = models.DecimalField(max_digits=10, decimal_places=4)
+    interest_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    interest_amount = models.DecimalField(max_digits=16, decimal_places=2)
+    loan_amount = models.DecimalField(max_digits=16, decimal_places=2)
+    admin_fee = models.DecimalField(max_digits=8, decimal_places=2)
+
+    class Meta(BaseUserHistory.Meta):
+        verbose_name = "Gold Loan History"
+        verbose_name_plural = "Gold Loan Histories"

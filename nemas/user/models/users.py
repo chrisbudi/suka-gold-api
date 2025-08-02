@@ -14,7 +14,7 @@ from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from decimal import Decimal
-from user.models.user_history import user_wallet_history, user_gold_history
+from user.models.user_history import WalletHistory
 from core.domain.bank import bank
 
 
@@ -278,11 +278,11 @@ class user_props(models.Model):
         self.save()
 
         # insert history user amount
-        user_wallet_history.objects.create(
+        WalletHistory.objects.create(
             user=self.user,
-            wallet_history_amount=amount,
-            wallet_history_type="C",
-            wallet_history_notes="Topup",
+            amount=amount,
+            transaction_type="D" if amount > 0 else "W",
+            note=f"Update balance by {amount}",
         )
 
     def update_gold_amt(self, weight: Decimal):

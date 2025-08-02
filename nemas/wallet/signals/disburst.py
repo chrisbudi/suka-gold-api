@@ -3,12 +3,13 @@ from django.dispatch import receiver
 from datetime import datetime
 
 from shared.utils.notification import create_user_notification
+from user.models.user_history import WalletHistory
 from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
 )
 from wallet.models import disburst_transaction
-from user.models import user_wallet_history, user_props
+from user.models import user_props
 from django.db import transaction
 from sendgrid.helpers.mail import Mail
 
@@ -34,7 +35,7 @@ def handle_disburst(
             user_props_instance.wallet_amt -= instance.disburst_total_amount
             user_props_instance.save()
 
-            user_wallet_history.objects.create(
+            WalletHistory.objects.create(
                 user=instance.user,
                 wallet_history_date=datetime.now(),
                 wallet_history_amount=instance.disburst_total_amount,

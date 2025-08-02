@@ -11,7 +11,7 @@ from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
 )
-from user.models import user_gold_history, user_wallet_history, user_props
+from user.models import GoldHistory, WalletHistory
 from django.db import transaction
 
 from sendgrid.helpers.mail import Mail
@@ -40,7 +40,7 @@ def handle_purchase(
             if price is None:
                 raise ValueError("Active gold price not found")
 
-            user_gold_history.objects.create(
+            GoldHistory.objects.create(
                 user=instance.user,
                 gold_purchase_date=datetime.now(),
                 gold_weight=instance.weight,
@@ -52,7 +52,7 @@ def handle_purchase(
                 gold_history_note="sale-" + str(instance.gold_transaction_id),
             )
 
-            user_wallet_history.objects.create(
+            WalletHistory.objects.create(
                 user=instance.user,
                 wallet_history_date=datetime.now(),
                 wallet_history_amount=instance.price,

@@ -13,7 +13,7 @@ from core.domain import gold_price
 from gold_transaction.models import gold_saving_sell
 from shared.services.email_service import EmailService
 from shared.utils.notification import create_user_notification
-from user.models import user_gold_history, user_wallet_history, user_props
+from user.models import GoldHistory, WalletHistory, user_props
 from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
@@ -37,7 +37,7 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
             if price is None:
                 raise ValueError("Active gold price not found")
 
-            user_gold_history.objects.create(
+            GoldHistory.objects.create(
                 user=instance.user,
                 gold_purchase_date=datetime.now(),
                 gold_weight=instance.weight,
@@ -49,7 +49,7 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
                 gold_history_note="sale-" + str(instance.gold_transaction_id),
             )
 
-            user_wallet_history.objects.create(
+            WalletHistory.objects.create(
                 user=instance.user,
                 wallet_history_date=datetime.now(),
                 wallet_history_amount=instance.price,
