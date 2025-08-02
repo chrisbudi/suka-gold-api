@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import datetime
+from datetime import date, datetime
 
 from shared.utils.notification import create_user_notification
 from user.models.user_history import WalletHistory
@@ -37,10 +37,10 @@ def handle_disburst(
 
             WalletHistory.objects.create(
                 user=instance.user,
-                wallet_history_date=datetime.now(),
-                wallet_history_amount=instance.disburst_total_amount,
-                wallet_history_type="D",
-                wallet_history_notes="disb-" + str(instance.disburst_transaction_id),
+                date=datetime.now(),
+                amount=instance.disburst_total_amount,
+                type="W",
+                notes="disb-" + str(instance.disburst_transaction_id),
             )
         # send email
         mailService = EmailService()

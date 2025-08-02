@@ -39,22 +39,22 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
 
             GoldHistory.objects.create(
                 user=instance.user,
-                gold_purchase_date=datetime.now(),
-                gold_weight=instance.weight,
-                gold_history_price_base=price.gold_price_base,
-                gold_history_price_buy=price.gold_price_buy,
-                gold_history_price_sell=price.gold_price_sell,
-                gold_history_type="C",
-                gold_history_amount=0,
-                gold_history_note="sale-" + str(instance.gold_transaction_id),
+                date=datetime.now(),
+                weight=instance.weight,
+                price_base=price.gold_price_base,
+                price_buy=price.gold_price_buy,
+                price_sell=price.gold_price_sell,
+                transaction_type="C",
+                amount=0,
+                note="sale-" + str(instance.gold_transaction_id),
             )
 
             WalletHistory.objects.create(
                 user=instance.user,
-                wallet_history_date=datetime.now(),
-                wallet_history_amount=instance.price,
-                wallet_history_type="D",
-                wallet_history_notes="sale-" + str(instance.gold_transaction_id),
+                date=datetime.now(),
+                amount=instance.price,
+                type="D",
+                notes="sale-" + str(instance.gold_transaction_id),
             )
             # send email
             mailService = EmailService()
