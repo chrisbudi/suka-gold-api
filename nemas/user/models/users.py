@@ -14,8 +14,8 @@ from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from decimal import Decimal
-from user.models.user_history import WalletHistory
 from core.domain.bank import bank
+from wallet.models import wallet_history
 
 
 # Create your models here.
@@ -278,7 +278,7 @@ class user_props(models.Model):
         self.save()
 
         # insert history user amount
-        WalletHistory.objects.create(
+        wallet_history.objects.create(
             user=self.user,
             amount=amount,
             transaction_type="D" if amount > 0 else "W",

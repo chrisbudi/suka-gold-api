@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from core.domain.gold import gold_history
 from gold_transaction.models import gold_transfer
-from user.models import GoldHistory
 from core.domain import gold_price
 from datetime import datetime
 from sendgrid.helpers.mail import Mail
@@ -31,9 +31,9 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
         if price is None:
             raise ValueError("Active gold price not found")
 
-        GoldHistory.objects.bulk_create(
+        gold_history.objects.bulk_create(
             [
-                GoldHistory(
+                gold_history(
                     user=instance.user_from,
                     date=datetime.now(),
                     weight=instance.transfer_member_gold_weight,
@@ -44,7 +44,7 @@ def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
                     amount=instance.transfer_member_amount_received,
                     note="transfer-" + instance.transfer_ref_number,
                 ),
-                GoldHistory(
+                gold_history(
                     user=instance.user_to,
                     date=datetime.now(),
                     weight=instance.transfer_member_transfered_weight,

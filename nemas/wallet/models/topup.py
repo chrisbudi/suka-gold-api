@@ -1,10 +1,8 @@
 from django.conf import settings
 
 from django.db import models
-from pytz import timezone
 from core.domain import bank
 from core.fields.uuidv7_field import UUIDv7Field
-from user.models import user_props
 
 
 class topup_transaction(models.Model):
@@ -66,8 +64,8 @@ class topup_transaction(models.Model):
         self.topup_status = topup_status
         self.save()
 
-        user = user_props.objects.get(user=self.user)
-        user.update_balance(self.topup_amount)
+        # user = user_props.objects.get(user=self.user)
+        # user.update_balance(self.topup_amount)
         return f"TOPUP Transaction {self.topup_transaction_id} - Type:"
 
 

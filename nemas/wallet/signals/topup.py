@@ -1,8 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import datetime
 
 from shared.utils.notification import create_user_notification
+from user.models import user
 from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
@@ -12,7 +12,6 @@ from sendgrid.helpers.mail import Mail
 
 from django.template.loader import render_to_string
 
-from user.models.users import user as User
 
 from shared.services.email_service import EmailService
 from django.conf import settings
@@ -52,7 +51,7 @@ def handle_topup(
         print("Failed to generate email. Mail object is None.")
 
 
-def generate_email(topup: topup_transaction, user: User):
+def generate_email(topup: topup_transaction, user: user):
     # Format the email body with the reset key
     detail_number = 1
     table_product_data = ""

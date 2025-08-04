@@ -5,13 +5,14 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 from core.domain import gold_price
 
+from core.domain.gold import gold_history
 from gold_transaction.models import gold_saving_buy
 from shared.utils.notification import create_user_notification
 from user.models.user_notification import (
     NotificationIconType,
     NotificationTransactionType,
 )
-from user.models import GoldHistory, WalletHistory, user_props
+from user.models import user_props
 from django.db import transaction
 
 from sendgrid.helpers.mail import Mail
@@ -21,6 +22,7 @@ from django.template.loader import render_to_string
 from user.models.users import user as User
 
 from shared.services.email_service import EmailService
+from wallet.models.wallet import wallet_history
 
 
 @receiver(post_save, sender=gold_saving_buy)
@@ -40,7 +42,7 @@ def handle_purchase(
             if price is None:
                 raise ValueError("Active gold price not found")
 
-            GoldHistory.objects.create(
+            gold_history.objects.create(
                 user=instance.user,
                 date=datetime.now(),
                 weight=instance.weight,
@@ -52,7 +54,7 @@ def handle_purchase(
                 note="sale-" + str(instance.gold_transaction_id),
             )
 
-            WalletHistory.objects.create(
+            wallet_history.objects.create(
                 user=instance.user,
                 date=datetime.now(),
                 amount=instance.price,
