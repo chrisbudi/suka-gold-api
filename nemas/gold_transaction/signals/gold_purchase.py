@@ -24,7 +24,7 @@ from user.models.users import user as User
 
 from shared.services.email_service import EmailService
 from wallet.models.wallet import wallet_history
-from wallet.repositories import wallet_repository
+from wallet.repositories.wallet_repository import WalletRepository
 
 
 @receiver(post_save, sender=gold_saving_buy)
@@ -47,7 +47,7 @@ def handle_purchase(
                 notes=f"gold purchase - {instance.gold_buy_number}",
             )
 
-            wallet_repo = wallet_repository.WalletRepository(user=instance.user)
+            wallet_repo = WalletRepository(user=instance.user)
             wallet_repo.deduct_balance(
                 amount=instance.price,
                 notes="gold purchase - " + str(instance.gold_transaction_id),
