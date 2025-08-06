@@ -34,27 +34,27 @@ user_view_url = []
 
 user_admin_url = [
     path(
-        "",
+        "admin",
         UserAdminView.as_view({"get": "list"}),
         name="list_admin_user",
     ),
     path(
-        "create",
+        "admin/create",
         UserAdminView.as_view({"post": "create"}),
         name="post_admin_user",
     ),
     path(
-        "<uuid:id>",
+        "admin/<uuid:id>",
         UserAdminView.as_view({"patch": "update"}),
         name="patch_admin_user",
     ),
     path(
-        "<uuid:id>",
+        "admin/<uuid:id>",
         UserAdminView.as_view({"delete": "destroy"}),
         name="delete_admin_user",
     ),
     path(
-        "<uuid:id>",
+        "admin/<uuid:id>",
         UserAdminView.as_view({"get": "retrieve"}),
         name="get_admin_user",
     ),

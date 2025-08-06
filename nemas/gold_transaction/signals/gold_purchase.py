@@ -5,8 +5,8 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 from core.domain import gold_price
 
-from core.domain.gold import gold_history
 from gold_transaction.models import gold_saving_buy
+from gold_transaction.models.gold_stock import gold_history
 from shared.utils.notification import create_user_notification
 from user.models.user_notification import (
     NotificationIconType,

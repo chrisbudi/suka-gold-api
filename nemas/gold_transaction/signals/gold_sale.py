@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 
-from core.domain.gold import gold_history
+from gold_transaction.models.gold_stock import gold_history
 from sendgrid.helpers.mail import Mail
 
 from core.domain import gold_price

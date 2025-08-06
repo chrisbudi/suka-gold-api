@@ -1,4 +1,4 @@
-from core.domain.gold import gold_stock
+from gold_transaction.models.gold_stock import gold_stock
 
 
 class GoldStockRepository:

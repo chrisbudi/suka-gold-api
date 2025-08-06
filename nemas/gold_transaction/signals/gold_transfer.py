@@ -1,9 +1,9 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from core.domain.gold import gold_history
 from gold_transaction.models import gold_transfer
 from core.domain import gold_price
 from datetime import datetime
+from gold_transaction.models.gold_stock import gold_history
 from sendgrid.helpers.mail import Mail
 
 from django.template.loader import render_to_string
