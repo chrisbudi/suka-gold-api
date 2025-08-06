@@ -4,6 +4,7 @@ from gold_transaction.models import gold_transfer
 from core.domain import gold_price
 from datetime import datetime
 from gold_transaction.models.gold_stock import gold_history
+from gold_transaction.repositories.gold_stock_repository import GoldStockRepository
 from sendgrid.helpers.mail import Mail
 
 from django.template.loader import render_to_string
@@ -17,46 +18,10 @@ from django.conf import settings
 @receiver(post_save, sender=gold_transfer)
 def handle_transfer(sender, instance: gold_transfer, created: bool, **kwargs):
     if created:
-        # update user props
-        user_props = instance.user_from.user_props
-        user_props.gold_wgt -= instance.transfer_member_gold_weight
-        user_props.save()
-
-        to_user_props = instance.user_to.user_props
-        to_user_props.gold_wgt += instance.transfer_member_gold_weight
-        to_user_props.save()
-
-        price_instance = gold_price()
-        price = price_instance.get_active_price()
-        if price is None:
-            raise ValueError("Active gold price not found")
-
-        gold_history.objects.bulk_create(
-            [
-                gold_history(
-                    user=instance.user_from,
-                    date=datetime.now(),
-                    weight=instance.transfer_member_gold_weight,
-                    price_base=price.gold_price_base,
-                    price_buy=price.gold_price_buy,
-                    price_sell=price.gold_price_sell,
-                    transaction_type="C",
-                    amount=instance.transfer_member_amount_received,
-                    note="transfer-" + instance.transfer_ref_number,
-                ),
-                gold_history(
-                    user=instance.user_to,
-                    date=datetime.now(),
-                    weight=instance.transfer_member_transfered_weight,
-                    price_base=price.gold_price_base,
-                    price_buy=price.gold_price_buy,
-                    price_sell=price.gold_price_sell,
-                    transaction_type="D",
-                    amount=instance.transfer_member_amount_received,
-                    note="transfer-" + instance.transfer_ref_number,
-                ),
-            ]
-            # return admin to main account
+        gold_stock_repo = GoldStockRepository(user=instance.user_from)
+        gold_stock_repo.transfer_gold(
+            user_to=instance.user_to,
+            weight=instance.transfer_member_gold_weight,
         )
 
         UserFrom = instance.user_from

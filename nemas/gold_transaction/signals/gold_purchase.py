@@ -7,6 +7,7 @@ from core.domain import gold_price
 
 from gold_transaction.models import gold_saving_buy
 from gold_transaction.models.gold_stock import gold_history
+from gold_transaction.repositories.gold_stock_repository import GoldStockRepository
 from shared.utils.notification import create_user_notification
 from user.models.user_notification import (
     NotificationIconType,
@@ -23,6 +24,7 @@ from user.models.users import user as User
 
 from shared.services.email_service import EmailService
 from wallet.models.wallet import wallet_history
+from wallet.repositories import wallet_repository
 
 
 @receiver(post_save, sender=gold_saving_buy)
@@ -32,34 +34,23 @@ def handle_purchase(
     print(created, "created", "gold saving buy")
     if created:
         with transaction.atomic():
-            # update user props
-            user_props_instance: user_props = user_props.objects.get(user=instance.user)
-            user_props_instance.gold_wgt += instance.weight
-            user_props_instance.wallet_amt -= instance.price
-            user_props_instance.save()
-
+            # update gold stock
             price = gold_price().get_active_price()
             if price is None:
                 raise ValueError("Active gold price not found")
 
-            gold_history.objects.create(
-                user=instance.user,
-                date=datetime.now(),
+            gold_stock_repo = GoldStockRepository(user=instance.user)
+            gold_stock_repo.buy_gold(
                 weight=instance.weight,
                 price_base=price.gold_price_base,
-                buy=price.gold_price_buy,
-                sell=price.gold_price_sell,
-                type="D",
-                amount=0,
-                note="sale-" + str(instance.gold_transaction_id),
+                price_buy=instance.price,
+                notes=f"gold purchase - {instance.gold_buy_number}",
             )
 
-            wallet_history.objects.create(
-                user=instance.user,
-                date=datetime.now(),
+            wallet_repo = wallet_repository.WalletRepository(user=instance.user)
+            wallet_repo.deduct_balance(
                 amount=instance.price,
-                type="D",
-                notes="sale-" + str(instance.gold_transaction_id),
+                notes="gold purchase - " + str(instance.gold_transaction_id),
             )
             # send email
             mailService = EmailService()

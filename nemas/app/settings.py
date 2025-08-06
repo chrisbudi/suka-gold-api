@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from uuid import UUID
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -444,3 +445,14 @@ PAXEL = {
     "API_KEY": os.getenv("PAXEL_API_KEY", ""),
     "API_SECRET": os.getenv("PAXEL_API_SECRET", ""),
 }
+
+SYSTEM_USER_ID = UUID("00000000-0000-0000-0000-000000000000")
+
+
+def get_system_user():
+    from django.contrib.auth import get_user_model
+
+    return get_user_model().objects.get(id=SYSTEM_USER_ID)
+
+
+SYSTEM_USER = get_system_user()

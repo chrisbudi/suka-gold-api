@@ -8,9 +8,7 @@ from core.fields.uuidv7_field import UUIDv7Field
 
 class gold_stock(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    topup_stock = models.DecimalField(
-        max_digits=16, decimal_places=4, default=Decimal(0.00)
-    )
+    weight = models.DecimalField(max_digits=16, decimal_places=4, default=Decimal(0.00))
     process_stock = models.DecimalField(
         max_digits=16, decimal_places=4, default=Decimal(0.00)
     )

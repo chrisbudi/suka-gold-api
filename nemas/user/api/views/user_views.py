@@ -20,7 +20,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 from user.api.serializers import UserSerializer, AuthTokenObtainPairSerializer
-from user.models import user  # Import the User model
+from user.models import user
 
 
 @extend_schema(

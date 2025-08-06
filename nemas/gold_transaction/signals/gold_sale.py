@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 
-from gold_transaction.models.gold_stock import gold_history
+from gold_transaction.repositories.gold_stock_repository import GoldStockRepository
 from sendgrid.helpers.mail import Mail
 
 from core.domain import gold_price
@@ -20,7 +20,7 @@ from user.models.user_notification import (
     NotificationTransactionType,
 )
 from user.models.users import user as User
-from wallet.models.wallet import wallet_history
+from wallet.repositories.wallet_repository import WalletRepository
 
 
 @receiver(post_save, sender=gold_saving_sell)
@@ -39,25 +39,20 @@ def handle_sale(sender: type[gold_saving_sell], instance, created, **kwargs):
             if price is None:
                 raise ValueError("Active gold price not found")
 
-            gold_history.objects.create(
-                user=instance.user,
-                date=datetime.now(),
+            gold_stock_repo = GoldStockRepository(instance.user)
+            gold_stock_repo.sell_gold(
                 weight=instance.weight,
                 price_base=price.gold_price_base,
-                price_buy=price.gold_price_buy,
-                price_sell=price.gold_price_sell,
-                transaction_type="C",
-                amount=0,
-                note="sale-" + str(instance.gold_transaction_id),
+                price_sell=instance.price,
+                notes=f"gold sell - {instance.gold_sell_number}",
             )
 
-            wallet_history.objects.create(
-                user=instance.user,
-                date=datetime.now(),
+            wallet_repo = WalletRepository(instance)
+            wallet_repo.add_balance(
                 amount=instance.price,
-                type="D",
-                notes="sale-" + str(instance.gold_transaction_id),
+                notes=f"gold sell - {instance.gold_sell_number}",
             )
+
             # send email
             mailService = EmailService()
             if instance.user is not None:
