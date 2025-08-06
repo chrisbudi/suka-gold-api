@@ -18,6 +18,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from common.generator import generate_numeric_code
 from user.models import user
+from user.models.users import role
 from user.signals.receiver import email_user_verification
 
 
@@ -38,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
         source="role.name", read_only=True, allow_blank=True, max_length=255
     )
     role = serializers.PrimaryKeyRelatedField(
-        queryset=get_user_model().objects.all(), required=False, allow_null=True
+        queryset=role.objects.all(), required=False, allow_null=True
     )
 
     class Meta:
@@ -51,20 +52,20 @@ class UserSerializer(serializers.ModelSerializer):
             "phone_number",
             "password",
             "name",
-            "is_2fa_verified",
-            "is_active",
-            "is_verified",
-            "is_ktp_verified",
-            "is_email_verified",
             "income_source",
-            "role",
             "role_name",
+            "role",
             "investment_purpose",
             "referal_code",
         ]
         read_only_fields = (
             "id",
             "member_number",
+            "is_2fa_verified",
+            "is_active",
+            "is_verified",
+            "is_ktp_verified",
+            "is_email_verified",
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 

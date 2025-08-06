@@ -9,7 +9,7 @@ from rest_framework import serializers
 from django_filters import rest_framework as filters
 
 from common.generator import generate_numeric_code
-from user.models.users import user_address, user_ktp, user_props
+from user.models.users import role, user_address, user_ktp, user_props
 
 
 class user_ktp_serializer(serializers.ModelSerializer):
@@ -109,7 +109,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
         source="role.name", read_only=True, allow_blank=True, max_length=255
     )
     role = serializers.PrimaryKeyRelatedField(
-        queryset=get_user_model().objects.all(), required=False, allow_null=True
+        queryset=role.objects.all(), required=False, allow_null=True
     )
 
     class Meta:
@@ -122,11 +122,6 @@ class UserAdminSerializer(serializers.ModelSerializer):
             "phone_number",
             "password",
             "name",
-            "is_2fa_verified",
-            "is_active",
-            "is_verified",
-            "is_ktp_verified",
-            "is_email_verified",
             "role",
             "role_name",
             "income_source",
@@ -140,6 +135,11 @@ class UserAdminSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "member_number",
+            "is_2fa_verified",
+            "is_active",
+            "is_verified",
+            "is_ktp_verified",
+            "is_email_verified",
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 
@@ -155,7 +155,10 @@ class UserAdminSerializer(serializers.ModelSerializer):
         """Create a new user with encrypted password and return it"""
         member_number = "IDN-" + generate_numeric_code(5)
         validated_data["member_number"] = member_number
+        role = validated_data.pop("role", None)
 
+        print(role, "role from validated_data")
+        validated_data["role_id"] = role
         if self.context.get("is_superuser", False):
             return get_user_model().objects.create_superuser(**validated_data)
         return get_user_model().objects.create_user(**validated_data)
