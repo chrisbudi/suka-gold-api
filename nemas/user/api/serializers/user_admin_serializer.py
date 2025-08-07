@@ -155,10 +155,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
         """Create a new user with encrypted password and return it"""
         member_number = "IDN-" + generate_numeric_code(5)
         validated_data["member_number"] = member_number
-        role = validated_data.pop("role", None)
 
-        print(role, "role from validated_data")
-        validated_data["role_id"] = role
         if self.context.get("is_superuser", False):
             return get_user_model().objects.create_superuser(**validated_data)
         return get_user_model().objects.create_user(**validated_data)
