@@ -165,11 +165,18 @@ class UserAdminSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password", None)
         if not instance.member_number:
             validated_data["member_number"] = "IDN-" + generate_numeric_code(5)
+
         user = super().update(instance, validated_data)
         if password:
             user.set_password(password)
             user.save()
         return user
+
+    def delete(self, instance):
+        """Custom delete to set is_deleted=True instead of actual deletion"""
+        instance.is_deleted = True
+        instance.save(update_fields=["is_deleted"])
+        return instance
 
 
 # class filter

@@ -84,10 +84,12 @@ class UserAdminView(viewsets.ModelViewSet):
     def delete(self, request, id=None):
         queryset = user.objects.all()
         info = get_object_or_404(queryset, pk=id)
-        info.delete()
+        info.is_deleted = True
+        info.save(update_fields=["is_deleted"])
+
         return Response(
             {
-                "message": "Gold object deleted successfully",
+                "message": "User object deleted successfully",
             },
             status=status.HTTP_204_NO_CONTENT,
         )
