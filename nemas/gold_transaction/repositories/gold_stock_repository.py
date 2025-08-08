@@ -1,8 +1,8 @@
 from decimal import Decimal
 from gold_transaction.models.gold_stock import gold_history, gold_stock
 from django.db import transaction
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from shared_kernel.utils.system_user import get_system_user
 
 
 class GoldStockRepository:
@@ -14,7 +14,7 @@ class GoldStockRepository:
         return stock
 
     def get_system_stock(self):
-        system_user = settings.SYSTEM_USER
+        system_user = get_system_user()
         try:
             return gold_stock.objects.get(user=system_user)
         except ObjectDoesNotExist:
