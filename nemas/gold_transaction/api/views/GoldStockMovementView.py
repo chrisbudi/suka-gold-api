@@ -35,8 +35,8 @@ class GoldStockMovementListCreateView(viewsets.ModelViewSet):
     serializer_class = GoldInOutStockSerializer
 
     @extend_schema(
-        summary="List Gold Sales",
-        description="Retrieve a list of gold Sales for the authenticated user.",
+        summary="List Gold Movement",
+        description="Retrieve a list of gold movements for the authenticated user.",
         responses={200: GoldInOutStockSerializer},
     )
     def list(self, request):
