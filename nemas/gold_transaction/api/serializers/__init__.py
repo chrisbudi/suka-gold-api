@@ -11,3 +11,5 @@ from .GoldTransferSerializer import (
     GoldTransferSerializer,
     GoldTransferFilter,
 )
+
+from .GoldInOutStockSerializer import GoldInOutStockSerializer

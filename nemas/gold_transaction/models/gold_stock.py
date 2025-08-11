@@ -90,3 +90,32 @@ class gold_loan_history(BaseUserHistory):
     class Meta(BaseUserHistory.Meta):
         verbose_name = "Gold Loan History"
         verbose_name_plural = "Gold Loan Histories"
+
+
+class gold_stock_history(BaseUserHistory):
+    MOVEMENT_TYPES = (
+        ("IN", "Stock In"),
+        ("OUT", "Stock Out"),
+    )
+    id = UUIDv7Field(primary_key=True, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="gold_stock_histories",
+    )
+    stock = models.ForeignKey(
+        gold_stock, on_delete=models.CASCADE, related_name="histories"
+    )
+    movement_type = models.CharField(max_length=3, choices=MOVEMENT_TYPES)
+    weight = models.DecimalField(max_digits=16, decimal_places=4)
+    stock_before = models.DecimalField(
+        max_digits=16, decimal_places=4, default=Decimal(0)
+    )
+    stock_after = models.DecimalField(
+        max_digits=16, decimal_places=4, default=Decimal(0)
+    )
+    note = models.TextField(blank=True, null=True)
+
+    class Meta(BaseUserHistory.Meta):
+        verbose_name = "Gold Stock History"
+        verbose_name_plural = "Gold Stock Histories"

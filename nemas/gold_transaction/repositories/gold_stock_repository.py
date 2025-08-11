@@ -1,5 +1,9 @@
 from decimal import Decimal
-from gold_transaction.models.gold_stock import gold_history, gold_stock
+from gold_transaction.models.gold_stock import (
+    gold_history,
+    gold_stock,
+    gold_stock_history,
+)
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from shared_kernel.utils.system_user import get_system_user
@@ -122,3 +126,95 @@ class GoldStockRepository:
             amount=0,
             note=f"Transfer from {from_stock.user.username}",
         )
+
+    @transaction.atomic
+    def redeem_gold(
+        self, weight: Decimal, price_base: Decimal, price_buy: Decimal, notes: str
+    ):
+
+        amount = weight * price_buy
+        # Deduct from system
+        system_stock = self.get_system_stock()
+        system_stock.reduce_gold(weight)
+        system_stock.save()
+
+        # Add to user
+        user_stock = self.get_or_create_user_stock(self.user)
+
+        user_stock.weight += weight
+        user_stock.save()
+
+        # Log history
+        gold_history.objects.create(
+            user=self.user,
+            weight=weight,
+            price_base=price_base,
+            price_buy=price_buy,
+            price_sell=Decimal(0),
+            transaction_type="R",
+            amount=amount,
+            note=notes,
+        )
+
+    @transaction.atomic
+    def stock_in(user, grams, price_base=None, price_buy=None, note=None):
+        stock, _ = gold_stock.objects.get_or_create(user=user)
+        before = stock.weight
+        stock.weight += Decimal(grams)
+        stock.save()
+
+        # Record movement history
+        gold_stock_history.objects.create(
+            user=user,
+            stock=stock,
+            movement_type="IN",
+            weight=grams,
+            stock_before=before,
+            stock_after=stock.weight,
+            note=note,
+        )
+
+        # Existing transaction history
+        gold_history.objects.create(
+            user=user,
+            weight=grams,
+            price_base=price_base or Decimal(0),
+            price_buy=price_buy or Decimal(0),
+            price_sell=Decimal(0),
+            transaction_type="B",
+            amount=(price_buy or Decimal(0)) * Decimal(grams),
+        )
+        return stock
+
+    @transaction.atomic
+    def stock_out(user, grams, price_base=None, price_sell=None, note=None):
+        stock = gold_stock.objects.select_for_update().get(user=user)
+        if stock.weight < Decimal(grams):
+            raise ValueError("Not enough stock to remove")
+
+        before = stock.weight
+        stock.weight -= Decimal(grams)
+        stock.save()
+
+        # Record movement history
+        gold_stock_history.objects.create(
+            user=user,
+            stock=stock,
+            movement_type="OUT",
+            weight=grams,
+            stock_before=before,
+            stock_after=stock.weight,
+            note=note,
+        )
+
+        # Existing transaction history
+        gold_history.objects.create(
+            user=user,
+            weight=grams,
+            price_base=price_base or Decimal(0),
+            price_buy=Decimal(0),
+            price_sell=price_sell or Decimal(0),
+            transaction_type="S",
+            amount=(price_sell or Decimal(0)) * Decimal(grams),
+        )
+        return stock
