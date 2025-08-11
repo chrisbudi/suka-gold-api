@@ -17,8 +17,6 @@ from gold_transaction.repositories.gold_stock_repository import (
 @extend_schema(
     summary="List and create gold stock movements",
     description="Retrieve a list of gold stock movement history for the authenticated user, or create a new gold stock movement entry.",
-    responses={200: GoldInOutStockSerializer(many=True)},
-    request=GoldInOutStockSerializer,
     tags=["Gold Stock History"],
 )
 class GoldStockMovementListCreateView(viewsets.ModelViewSet):
