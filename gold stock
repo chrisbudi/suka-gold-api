@@ -1,0 +1,41 @@
+gold stock
+gold history
+gold stock in out
+
+
+*tambah stock
+gold stock in out
+gold history(system)
+gold stock(system)
+
+
+*reduce stock
+gold stock in out
+gold history (system)
+gold stock(system)
+
+
+
+*gold sell
+gold history(user, system)
+gold stock(user, system)
+
+*gold buy
+gold history(system, user)
+gold stock(system, user)
+
+*transfer
+gold stock(user from, user to)
+gold history(user from, user to)
+
+*deposito
+gold history deposito (user, system)
+gold stock(user, system)
+gold history(user, system)
+
+
+*loan
+gold hisotry loan (user, system)
+gold stock (user, system)
+gold history(user, system)
+
