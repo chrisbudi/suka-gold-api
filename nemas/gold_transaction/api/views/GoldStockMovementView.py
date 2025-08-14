@@ -8,7 +8,7 @@ from rest_framework import generics, permissions
 from gold_transaction.api.serializers.GoldInOutStockSerializer import (
     GoldInOutStockSerializer,
 )
-from gold_transaction.models.gold_stock import gold_stock_history
+from gold_transaction.models.gold_stock import gold_stock_inout
 from gold_transaction.repositories.gold_stock_repository import (
     GoldStockRepository,
 )
@@ -23,7 +23,7 @@ class GoldStockMovementListCreateView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    queryset = gold_stock_history.objects.all()  # Use the model class directly
+    queryset = gold_stock_inout.objects.all()  # Use the model class directly
     serializer_class = GoldStockRepository
     authentication_classes = [JWTAuthentication]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -38,7 +38,7 @@ class GoldStockMovementListCreateView(viewsets.ModelViewSet):
         responses={200: GoldInOutStockSerializer},
     )
     def list(self, request):
-        queryset = gold_stock_history.objects.filter(user=request.user)
+        queryset = gold_stock_inout.objects.filter(user=request.user)
         filter_queryset = self.filter_queryset(queryset)
         paginated_queryset = self.paginate_queryset(filter_queryset)
         serializer = GoldInOutStockSerializer(paginated_queryset, many=True)

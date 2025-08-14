@@ -2,7 +2,7 @@ from decimal import Decimal
 from gold_transaction.models.gold_stock import (
     gold_history,
     gold_stock,
-    gold_stock_history,
+    gold_stock_inout,
 )
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
@@ -164,7 +164,7 @@ class GoldStockRepository:
         stock.save()
 
         # Record movement history
-        gold_stock_history.objects.create(
+        gold_stock_inout.objects.create(
             user=user,
             stock=stock,
             movement_type="IN",
@@ -197,7 +197,7 @@ class GoldStockRepository:
         stock.save()
 
         # Record movement history
-        gold_stock_history.objects.create(
+        gold_stock_inout.objects.create(
             user=user,
             stock=stock,
             movement_type="OUT",

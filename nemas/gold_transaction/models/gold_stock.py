@@ -1,4 +1,5 @@
 from decimal import Decimal
+import uuid
 from django.conf import settings
 
 from django.db import models
@@ -7,7 +8,10 @@ from core.fields.uuidv7_field import UUIDv7Field
 
 
 class gold_stock(models.Model):
-    id = UUIDv7Field(primary_key=True, editable=False)
+    # Step 1: Add new UUID field (not primary key yet, nullable for migration)
+    new_id = UUIDv7Field(
+        primary_key=True, editable=False
+    )  # Add new UUID field for migration
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     weight = models.DecimalField(max_digits=16, decimal_places=4, default=Decimal(0.00))
@@ -92,19 +96,16 @@ class gold_loan_history(BaseUserHistory):
         verbose_name_plural = "Gold Loan Histories"
 
 
-class gold_stock_history(BaseUserHistory):
+class gold_stock_inout(BaseUserHistory):
     MOVEMENT_TYPES = (
         ("IN", "Stock In"),
         ("OUT", "Stock Out"),
     )
-    id = UUIDv7Field(primary_key=True, editable=False)
+    gold_stock_inout_id = UUIDv7Field(unique=True, editable=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="gold_stock_histories",
-    )
-    stock = models.ForeignKey(
-        gold_stock, on_delete=models.CASCADE, related_name="histories"
     )
     movement_type = models.CharField(max_length=3, choices=MOVEMENT_TYPES)
     weight = models.DecimalField(max_digits=16, decimal_places=4)
