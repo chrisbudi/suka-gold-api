@@ -49,6 +49,7 @@ ALLOWED_HOSTS = [
     "3.0.17.240",
     "18.138.179.185",
     "nemas.id",
+    "app",
     "www.nemas.id",
 ]
 
